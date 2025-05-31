@@ -69,7 +69,7 @@ async def sync_workspace(key, ws):
                                        {"filter":{"property":"object","value":"database"}})
             except Exception as e:
                 print(f"  ❌ Database search failed for {key}: {e}")
-                continue
+                return
 
             db_count = 0
             page_count = 0
@@ -90,7 +90,7 @@ async def sync_workspace(key, ws):
                     for page in res["results"]:
                         # Extract page title and all text properties
                         content_parts = []
-                        
+
                         # Get page title
                         for prop_name, prop_data in page["properties"].items():
                             if prop_data.get("type") == "title" and prop_data.get("title"):
@@ -109,7 +109,7 @@ async def sync_workspace(key, ws):
                                 multi_select_text = ", ".join([ms.get("name", "") for ms in prop_data["multi_select"]])
                                 if multi_select_text:
                                     content_parts.append(f"{prop_name}: {multi_select_text}")
-                        
+
                         content = "\n".join(content_parts) if content_parts else f"Page in {db_title}"
 
                         if content.strip():

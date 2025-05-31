@@ -601,11 +601,33 @@ def ask(q: str = Query(..., description="Your question")):
         all_scores = [f'{h.score:.3f}' for h in all_hits[:5]]
         print(f"✓ Top 5 raw scores: {all_scores}")
         
+        # Handle questions without specific context - be more conversational
         if not hits:
-            return {
-                "answer": "I don't have that specific information in your knowledge base yet. To get accurate answers, please:\n\n1. Add the relevant documents to data/raw/ and run ingest.py\n2. Update your Notion pages with the correct information\n3. Or ask me about something I do know from your uploaded documents\n\nI can help with calendar management, email prioritization, and questions about content that's already in your system.",
-                "sources": []
-            }
+            # For general questions, still answer but note the lack of personal context
+            msgs = [
+                {"role": "system", "content": """You are Michael Slusher's personal AI companion and executive assistant. Michael is the founder of Rocket Launch Studio, a creative professional with ADHD who values efficiency and clear communication.
+
+You can answer general questions, provide explanations, give advice, help with coding, etc. However, you don't have specific personal information about Michael available for this question.
+
+Be conversational, helpful, and supportive. If this seems like a question that would benefit from Michael's personal information, let him know that you could provide more personalized help if he adds relevant documents to his knowledge base."""},
+                {"role": "user", "content": q}
+            ]
+            
+            response = openai_client.chat.completions.create(
+                model=CHAT_MD,
+                messages=msgs,
+                temperature=0.7,
+                max_tokens=1000
+            )
+            
+            ans = response.choices[0].message.content.strip()
+            
+            # Add a note about personal context if the question seems personal
+            personal_keywords = ['my', 'i am', 'i have', 'my family', 'my business', 'my schedule', 'my email', 'my calendar']
+            if any(keyword in q.lower() for keyword in personal_keywords):
+                ans += "\n\n💡 *For more personalized assistance with your specific information, you can add relevant documents to data/raw/ and run ingest.py, or update your Notion pages.*"
+            
+            return {"answer": ans, "sources": []}
         
         # Build context
         ctx_pieces = []
@@ -617,10 +639,8 @@ def ask(q: str = Query(..., description="Your question")):
         ctx = "\n\n---\n\n".join(ctx_pieces)
         print(f"✓ Built context from {len(hits)} sources")
         
-        # Enhanced system prompt for Michael with strict fact-checking
+        # Enhanced system prompt for Michael - conversational but informed
         system_prompt = f"""You are Michael Slusher's personal AI companion and executive assistant. You know Michael intimately and should respond as his trusted advisor and helper.
-
-CRITICAL INSTRUCTION: Only use information found in the provided context below. If the answer is not in the context, you MUST say "I don't have that information in your knowledge base yet" rather than guessing or making up facts.
 
 KEY CONTEXT ABOUT MICHAEL:
 - You are speaking directly to Michael Slusher, founder of Rocket Launch Studio
@@ -630,20 +650,24 @@ KEY CONTEXT ABOUT MICHAEL:
 - When he asks first-person questions like "who is my mother" or "what's my schedule", HE is Michael
 
 YOUR ROLE:
-- Act as Michael's personal assistant, not a generic AI
-- Provide personalized advice based ONLY on information in the context
+- Act as Michael's personal assistant and conversational companion
+- Answer general questions using your knowledge, but prioritize Michael's personal information when available
+- For personal questions about Michael, use the provided context when available
+- For general questions (like "What's the weather?" or "How do I code X?"), answer normally using your general knowledge
 - Help him stay organized and on track with his goals
 - Be encouraging and supportive, understanding his neurodivergent needs
-- NEVER make up or guess personal information about Michael
 
 COMMUNICATION STYLE:
-- Be direct but warm and supportive
+- Be conversational, warm, and supportive
 - Break down complex information into digestible chunks
-- Offer actionable advice and next steps based on available context
-- Reference his goals and values when relevant from the provided information
-- If you don't know something, be honest about it
+- Offer actionable advice and next steps
+- For personal matters, reference the context when available
+- For general questions, answer normally but keep Michael's preferences in mind
+- If you don't have specific personal information about Michael, say so, but still try to be helpful
 
-Context from Michael's documents:
+IMPORTANT: You can answer general questions, provide explanations, help with coding, give advice, etc. You're not limited to only Michael's documents. However, when it comes to personal information about Michael specifically, prioritize the context below.
+
+Context from Michael's documents (use this for personal questions about Michael):
 {ctx}"""
         
         msgs = [
