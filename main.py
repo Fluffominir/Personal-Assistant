@@ -590,12 +590,16 @@ def ask(q: str = Query(..., description="Your question")):
         main_hits = idx.query(vector=qvec, top_k=6, namespace=NS, include_metadata=True).matches
         notion_hits = idx.query(vector=qvec, top_k=6, namespace="notion", include_metadata=True).matches
         
-        # Combine and filter by relevance score with higher threshold
+        # Combine and filter by relevance score with adjusted threshold
         all_hits = main_hits + notion_hits
-        # Use higher relevance threshold to prevent hallucinations
-        hits = [h for h in all_hits if h.score > 0.75][:8]
+        # Lower threshold but still prevent hallucinations
+        hits = [h for h in all_hits if h.score > 0.60][:8]
         print(f"✓ Found {len(hits)} relevant matches ({len(main_hits)} from docs, {len(notion_hits)} from Notion)")
         print(f"✓ Relevance scores: {[f'{h.score:.3f}' for h in hits]}")
+        
+        # Debug: Show all scores even if below threshold
+        all_scores = [f'{h.score:.3f}' for h in all_hits[:5]]
+        print(f"✓ Top 5 raw scores: {all_scores}")
         
         if not hits:
             return {

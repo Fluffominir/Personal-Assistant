@@ -84,19 +84,29 @@ async def sync_workspace(key, ws):
                     res = await fetch_json(session, f"https://api.notion.com/v1/databases/{db_id}/query", token, qry)
 
                     for page in res["results"]:
-                        # Extract page title/content
-                        title_prop = None
+                        # Extract page title and all text properties
+                        content_parts = []
+                        
+                        # Get page title
                         for prop_name, prop_data in page["properties"].items():
-                            if prop_data.get("type") == "title":
-                                title_prop = prop_data
-                                break
-
-                        if title_prop and title_prop.get("title"):
-                            plain = title_prop["title"][0].get("plain_text", "") if title_prop["title"] else ""
-                        else:
-                            plain = ""
-
-                        content = plain or f"Page in {db_title}" or page["url"]
+                            if prop_data.get("type") == "title" and prop_data.get("title"):
+                                title_text = prop_data["title"][0].get("plain_text", "") if prop_data["title"] else ""
+                                if title_text:
+                                    content_parts.append(f"Title: {title_text}")
+                            elif prop_data.get("type") == "rich_text" and prop_data.get("rich_text"):
+                                rich_text = " ".join([rt.get("plain_text", "") for rt in prop_data["rich_text"]])
+                                if rich_text.strip():
+                                    content_parts.append(f"{prop_name}: {rich_text}")
+                            elif prop_data.get("type") == "select" and prop_data.get("select"):
+                                select_text = prop_data["select"].get("name", "")
+                                if select_text:
+                                    content_parts.append(f"{prop_name}: {select_text}")
+                            elif prop_data.get("type") == "multi_select" and prop_data.get("multi_select"):
+                                multi_select_text = ", ".join([ms.get("name", "") for ms in prop_data["multi_select"]])
+                                if multi_select_text:
+                                    content_parts.append(f"{prop_name}: {multi_select_text}")
+                        
+                        content = "\n".join(content_parts) if content_parts else f"Page in {db_title}"
 
                         if content.strip():
                             vec = await embed(content)

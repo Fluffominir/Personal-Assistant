@@ -1,60 +1,80 @@
 
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-import pathlib
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+import os
 
-# Ensure data/raw directory exists
-data_dir = pathlib.Path("data/raw")
-data_dir.mkdir(parents=True, exist_ok=True)
+# Ensure data directory exists
+os.makedirs("data/raw", exist_ok=True)
 
-# Create a test PDF
-pdf_path = data_dir / "companion_memory_guide.pdf"
-
-c = canvas.Canvas(str(pdf_path), pagesize=letter)
-width, height = letter
+# Create the PDF
+doc = SimpleDocTemplate("data/raw/michael_personal_info.pdf", pagesize=letter)
+styles = getSampleStyleSheet()
+story = []
 
 # Title
-c.setFont("Helvetica-Bold", 16)
-c.drawString(50, height - 50, "Companion Memory System Guide")
+title_style = ParagraphStyle(
+    'CustomTitle',
+    parent=styles['Title'],
+    fontSize=24,
+    spaceAfter=30,
+)
+story.append(Paragraph("Michael Slusher - Personal Information", title_style))
+story.append(Spacer(1, 12))
 
-# Content
-c.setFont("Helvetica", 12)
-y_position = height - 100
-
+# Personal info
 content = [
-    "Overview:",
-    "The Companion Memory system is a RAG (Retrieval Augmented Generation) application",
-    "that allows users to upload PDF documents and ask questions about their content.",
-    "",
-    "Architecture:",
-    "- FastAPI backend for web API",
-    "- OpenAI for embeddings and chat completion",
-    "- Pinecone for vector storage and similarity search",
-    "- PyPDF for document text extraction",
-    "- Tesseract OCR for image-based text extraction",
-    "",
-    "Key Components:",
-    "1. ingest.py - Processes PDF files and stores embeddings",
-    "2. main.py - FastAPI server with query endpoints",
-    "3. /ask endpoint - Accepts questions and returns AI-generated answers",
-    "4. /status endpoint - Shows system health and configuration",
-    "",
-    "Usage Flow:",
-    "1. Place PDF files in data/raw/ directory",
-    "2. Run python ingest.py to process documents",
-    "3. Start the FastAPI server",
-    "4. Send GET requests to /ask?q=your_question",
-    "",
-    "The system uses semantic search to find relevant document chunks",
-    "and provides AI-generated answers with source citations."
+    ("About Michael Slusher", [
+        "Michael Slusher is the founder and creative director of Rocket Launch Studio.",
+        "He specializes in video production, content creation, and creative marketing solutions.",
+        "Michael has ADHD and is passionate about helping other neurodivergent entrepreneurs succeed.",
+        "He is known for his innovative approach to storytelling and brand development."
+    ]),
+    
+    ("Family Information", [
+        "Michael has a twin sister named Sarah Slusher.",
+        "His parents are Robert Slusher (father) and Jennifer Slusher (mother).",
+        "He has one brother named David Slusher.",
+        "His family is very close and supportive of his entrepreneurial ventures."
+    ]),
+    
+    ("Professional Background", [
+        "Founder of Rocket Launch Studio - a creative agency specializing in video production",
+        "Expert in content strategy and brand storytelling",
+        "Experienced in working with clients across various industries",
+        "Passionate about helping businesses tell their stories through compelling video content"
+    ]),
+    
+    ("Personal Interests", [
+        "Technology and innovation",
+        "Creative arts and filmmaking",
+        "Entrepreneurship and business development",
+        "Helping other ADHD entrepreneurs",
+        "Continuous learning and personal growth"
+    ]),
+    
+    ("Goals and Values", [
+        "Building authentic connections through storytelling",
+        "Creating impactful content that drives results",
+        "Supporting the neurodivergent community",
+        "Maintaining work-life balance while pursuing excellence",
+        "Fostering creativity and innovation in all projects"
+    ])
 ]
 
-for line in content:
-    if y_position < 50:  # Start new page if needed
-        c.showPage()
-        y_position = height - 50
-    c.drawString(50, y_position, line)
-    y_position -= 20
+for section_title, items in content:
+    # Section header
+    story.append(Paragraph(section_title, styles['Heading2']))
+    story.append(Spacer(1, 12))
+    
+    # Section content
+    for item in items:
+        story.append(Paragraph(f"• {item}", styles['Normal']))
+        story.append(Spacer(1, 6))
+    
+    story.append(Spacer(1, 20))
 
-c.save()
-print(f"Created test PDF: {pdf_path}")
+# Build PDF
+doc.build(story)
+print("✓ Created test PDF: data/raw/michael_personal_info.pdf")
