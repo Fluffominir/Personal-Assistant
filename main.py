@@ -8,11 +8,14 @@ INDEX_NM   = "companion-memory"
 NS         = "v1"
 
 openai_client = openai.OpenAI()
-pc  = pinecone.Pinecone(api_key=os.environ["PINECONE_API_KEY"],
-                        environment=os.environ["PINECONE_ENVIRONMENT"])
+pc  = pinecone.Pinecone(api_key=os.environ["PINECONE_API_KEY"])
 idx = pc.Index(INDEX_NM)
 
 app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Companion Memory API", "endpoints": ["/ask"]}
 
 class Answer(BaseModel):
     answer: str

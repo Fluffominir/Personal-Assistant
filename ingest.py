@@ -11,8 +11,7 @@ CHUNK_W   = 400
 OVERLAP_W = 200
 
 openai_client = openai.OpenAI()
-pc = pinecone.Pinecone(api_key=os.environ["PINECONE_API_KEY"],
-                       environment=os.environ["PINECONE_ENVIRONMENT"])
+pc = pinecone.Pinecone(api_key=os.environ["PINECONE_API_KEY"])
 if INDEX_NM not in pc.list_indexes().names():
     pc.create_index(INDEX_NM, dimension=1536, metric="cosine")
 idx = pc.Index(INDEX_NM)
