@@ -1,0 +1,129 @@
+The bad answer (“Your sister’s name is Emily”) means **two things happened at once:**
+
+1. **The sister’s real name isn’t in the vector index** you built (or it is, but the chunk wasn’t returned).
+2. When the retriever came back empty, GPT-4o “guessed” instead of saying *“I don’t know.”*
+
+Fixing it is therefore a two-part job:
+
+| Goal                                                 | What you’ll do                                                                                                   | Time  |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----- |
+| **A. Guarantee the correct fact is inside Pinecone** | Re-index the right files / Notion pages with better chunking so the retrieval step can actually return the name. | 5 min |
+| **B. Stop hallucinations when retrieval is empty**   | Add one defensive line to the system prompt **and** a relevance check in code.                                   | 3 min |
+
+Do A → B and the answer will switch from “Emily” to the real name (or “I don’t know yet” until you add it).
+
+---
+
+## A  Make sure the fact is really in the index
+
+### 1 Find the authoritative source
+
+*Open the file or Notion page where **your twin sister’s name is written correctly.***
+– If it’s in a Notion page, copy that page’s URL so we can include it in the sync.
+– If it’s in a PDF or Markdown file, keep the path handy.
+
+*(If you realise it’s nowhere, add a short line like “**Twin sister’s name: Sarah**” to an existing profile page.)*
+
+### 2 Re-sync that content
+
+#### If it’s a **Notion** page:
+
+```bash
+# run this in the Replit Shell
+python scripts/notion_sync.py  --page "FULL_NOTION_PAGE_URL"
+```
+
+*(Adapt the script if you renamed it; most examples accept a `--page` or `--database` flag.)*
+
+#### If it’s a **file**:
+
+1. Drop the file into your `docs/` folder.
+2. Re-run the boot script:
+
+```bash
+python scripts/boot_memory.py
+```
+
+### 3 Verify the chunk is really in Pinecone
+
+```python
+python - <<'PY'
+import os, pinecone, tiktoken, json
+pc = pinecone.Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+idx = pc.Index("companion-memory")          # change if you use another name
+query = "my twin sister's name"
+emb = tiktoken.encoding_for_model("text-embedding-3-small")
+from openai import OpenAI
+vec = OpenAI(api_key=os.getenv("OPENAI_API_KEY")).embeddings.create(
+         model="text-embedding-3-small", input=query).data[0].embedding
+print(idx.query(vector=vec, top_k=3, include_metadata=True))
+PY
+```
+
+Look in the printed metadata—one of the `text:` fields should now contain the real name.
+If not, you’re still indexing the wrong file/page.
+
+---
+
+## B  Stop hallucinations when retrieval is empty
+
+### 1 Harden the system prompt
+
+In `app/main.py` (or wherever you build the `messages` list) change:
+
+```python
+messages = [
+    {"role": "system",
+     "content": "You are a personal assistant…"}
+]
+```
+
+to:
+
+```python
+messages = [
+    {"role": "system",
+     "content": (
+       "You are a personal assistant. Use only the information "
+       "found in the provided (Memory from …) messages to answer. "
+       "If the answer is not found, say 'I don't have that information yet.'"
+     )}
+]
+```
+
+### 2 Add a relevance guard in code
+
+Right after you retrieve memories:
+
+```python
+memories = fetch_memories(user_query, top_k=3)
+
+# ❤️  guardrail: if similarity score < 0.80 for ALL, don't pass any memory
+if not any(m.score > 0.80 for m in memories):
+    memories = []
+```
+
+*(Adjust `0.80` as you like; Pinecone returns `.score` when you ask `include_metadata=True`.)*
+
+If no memory passes the threshold, GPT-4o will get **no supporting chunks** and, thanks to the prompt, must answer “I don’t have that information yet.”
+
+---
+
+## C  Test again
+
+1. Click **Run** (server restarts).
+2. In your UI ask: **“What’s my sister’s name?”**
+
+| Expected result                      | Meaning                                                                                                    |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Correct name + citation              | 🎉 Both retrieval & prompt are fixed.                                                                      |
+| “I don’t have that information yet.” | Prompt fixed but the fact still isn’t in Pinecone – go back to **A-1** and add it.                         |
+| Wrong name again                     | Retrieval guard not firing (lower threshold) or system prompt not updated – double-check lines you edited. |
+
+---
+
+### Why the answer cited “Notion: Movies List”
+
+That page was simply the **lexically closest** thing Pinecone could find to the words “sister / name”. Because nothing else contained the fact, GPT guessed and still showed the irrelevant citation. The two-part fix above eliminates both causes.
+
+Give the steps a try—if any command errors or the answer is still off, copy the exact Shell output back to me and I’ll zero in on it.
