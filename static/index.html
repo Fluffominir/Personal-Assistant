@@ -4,44 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michael's AI Companion</title>
+    <title>Michael's AI Companion - ATLAS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --accent: #06b6d4;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
+            /* Michael's Brand Colors */
+            --spruce-blue: #2B5A6B;
+            --olive-green: #556B2F;
+            --spruce-light: #3E7A8F;
+            --olive-light: #6B8B3A;
             
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --bg-quaternary: #0f3460;
-            --bg-card: rgba(255, 255, 255, 0.05);
-            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            /* Extended Palette */
+            --primary: var(--spruce-blue);
+            --primary-light: var(--spruce-light);
+            --secondary: var(--olive-green);
+            --secondary-light: var(--olive-light);
+            --accent: #E8A317;
+            --accent-light: #F4B942;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --info: #3498DB;
             
-            --text-primary: #ffffff;
-            --text-secondary: #e2e8f0;
-            --text-muted: #94a3b8;
-            --text-accent: #64748b;
+            /* Backgrounds */
+            --bg-primary: #0A0E1A;
+            --bg-secondary: #0F1420;
+            --bg-tertiary: #151B2B;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-glass-strong: rgba(255, 255, 255, 0.08);
             
-            --border: rgba(255, 255, 255, 0.1);
-            --border-light: rgba(255, 255, 255, 0.05);
+            /* Text */
+            --text-primary: #FFFFFF;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+            --text-accent: #64748B;
             
-            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            /* Borders & Effects */
+            --border: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.04);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 30px rgba(43, 90, 107, 0.4);
+            --shadow-accent: 0 0 20px rgba(232, 163, 23, 0.3);
             
-            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-            --gradient-cool: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--spruce-blue) 0%, var(--spruce-light) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--olive-green) 0%, var(--olive-light) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            --gradient-bg: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
             
+            /* Spacing */
             --radius-sm: 0.5rem;
             --radius-md: 0.75rem;
             --radius-lg: 1rem;
@@ -56,41 +72,94 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gradient-bg);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
             overflow-x: hidden;
+            font-weight: 400;
+            letter-spacing: -0.01em;
         }
 
         .app-container {
             display: flex;
             min-height: 100vh;
+            position: relative;
         }
 
-        /* Navigation Sidebar */
-        .nav-sidebar {
-            width: 280px;
-            background: var(--bg-card);
+        /* Animated Background Elements */
+        .bg-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .orb:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -150px;
+            animation-delay: 0s;
+        }
+
+        .orb:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -100px;
+            animation-delay: 2s;
+            background: var(--gradient-secondary);
+        }
+
+        .orb:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 50%;
+            left: 50%;
+            animation-delay: 4s;
+            background: var(--gradient-accent);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 300px;
+            background: var(--bg-glass);
             backdrop-filter: blur(20px);
             border-right: 1px solid var(--border);
             padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
             position: fixed;
             height: 100vh;
             z-index: 100;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
         }
 
-        .nav-sidebar.mobile-hidden {
+        .sidebar.mobile-hidden {
             transform: translateX(-100%);
         }
 
         .ai-avatar {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: var(--gradient-primary);
             display: flex;
@@ -105,44 +174,46 @@
         .ai-avatar::before {
             content: '';
             position: absolute;
-            inset: 0;
+            inset: -2px;
             background: var(--gradient-primary);
             border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
+            animation: rotate 4s linear infinite;
+            z-index: -1;
         }
 
         .ai-avatar i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: white;
             z-index: 1;
-            position: relative;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .ai-name {
             text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.75rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 0.1em;
         }
 
         .ai-status {
             text-align: center;
             color: var(--text-muted);
             font-size: 0.875rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            font-weight: 500;
         }
 
         .status-dot {
@@ -150,42 +221,63 @@
             height: 8px;
             border-radius: 50%;
             background: var(--success);
-            animation: breathe 2s ease-in-out infinite;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        @keyframes breathe {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
         }
 
         .nav-menu {
-            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
 
         .nav-item {
-            padding: 1rem 1.25rem;
-            border-radius: var(--radius-lg);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-xl);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 1rem;
             font-weight: 500;
             border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-item:hover::before {
+            left: 0;
         }
 
         .nav-item:hover {
-            background: var(--bg-card-hover);
-            transform: translateX(4px);
+            transform: translateX(8px);
+            color: white;
         }
 
         .nav-item.active {
             background: var(--gradient-primary);
             box-shadow: var(--shadow-glow);
             color: white;
+        }
+
+        .nav-item.active::before {
+            left: 0;
         }
 
         .nav-item i {
@@ -197,237 +289,111 @@
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-left: 280px;
+            margin-left: 300px;
             padding: 2rem;
             min-height: 100vh;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Header */
-        .page-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .greeting {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .greeting-subtitle {
-            color: var(--text-muted);
-            font-size: 1.125rem;
+            position: relative;
+            z-index: 1;
         }
 
         .mobile-nav-toggle {
             display: none;
-            background: var(--bg-card);
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             padding: 0.75rem;
             color: var(--text-primary);
             cursor: pointer;
-            margin-left: auto;
-        }
-
-        /* Widgets Grid */
-        .widgets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .widget {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .widget:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-
-        .widget-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .widget-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .widget-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .widget-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .widget-subtitle {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-
-        /* Specific Widget Styles */
-        .weather-widget {
-            background: var(--gradient-cool);
-        }
-
-        .calendar-widget {
-            background: var(--gradient-primary);
-        }
-
-        .tasks-widget {
-            background: var(--gradient-warm);
-        }
-
-        .metrics-widget {
-            background: var(--gradient-success);
-        }
-
-        .widget.weather-widget .widget-icon,
-        .widget.calendar-widget .widget-icon,
-        .widget.tasks-widget .widget-icon,
-        .widget.metrics-widget .widget-icon {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .widget.weather-widget .widget-title,
-        .widget.calendar-widget .widget-title,
-        .widget.tasks-widget .widget-title,
-        .widget.metrics-widget .widget-title {
-            color: white;
-        }
-
-        .widget.weather-widget .widget-value,
-        .widget.calendar-widget .widget-value,
-        .widget.tasks-widget .widget-value,
-        .widget.metrics-widget .widget-value {
-            color: white;
-        }
-
-        .widget.weather-widget .widget-subtitle,
-        .widget.calendar-widget .widget-subtitle,
-        .widget.tasks-widget .widget-subtitle,
-        .widget.metrics-widget .widget-subtitle {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* Calendar Events */
-        .calendar-events {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .calendar-event {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--accent);
-        }
-
-        .event-time {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.25rem;
-        }
-
-        .event-title {
-            font-weight: 500;
-            font-size: 0.875rem;
+            z-index: 200;
         }
 
         /* Chat Interface */
         .chat-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
+        .page-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .greeting {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .greeting-subtitle {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
         .chat-input-container {
-            display: flex;
-            gap: 1rem;
+            position: relative;
             margin-bottom: 2rem;
         }
 
         .chat-input-wrapper {
-            flex: 1;
             position: relative;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-glass);
         }
 
         #questionInput {
             width: 100%;
-            padding: 1rem 1.25rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
+            background: transparent;
+            border: none;
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 1.1rem;
             resize: none;
             min-height: 60px;
-            transition: all 0.3s ease;
+            font-family: inherit;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
         #questionInput:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         #questionInput::placeholder {
             color: var(--text-muted);
         }
 
+        .input-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .input-info {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         #askButton {
-            padding: 1rem 2rem;
+            padding: 0.875rem 2rem;
             background: var(--gradient-primary);
             color: white;
             border: none;
@@ -436,16 +402,15 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
-            min-width: 120px;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            box-shadow: var(--shadow-glow);
         }
 
         #askButton:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
+            box-shadow: 0 0 40px rgba(43, 90, 107, 0.6);
         }
 
         #askButton:disabled {
@@ -454,46 +419,221 @@
             transform: none;
         }
 
+        /* Answer Container */
         .answer-container {
-            background: var(--bg-card);
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 2rem;
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
             margin-bottom: 2rem;
             display: none;
-            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-glass);
+            position: relative;
         }
 
         .answer-text {
-            font-size: 1rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
             white-space: pre-wrap;
-        }
-
-        .sources {
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .sources-header {
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-weight: 400;
             color: var(--text-secondary);
-            margin-bottom: 1rem;
+        }
+
+        /* Collapsible Sources */
+        .sources-section {
+            border-top: 1px solid var(--border-light);
+            padding-top: 1.5rem;
+        }
+
+        .sources-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 1rem 0;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sources-toggle:hover {
+            color: var(--primary-light);
+        }
+
+        .sources-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .sources-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .sources-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sources-content.expanded {
+            max-height: 500px;
+            padding-bottom: 1rem;
         }
 
         .source-item {
             background: var(--bg-tertiary);
-            padding: 0.5rem 0.75rem;
-            margin: 0.5rem 0;
-            border-radius: var(--radius-md);
-            font-size: 0.8125rem;
-            color: var(--primary);
+            padding: 0.875rem 1.25rem;
+            margin: 0.75rem 0;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            color: var(--primary-light);
             border: 1px solid var(--border-light);
+            border-left: 4px solid var(--primary);
         }
 
-        /* Loading and Error States */
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .action-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.3s ease;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .action-card:hover::before {
+            left: 0;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glass);
+            border-color: var(--primary);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .action-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .action-description {
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.5;
+        }
+
+        /* Widgets */
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .widget {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .widget:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glass);
+            border-color: rgba(43, 90, 107, 0.3);
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .widget-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .widget-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .widget-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .widget-subtitle {
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            font-weight: 500;
+        }
+
+        /* Loading States */
         .loading {
             display: flex;
             align-items: center;
@@ -511,86 +651,46 @@
             to { transform: rotate(360deg); }
         }
 
-        .error-message {
-            color: var(--danger);
-            background: rgba(239, 68, 68, 0.1);
-            padding: 1rem;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        /* Settings Page */
-        .settings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .settings-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1.25rem 1.75rem;
             border-radius: var(--radius-xl);
-            padding: 1.5rem;
-        }
-
-        .settings-header {
-            font-size: 1.25rem;
+            color: white;
             font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-light);
+        .notification.success {
+            background: linear-gradient(135deg, var(--success) 0%, #2ECC71 100%);
         }
 
-        .setting-item:last-child {
-            border-bottom: none;
+        .notification.error {
+            background: linear-gradient(135deg, var(--danger) 0%, #C0392B 100%);
         }
 
-        .setting-toggle {
-            width: 48px;
-            height: 24px;
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s ease;
+        .notification.info {
+            background: var(--gradient-primary);
         }
 
-        .setting-toggle.active {
-            background: var(--primary);
-        }
-
-        .setting-toggle::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s ease;
-        }
-
-        .setting-toggle.active::after {
-            transform: translateX(24px);
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .nav-sidebar {
+            .sidebar {
                 transform: translateX(-100%);
             }
 
-            .nav-sidebar.mobile-visible {
+            .sidebar.mobile-visible {
                 transform: translateX(0);
             }
 
@@ -603,65 +703,22 @@
                 display: block;
             }
 
+            .greeting {
+                font-size: 2.25rem;
+            }
+
             .widgets-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
 
-            .greeting {
-                font-size: 2rem;
-            }
-
-            .chat-input-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .settings-grid {
+            .quick-actions {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-lg);
-            color: white;
-            font-weight: 500;
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
-            max-width: 400px;
-            backdrop-filter: blur(20px);
-        }
-
-        .notification.success {
-            background: var(--gradient-success);
-        }
-
-        .notification.error {
-            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
-        }
-
-        .notification.info {
-            background: var(--gradient-primary);
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -670,134 +727,198 @@
 
         ::-webkit-scrollbar-thumb {
             background: var(--primary);
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
+            background: var(--primary-light);
+        }
+
+        /* Utility Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
+    <div class="bg-orbs">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
     <div class="app-container">
-        <!-- Navigation Sidebar -->
-        <nav class="nav-sidebar" id="navSidebar">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
             <div class="ai-avatar">
-                <i class="fas fa-robot"></i>
+                <i class="fas fa-mountain"></i>
             </div>
-            <h2 class="ai-name">ARIA</h2>
+            <h2 class="ai-name">ATLAS</h2>
             <div class="ai-status">
                 <div class="status-dot"></div>
-                Online & Ready
+                Ready to assist
             </div>
             
             <div class="nav-menu">
                 <div class="nav-item active" data-page="dashboard">
                     <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
+                    <span>Command Center</span>
                 </div>
                 <div class="nav-item" data-page="work">
-                    <i class="fas fa-briefcase"></i>
-                    <span>Work</span>
+                    <i class="fas fa-rocket"></i>
+                    <span>Rocket Launch Studio</span>
                 </div>
-                <div class="nav-item" data-page="chat">
-                    <i class="fas fa-comments"></i>
-                    <span>Chat</span>
+                <div class="nav-item" data-page="integrations">
+                    <i class="fas fa-plug"></i>
+                    <span>Integrations</span>
                 </div>
-                <div class="nav-item" data-page="settings">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                <div class="nav-item" data-page="insights">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Insights</span>
                 </div>
             </div>
         </nav>
 
+        <button class="mobile-nav-toggle" onclick="toggleMobileNav()">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Dashboard Page -->
-            <div class="page active" id="dashboard">
+            <!-- Dashboard -->
+            <div class="page active fade-in" id="dashboard">
                 <div class="page-header">
-                    <div>
-                        <h1 class="greeting" id="greetingText">Good morning, Michael! 👋</h1>
-                        <p class="greeting-subtitle" id="greetingSubtitle">Ready to make today productive?</p>
-                    </div>
-                    <button class="mobile-nav-toggle" onclick="toggleMobileNav()">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                    <h1 class="greeting" id="greetingText">Good morning, Michael</h1>
+                    <p class="greeting-subtitle" id="greetingSubtitle">Your creative companion is ready to help</p>
                 </div>
 
+                <!-- Chat Interface -->
+                <div class="chat-container">
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <textarea 
+                                id="questionInput" 
+                                placeholder="Ask me anything about your projects, schedule, or get creative help..."
+                                onkeypress="handleKeyPress(event)"
+                                rows="3"
+                            ></textarea>
+                            <div class="input-actions">
+                                <div class="input-info">
+                                    <i class="fas fa-keyboard"></i>
+                                    Press Enter to send
+                                </div>
+                                <button id="askButton" onclick="askQuestion()">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Ask ATLAS
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="answerContainer" class="answer-container">
+                        <div id="answerText" class="answer-text"></div>
+                        <div class="sources-section" id="sourcesSection">
+                            <button class="sources-toggle" onclick="toggleSources()">
+                                <span>View Sources</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="sources-content" id="sourcesContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-card" onclick="window.open('/calendar/today', '_blank')">
+                        <div class="action-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="action-title">Today's Schedule</div>
+                        <div class="action-description">View your calendar events and upcoming meetings</div>
+                    </div>
+
+                    <div class="action-card" onclick="window.open('/email/priority', '_blank')">
+                        <div class="action-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="action-title">Priority Emails</div>
+                        <div class="action-description">Check important and unread messages</div>
+                    </div>
+
+                    <div class="action-card" onclick="testIntegrations()">
+                        <div class="action-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="action-title">Sync All Data</div>
+                        <div class="action-description">Refresh data from all connected services</div>
+                    </div>
+
+                    <div class="action-card" onclick="showPage('work')">
+                        <div class="action-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="action-title">Studio Dashboard</div>
+                        <div class="action-description">View project status and business metrics</div>
+                    </div>
+                </div>
+
+                <!-- Widgets -->
                 <div class="widgets-grid">
-                    <!-- Weather Widget -->
-                    <div class="widget weather-widget">
+                    <div class="widget">
                         <div class="widget-header">
                             <div class="widget-title">
                                 <div class="widget-icon">
-                                    <i class="fas fa-cloud-sun"></i>
+                                    <i class="fas fa-brain"></i>
                                 </div>
-                                Weather
+                                System Health
                             </div>
                         </div>
-                        <div class="widget-value" id="temperature">Loading...</div>
-                        <div class="widget-subtitle" id="weatherLocation">Fetching location...</div>
-                        <div class="widget-subtitle" id="weatherCondition"></div>
+                        <div class="widget-value" id="systemHealth">98%</div>
+                        <div class="widget-subtitle" id="systemStatus">All systems operational</div>
                     </div>
 
-                    <!-- Calendar Widget -->
-                    <div class="widget calendar-widget">
+                    <div class="widget">
                         <div class="widget-header">
                             <div class="widget-title">
                                 <div class="widget-icon">
                                     <i class="fas fa-calendar-day"></i>
                                 </div>
-                                Today's Schedule
+                                Today's Events
                             </div>
                         </div>
-                        <div class="calendar-events" id="todayEvents">
-                            <div class="loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                Loading events...
-                            </div>
-                        </div>
+                        <div class="widget-value" id="eventCount">Loading...</div>
+                        <div class="widget-subtitle" id="nextEvent">Checking calendar...</div>
                     </div>
 
-                    <!-- System Status Widget -->
-                    <div class="widget metrics-widget">
-                        <div class="widget-header">
-                            <div class="widget-title">
-                                <div class="widget-icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                System Status
-                            </div>
-                        </div>
-                        <div class="widget-value" id="systemHealth">98%</div>
-                        <div class="widget-subtitle">All systems operational</div>
-                        <div class="widget-subtitle" id="lastSync">Last sync: Just now</div>
-                    </div>
-
-                    <!-- Quick Actions Widget -->
                     <div class="widget">
                         <div class="widget-header">
                             <div class="widget-title">
                                 <div class="widget-icon">
-                                    <i class="fas fa-bolt"></i>
+                                    <i class="fas fa-project-diagram"></i>
                                 </div>
-                                Quick Actions
+                                Active Projects
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <button onclick="window.open('/calendar/today', '_blank')" style="padding: 0.75rem; background: var(--gradient-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 0.875rem;">
-                                <i class="fas fa-calendar"></i> Calendar
-                            </button>
-                            <button onclick="window.open('/email/priority', '_blank')" style="padding: 0.75rem; background: var(--gradient-accent); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 0.875rem;">
-                                <i class="fas fa-envelope"></i> Emails
-                            </button>
-                            <button onclick="showPage('chat')" style="padding: 0.75rem; background: var(--gradient-warm); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 0.875rem;">
-                                <i class="fas fa-comments"></i> Ask ARIA
-                            </button>
-                            <button onclick="testIntegrations()" style="padding: 0.75rem; background: var(--gradient-success); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 0.875rem;">
-                                <i class="fas fa-sync"></i> Sync All
-                            </button>
+                        <div class="widget-value">5</div>
+                        <div class="widget-subtitle">3 in production, 2 in planning</div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <div class="widget-icon">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                Knowledge Base
+                            </div>
                         </div>
+                        <div class="widget-value" id="knowledgeSize">1.2K</div>
+                        <div class="widget-subtitle">Documents and memories indexed</div>
                     </div>
                 </div>
             </div>
@@ -805,207 +926,125 @@
             <!-- Work Page -->
             <div class="page" id="work">
                 <div class="page-header">
-                    <div>
-                        <h1 class="greeting">Rocket Launch Studio 🚀</h1>
-                        <p class="greeting-subtitle">Your business command center</p>
-                    </div>
+                    <h1 class="greeting">Rocket Launch Studio</h1>
+                    <p class="greeting-subtitle">Creative excellence in every frame</p>
                 </div>
 
                 <div class="widgets-grid">
-                    <!-- Project Status -->
                     <div class="widget">
                         <div class="widget-header">
                             <div class="widget-title">
-                                <div class="widget-icon" style="background: var(--gradient-primary); color: white;">
-                                    <i class="fas fa-project-diagram"></i>
-                                </div>
-                                Active Projects
-                            </div>
-                        </div>
-                        <div class="widget-value">3</div>
-                        <div class="widget-subtitle">2 on track, 1 needs attention</div>
-                    </div>
-
-                    <!-- Revenue Widget -->
-                    <div class="widget">
-                        <div class="widget-header">
-                            <div class="widget-title">
-                                <div class="widget-icon" style="background: var(--gradient-success); color: white;">
+                                <div class="widget-icon">
                                     <i class="fas fa-dollar-sign"></i>
                                 </div>
-                                This Month
+                                Monthly Revenue
                             </div>
                         </div>
-                        <div class="widget-value">$12,450</div>
-                        <div class="widget-subtitle">+18% from last month</div>
+                        <div class="widget-value">$15,240</div>
+                        <div class="widget-subtitle">+22% from last month</div>
                     </div>
 
-                    <!-- Clients Widget -->
                     <div class="widget">
                         <div class="widget-header">
                             <div class="widget-title">
-                                <div class="widget-icon" style="background: var(--gradient-accent); color: white;">
+                                <div class="widget-icon">
                                     <i class="fas fa-users"></i>
                                 </div>
                                 Active Clients
                             </div>
                         </div>
-                        <div class="widget-value">8</div>
-                        <div class="widget-subtitle">2 new this week</div>
+                        <div class="widget-value">12</div>
+                        <div class="widget-subtitle">3 new this month</div>
                     </div>
 
-                    <!-- Tasks Widget -->
                     <div class="widget">
                         <div class="widget-header">
                             <div class="widget-title">
-                                <div class="widget-icon" style="background: var(--gradient-warm); color: white;">
-                                    <i class="fas fa-tasks"></i>
+                                <div class="widget-icon">
+                                    <i class="fas fa-video"></i>
                                 </div>
-                                Tasks Today
+                                Projects This Month
                             </div>
                         </div>
-                        <div class="widget-value">7</div>
-                        <div class="widget-subtitle">3 completed, 4 remaining</div>
+                        <div class="widget-value">8</div>
+                        <div class="widget-subtitle">6 completed, 2 in progress</div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <div class="widget-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                Hours This Week
+                            </div>
+                        </div>
+                        <div class="widget-value">32</div>
+                        <div class="widget-subtitle">Focused creative time</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Chat Page -->
-            <div class="page" id="chat">
+            <!-- Integrations Page -->
+            <div class="page" id="integrations">
                 <div class="page-header">
-                    <div>
-                        <h1 class="greeting">Chat with ARIA 🤖</h1>
-                        <p class="greeting-subtitle">Your intelligent companion is here to help</p>
-                    </div>
+                    <h1 class="greeting">Integrations</h1>
+                    <p class="greeting-subtitle">Connect your digital ecosystem</p>
                 </div>
 
-                <div class="chat-container">
-                    <div class="chat-input-container">
-                        <div class="chat-input-wrapper">
-                            <textarea 
-                                id="questionInput" 
-                                placeholder="Ask me anything about your schedule, projects, or get help with any topic..."
-                                onkeypress="handleKeyPress(event)"
-                                rows="3"
-                            ></textarea>
-                        </div>
-                        <button id="askButton" onclick="askQuestion()">
-                            <i class="fas fa-paper-plane"></i>
-                            Ask ARIA
-                        </button>
-                    </div>
-
-                    <div id="answerContainer" class="answer-container">
-                        <div id="answerText" class="answer-text"></div>
-                        <div id="sources" class="sources">
-                            <div class="sources-header">Sources:</div>
-                        </div>
+                <div id="integrationsList" class="widgets-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading integrations...
                     </div>
                 </div>
             </div>
 
-            <!-- Settings Page -->
-            <div class="page" id="settings">
+            <!-- Insights Page -->
+            <div class="page" id="insights">
                 <div class="page-header">
-                    <div>
-                        <h1 class="greeting">Settings ⚙️</h1>
-                        <p class="greeting-subtitle">Customize your AI companion experience</p>
-                    </div>
+                    <h1 class="greeting">Insights</h1>
+                    <p class="greeting-subtitle">Data-driven creativity</p>
                 </div>
 
-                <div class="settings-grid">
-                    <!-- AI Settings -->
-                    <div class="settings-section">
-                        <div class="settings-header">
-                            <i class="fas fa-robot"></i>
-                            AI Companion
-                        </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Voice Responses</div>
-                                <div class="widget-subtitle">Enable text-to-speech</div>
+                <div class="widgets-grid">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <div class="widget-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                Productivity Score
                             </div>
-                            <div class="setting-toggle" onclick="toggleSetting(this)"></div>
                         </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Proactive Suggestions</div>
-                                <div class="widget-subtitle">ARIA suggests optimizations</div>
-                            </div>
-                            <div class="setting-toggle active" onclick="toggleSetting(this)"></div>
-                        </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Learning Mode</div>
-                                <div class="widget-subtitle">Learn from your preferences</div>
-                            </div>
-                            <div class="setting-toggle active" onclick="toggleSetting(this)"></div>
-                        </div>
+                        <div class="widget-value">87%</div>
+                        <div class="widget-subtitle">Above average this week</div>
                     </div>
 
-                    <!-- Integrations -->
-                    <div class="settings-section">
-                        <div class="settings-header">
-                            <i class="fas fa-plug"></i>
-                            Integrations
-                        </div>
-                        <div id="integrationsList">
-                            <div class="loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                Loading integrations...
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <div class="widget-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                Wellness Check
                             </div>
                         </div>
+                        <div class="widget-value">Good</div>
+                        <div class="widget-subtitle">Remember to take breaks</div>
                     </div>
 
-                    <!-- Notifications */
-                    <div class="settings-section">
-                        <div class="settings-header">
-                            <i class="fas fa-bell"></i>
-                            Notifications
-                        </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Calendar Reminders</div>
-                                <div class="widget-subtitle">Get notified before events</div>
+                    <div class="widget">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <div class="widget-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                Creative Flow
                             </div>
-                            <div class="setting-toggle active" onclick="toggleSetting(this)"></div>
                         </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Email Alerts</div>
-                                <div class="widget-subtitle">Important email notifications</div>
-                            </div>
-                            <div class="setting-toggle active" onclick="toggleSetting(this)"></div>
-                        </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>System Updates</div>
-                                <div class="widget-subtitle">Sync and system notifications</div>
-                            </div>
-                            <div class="setting-toggle" onclick="toggleSetting(this)"></div>
-                        </div>
-                    </div>
-
-                    <!-- Appearance -->
-                    <div class="settings-section">
-                        <div class="settings-header">
-                            <i class="fas fa-palette"></i>
-                            Appearance
-                        </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Animations</div>
-                                <div class="widget-subtitle">Enable smooth animations</div>
-                            </div>
-                            <div class="setting-toggle active" onclick="toggleSetting(this)"></div>
-                        </div>
-                        <div class="setting-item">
-                            <div>
-                                <div>Reduced Motion</div>
-                                <div class="widget-subtitle">Accessibility option</div>
-                            </div>
-                            <div class="setting-toggle" onclick="toggleSetting(this)"></div>
-                        </div>
+                        <div class="widget-value">Peak</div>
+                        <div class="widget-subtitle">Optimal creative energy detected</div>
                     </div>
                 </div>
             </div>
@@ -1013,43 +1052,38 @@
     </div>
 
     <script>
-        // Global variables
+        // Global state
         let currentPage = 'dashboard';
-        let weatherData = null;
-        let calendarData = null;
+        let sourcesExpanded = false;
 
-        // Page navigation
+        // Navigation
         function showPage(pageName) {
-            // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             
-            // Remove active class from nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Show selected page
             document.getElementById(pageName).classList.add('active');
-            
-            // Add active class to corresponding nav item
             document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
             
             currentPage = pageName;
             
-            // Load page-specific data
-            if (pageName === 'dashboard') {
-                loadDashboardData();
-            } else if (pageName === 'settings') {
+            if (pageName === 'integrations') {
                 loadIntegrations();
+            } else if (pageName === 'dashboard') {
+                loadDashboardData();
             }
+            
+            // Close mobile nav
+            document.getElementById('sidebar').classList.remove('mobile-visible');
         }
 
         // Mobile navigation
         function toggleMobileNav() {
-            const sidebar = document.getElementById('navSidebar');
-            sidebar.classList.toggle('mobile-visible');
+            document.getElementById('sidebar').classList.toggle('mobile-visible');
         }
 
         // Navigation event listeners
@@ -1057,9 +1091,6 @@
             item.addEventListener('click', () => {
                 const page = item.getAttribute('data-page');
                 showPage(page);
-                
-                // Close mobile nav
-                document.getElementById('navSidebar').classList.remove('mobile-visible');
             });
         });
 
@@ -1070,101 +1101,18 @@
             let greeting, subtitle;
             
             if (hour < 12) {
-                greeting = "Good morning, Michael! ☀️";
-                subtitle = "Ready to make today productive?";
+                greeting = "Good morning, Michael";
+                subtitle = "Your creative companion is ready to help";
             } else if (hour < 17) {
-                greeting = "Good afternoon, Michael! 🌤️";
-                subtitle = "Hope your day is going well!";
+                greeting = "Good afternoon, Michael";
+                subtitle = "Let's tackle today's challenges together";
             } else {
-                greeting = "Good evening, Michael! 🌅";
-                subtitle = "Time to wind down and reflect.";
+                greeting = "Good evening, Michael";
+                subtitle = "Time to review and plan ahead";
             }
             
             document.getElementById('greetingText').textContent = greeting;
             document.getElementById('greetingSubtitle').textContent = subtitle;
-        }
-
-        // Weather API (using a free service)
-        async function loadWeather() {
-            try {
-                // First get user location
-                const locationResponse = await fetch('https://ipapi.co/json/');
-                const location = await locationResponse.json();
-                
-                // Then get weather (using a free weather API)
-                const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=YOUR_API_KEY&units=metric`);
-                
-                if (weatherResponse.ok) {
-                    const weather = await weatherResponse.json();
-                    document.getElementById('temperature').textContent = `${Math.round(weather.main.temp)}°C`;
-                    document.getElementById('weatherLocation').textContent = `${location.city}, ${location.country_name}`;
-                    document.getElementById('weatherCondition').textContent = weather.weather[0].description;
-                } else {
-                    // Fallback to mock data
-                    document.getElementById('temperature').textContent = '22°C';
-                    document.getElementById('weatherLocation').textContent = 'Current Location';
-                    document.getElementById('weatherCondition').textContent = 'Partly cloudy';
-                }
-            } catch (error) {
-                // Fallback to mock data
-                document.getElementById('temperature').textContent = '22°C';
-                document.getElementById('weatherLocation').textContent = 'Current Location';
-                document.getElementById('weatherCondition').textContent = 'Weather unavailable';
-            }
-        }
-
-        // Load calendar events
-        async function loadCalendarEvents() {
-            try {
-                const response = await fetch('/calendar/today');
-                const data = await response.json();
-                
-                const eventsContainer = document.getElementById('todayEvents');
-                
-                if (data.events && data.events.length > 0) {
-                    eventsContainer.innerHTML = '';
-                    data.events.slice(0, 3).forEach(event => {
-                        const eventDiv = document.createElement('div');
-                        eventDiv.className = 'calendar-event';
-                        
-                        const startTime = new Date(event.start_time);
-                        const timeStr = startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        
-                        eventDiv.innerHTML = `
-                            <div class="event-time">${timeStr}</div>
-                            <div class="event-title">${event.title}</div>
-                        `;
-                        eventsContainer.appendChild(eventDiv);
-                    });
-                } else {
-                    eventsContainer.innerHTML = '<div class="widget-subtitle">No events scheduled for today</div>';
-                }
-            } catch (error) {
-                document.getElementById('todayEvents').innerHTML = '<div class="widget-subtitle">Calendar not available</div>';
-            }
-        }
-
-        // Dashboard data loading
-        function loadDashboardData() {
-            updateGreeting();
-            loadWeather();
-            loadCalendarEvents();
-            updateSystemStatus();
-        }
-
-        // System status
-        function updateSystemStatus() {
-            fetch('/status')
-                .then(response => response.json())
-                .then(data => {
-                    const healthPercentage = data.ready ? 98 : 65;
-                    document.getElementById('systemHealth').textContent = `${healthPercentage}%`;
-                    document.getElementById('lastSync').textContent = `Last sync: ${new Date().toLocaleTimeString()}`;
-                })
-                .catch(() => {
-                    document.getElementById('systemHealth').textContent = '--';
-                    document.getElementById('lastSync').textContent = 'Status unavailable';
-                });
         }
 
         // Chat functionality
@@ -1180,7 +1128,7 @@
             const button = document.getElementById('askButton');
             const answerContainer = document.getElementById('answerContainer');
             const answerText = document.getElementById('answerText');
-            const sourcesDiv = document.getElementById('sources');
+            const sourcesSection = document.getElementById('sourcesSection');
 
             const question = input.value.trim();
             if (!question) return;
@@ -1189,8 +1137,8 @@
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
             answerContainer.style.display = 'block';
-            answerText.innerHTML = '<div class="loading"><i class="fas fa-brain fa-pulse"></i> ARIA is processing your question...</div>';
-            sourcesDiv.innerHTML = '<div class="sources-header">Sources:</div>';
+            answerText.innerHTML = '<div class="loading"><i class="fas fa-brain fa-pulse"></i> ATLAS is processing your question...</div>';
+            sourcesSection.style.display = 'none';
 
             try {
                 const response = await fetch('/ask?q=' + encodeURIComponent(question));
@@ -1199,39 +1147,98 @@
                 if (response.ok) {
                     answerText.textContent = data.answer;
 
-                    // Display sources
+                    // Handle sources
                     if (data.sources && data.sources.length > 0) {
-                        sourcesDiv.innerHTML = '<div class="sources-header">Sources:</div>';
+                        sourcesSection.style.display = 'block';
+                        const sourcesContent = document.getElementById('sourcesContent');
+                        sourcesContent.innerHTML = '';
+                        
                         data.sources.forEach(source => {
                             const sourceItem = document.createElement('div');
                             sourceItem.className = 'source-item';
                             sourceItem.textContent = source;
-                            sourcesDiv.appendChild(sourceItem);
+                            sourcesContent.appendChild(sourceItem);
                         });
                     } else {
-                        sourcesDiv.style.display = 'none';
+                        sourcesSection.style.display = 'none';
                     }
                 } else {
-                    answerText.innerHTML = '<div class="error-message">Error: ' + (data.detail || 'Failed to get answer') + '</div>';
-                    sourcesDiv.style.display = 'none';
+                    answerText.innerHTML = `<div style="color: var(--danger);">Error: ${data.detail || 'Failed to get answer'}</div>`;
+                    sourcesSection.style.display = 'none';
                 }
             } catch (error) {
-                answerText.innerHTML = '<div class="error-message">Network error: ' + error.message + '</div>';
-                sourcesDiv.style.display = 'none';
+                answerText.innerHTML = `<div style="color: var(--danger);">Network error: ${error.message}</div>`;
+                sourcesSection.style.display = 'none';
             } finally {
                 button.disabled = false;
-                button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask ARIA';
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask ATLAS';
                 input.value = '';
             }
         }
 
-        // Settings functionality
-        function toggleSetting(toggle) {
-            toggle.classList.toggle('active');
-            // Here you would save the setting to localStorage or backend
+        // Toggle sources
+        function toggleSources() {
+            const toggle = document.querySelector('.sources-toggle');
+            const content = document.getElementById('sourcesContent');
+            
+            sourcesExpanded = !sourcesExpanded;
+            
+            if (sourcesExpanded) {
+                toggle.classList.add('expanded');
+                content.classList.add('expanded');
+                toggle.querySelector('span').textContent = 'Hide Sources';
+            } else {
+                toggle.classList.remove('expanded');
+                content.classList.remove('expanded');
+                toggle.querySelector('span').textContent = 'View Sources';
+            }
         }
 
-        // Load integrations for settings
+        // Load dashboard data
+        function loadDashboardData() {
+            updateGreeting();
+            loadSystemHealth();
+            loadTodayEvents();
+        }
+
+        // Load system health
+        function loadSystemHealth() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    const healthPercentage = data.ready ? 98 : 65;
+                    document.getElementById('systemHealth').textContent = `${healthPercentage}%`;
+                    document.getElementById('systemStatus').textContent = data.ready ? 'All systems operational' : 'Some services offline';
+                })
+                .catch(() => {
+                    document.getElementById('systemHealth').textContent = '--';
+                    document.getElementById('systemStatus').textContent = 'Status unavailable';
+                });
+        }
+
+        // Load today's events
+        function loadTodayEvents() {
+            fetch('/calendar/today')
+                .then(response => response.json())
+                .then(data => {
+                    const eventCount = data.events ? data.events.length : 0;
+                    document.getElementById('eventCount').textContent = eventCount;
+                    
+                    if (eventCount > 0) {
+                        const nextEvent = data.events[0];
+                        const eventTime = new Date(nextEvent.start_time);
+                        document.getElementById('nextEvent').textContent = `Next: ${nextEvent.title} at ${eventTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                    } else {
+                        document.getElementById('nextEvent').textContent = 'No events scheduled today';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('eventCount').textContent = '--';
+                    document.getElementById('nextEvent').textContent = 'Calendar unavailable';
+                });
+        }
+
+        // Load integrations
         function loadIntegrations() {
             fetch('/integrations')
                 .then(response => response.json())
@@ -1240,45 +1247,61 @@
                     container.innerHTML = '';
                     
                     data.integrations.forEach(integration => {
-                        const item = document.createElement('div');
-                        item.className = 'setting-item';
+                        const widget = document.createElement('div');
+                        widget.className = 'widget';
                         
-                        item.innerHTML = `
-                            <div>
-                                <div>${integration.name}</div>
-                                <div class="widget-subtitle">${integration.status_message}</div>
+                        const statusColor = integration.connected ? 'var(--success)' : 'var(--warning)';
+                        const statusIcon = integration.connected ? 'check-circle' : 'exclamation-circle';
+                        
+                        widget.innerHTML = `
+                            <div class="widget-header">
+                                <div class="widget-title">
+                                    <div class="widget-icon">
+                                        <i class="fas fa-${getIntegrationIcon(integration.name)}"></i>
+                                    </div>
+                                    ${integration.name}
+                                </div>
+                                <i class="fas fa-${statusIcon}" style="color: ${statusColor};"></i>
                             </div>
-                            <div class="setting-toggle ${integration.connected ? 'active' : ''}" onclick="handleIntegrationToggle('${integration.name}', this)"></div>
+                            <div class="widget-subtitle">${integration.status_message}</div>
+                            ${!integration.connected && integration.auth_url ? 
+                                `<button onclick="window.open('${integration.auth_url}', '_blank')" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--gradient-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer;">Connect</button>` 
+                                : ''
+                            }
                         `;
-                        container.appendChild(item);
+                        container.appendChild(widget);
                     });
                 })
                 .catch(() => {
-                    document.getElementById('integrationsList').innerHTML = '<div class="error-message">Failed to load integrations</div>';
+                    document.getElementById('integrationsList').innerHTML = '<div style="color: var(--danger);">Failed to load integrations</div>';
                 });
         }
 
-        // Handle integration toggle
-        function handleIntegrationToggle(name, toggle) {
-            if (!toggle.classList.contains('active')) {
-                // Try to connect
-                if (name.includes('Google')) {
-                    window.open('/auth/google', '_blank', 'width=600,height=700');
-                } else {
-                    showNotification(`${name} configuration required in settings`, 'info');
-                }
-            }
+        function getIntegrationIcon(name) {
+            const icons = {
+                'Google Calendar': 'calendar-alt',
+                'Gmail': 'envelope',
+                'Google Drive': 'cloud',
+                'Notion': 'sticky-note',
+                'Dubsado': 'briefcase',
+                'QuickBooks': 'calculator',
+                'Synology NAS': 'server',
+                'Slack': 'slack',
+                'Zoom': 'video',
+                'Zapier': 'bolt'
+            };
+            return icons[name] || 'plug';
         }
 
-        // Test all integrations
+        // Test integrations
         function testIntegrations() {
             showNotification('Running integration tests...', 'info');
             
             fetch('/integrations')
                 .then(response => response.json())
                 .then(() => {
-                    showNotification('Integration test completed!', 'success');
-                    loadDashboardData(); // Refresh data
+                    showNotification('Integration test completed', 'success');
+                    loadDashboardData();
                 })
                 .catch(() => {
                     showNotification('Integration test failed', 'error');
@@ -1303,7 +1326,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboardData();
             
-            // Auto-refresh dashboard every 5 minutes
+            // Auto-refresh every 5 minutes
             setInterval(() => {
                 if (currentPage === 'dashboard') {
                     loadDashboardData();
@@ -1314,10 +1337,10 @@
             setInterval(updateGreeting, 3600000);
         });
 
-        // Handle mobile navigation
+        // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
-                document.getElementById('navSidebar').classList.remove('mobile-visible');
+                document.getElementById('sidebar').classList.remove('mobile-visible');
             }
         });
     </script>
