@@ -1,6 +1,7 @@
-{ pkgs }: {
+{ pkgs }:
+{
   deps = [
-    pkgs.python311Full   # Python runtime
-    pkgs.tesseract       # OCR binary so pytesseract works
+    pkgs.python311Full
+    pkgs.tesseract
   ];
 }

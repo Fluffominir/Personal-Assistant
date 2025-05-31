@@ -13,6 +13,8 @@ pinecone-client = "^3.0.0"
 pypdf = "^3.0.0"
 Pillow = "^10.0.0"
 pytesseract = "^0.3.10"
+pinecone = "^7.0.2"
+pydantic = "^2.11.5"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md
