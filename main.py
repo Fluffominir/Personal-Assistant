@@ -586,14 +586,14 @@ def ask(q: str = Query(..., description="Your question")):
         qvec = openai_client.embeddings.create(model=EMBED_MD, input=q).data[0].embedding
         print(f"✓ Generated embedding vector")
         
-        # Query Pinecone - search both main documents and Notion data
-        main_hits = idx.query(vector=qvec, top_k=6, namespace=NS, include_metadata=True).matches
-        notion_hits = idx.query(vector=qvec, top_k=6, namespace="notion", include_metadata=True).matches
+        # Query Pinecone - search both main documents and Notion data with more results
+        main_hits = idx.query(vector=qvec, top_k=10, namespace=NS, include_metadata=True).matches
+        notion_hits = idx.query(vector=qvec, top_k=10, namespace="notion", include_metadata=True).matches
         
-        # Combine and filter by relevance score with adjusted threshold
+        # Combine and filter by relevance score with more permissive threshold
         all_hits = main_hits + notion_hits
-        # Lower threshold but still prevent hallucinations
-        hits = [h for h in all_hits if h.score > 0.60][:8]
+        # Much lower threshold to actually find relevant content
+        hits = [h for h in all_hits if h.score > 0.25][:8]
         print(f"✓ Found {len(hits)} relevant matches ({len(main_hits)} from docs, {len(notion_hits)} from Notion)")
         print(f"✓ Relevance scores: {[f'{h.score:.3f}' for h in hits]}")
         

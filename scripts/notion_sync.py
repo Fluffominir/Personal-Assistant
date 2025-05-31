@@ -63,9 +63,13 @@ async def sync_workspace(key, ws):
 
     async with aiohttp.ClientSession() as session:
         try:
-            # 1. discover ALL databases
-            dbs = await fetch_json(session, "https://api.notion.com/v1/search", token,
-                                   {"filter":{"property":"object","value":"database"}})
+            # 1. discover ALL databases with better error handling
+            try:
+                dbs = await fetch_json(session, "https://api.notion.com/v1/search", token,
+                                       {"filter":{"property":"object","value":"database"}})
+            except Exception as e:
+                print(f"  ❌ Database search failed for {key}: {e}")
+                continue
 
             db_count = 0
             page_count = 0
