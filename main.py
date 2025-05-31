@@ -35,7 +35,23 @@ google_tokens = {}
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
-REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", "https://your-repl-url.replit.dev/auth/google/callback")
+# Auto-detect the redirect URI based on the environment
+def get_redirect_uri():
+    # Check if explicitly set
+    if os.environ.get("GOOGLE_REDIRECT_URI"):
+        return os.environ.get("GOOGLE_REDIRECT_URI")
+    
+    # Try to auto-detect from Replit environment
+    repl_slug = os.environ.get("REPL_SLUG")
+    repl_owner = os.environ.get("REPL_OWNER")
+    
+    if repl_slug and repl_owner:
+        return f"https://{repl_slug}.{repl_owner}.repl.co/auth/google/callback"
+    
+    # Fallback
+    return "https://your-repl-name.your-username.repl.co/auth/google/callback"
+
+REDIRECT_URI = get_redirect_uri()
 
 print("🔍 Checking environment variables...")
 required_vars = ["OPENAI_API_KEY", "PINECONE_API_KEY"]
@@ -248,8 +264,22 @@ def root():
 @app.get("/auth/google")
 def google_auth():
     """Initiate Google OAuth flow"""
-    if not GOOGLE_CLIENT_ID:
-        raise HTTPException(status_code=503, detail="Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Secrets.")
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        missing = []
+        if not GOOGLE_CLIENT_ID:
+            missing.append("GOOGLE_CLIENT_ID")
+        if not GOOGLE_CLIENT_SECRET:
+            missing.append("GOOGLE_CLIENT_SECRET")
+        
+        raise HTTPException(
+            status_code=503, 
+            detail=f"Google OAuth not configured. Missing: {', '.join(missing)}. Please set these in Secrets."
+        )
+    
+    print(f"🔄 Initiating Google OAuth flow...")
+    print(f"   Client ID: {GOOGLE_CLIENT_ID[:20]}...")
+    print(f"   Redirect URI: {REDIRECT_URI}")
+    print(f"   Scopes: {GOOGLE_SCOPES}")
     
     auth_url = "https://accounts.google.com/o/oauth2/auth"
     params = {
@@ -258,19 +288,29 @@ def google_auth():
         "scope": " ".join(GOOGLE_SCOPES),
         "response_type": "code",
         "access_type": "offline",
-        "prompt": "consent"
+        "prompt": "consent",
+        "include_granted_scopes": "true"
     }
     
     url = f"{auth_url}?{urllib.parse.urlencode(params)}"
+    print(f"🔗 Generated OAuth URL: {url[:100]}...")
+    
     return RedirectResponse(url=url)
 
 @app.get("/auth/google/callback")
-async def google_callback(code: str):
+async def google_callback(code: str = None, error: str = None):
     """Handle Google OAuth callback"""
+    if error:
+        print(f"❌ OAuth error: {error}")
+        return RedirectResponse(url="/?error=" + urllib.parse.quote(error))
+    
     if not code:
-        raise HTTPException(status_code=400, detail="Authorization code not provided")
+        print("❌ No authorization code provided")
+        return RedirectResponse(url="/?error=no_code")
     
     try:
+        print(f"🔄 Processing OAuth callback with code: {code[:10]}...")
+        
         # Exchange code for tokens
         token_url = "https://oauth2.googleapis.com/token"
         data = {
@@ -281,22 +321,35 @@ async def google_callback(code: str):
             "redirect_uri": REDIRECT_URI
         }
         
+        print(f"🔄 Exchanging code for tokens...")
+        print(f"   Redirect URI: {REDIRECT_URI}")
+        
         async with aiohttp.ClientSession() as session:
             async with session.post(token_url, data=data) as response:
+                response_text = await response.text()
+                
                 if response.status == 200:
                     tokens = await response.json()
+                    print(f"✅ Successfully received tokens")
+                    
                     # Store tokens (in production, associate with user ID)
                     google_tokens["access_token"] = tokens.get("access_token")
                     google_tokens["refresh_token"] = tokens.get("refresh_token")
                     google_tokens["expires_at"] = datetime.now() + timedelta(seconds=tokens.get("expires_in", 3600))
                     
+                    print(f"✅ Tokens stored successfully")
+                    print(f"   Access token: {tokens.get('access_token', 'None')[:20]}...")
+                    print(f"   Refresh token: {'Yes' if tokens.get('refresh_token') else 'No'}")
+                    
                     return RedirectResponse(url="/?auth=success")
                 else:
-                    error = await response.text()
-                    raise HTTPException(status_code=400, detail=f"Token exchange failed: {error}")
+                    print(f"❌ Token exchange failed: {response.status}")
+                    print(f"   Response: {response_text}")
+                    return RedirectResponse(url=f"/?error=token_exchange_failed_{response.status}")
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"OAuth callback error: {str(e)}")
+        print(f"❌ OAuth callback error: {str(e)}")
+        return RedirectResponse(url="/?error=" + urllib.parse.quote(str(e)))
 
 async def get_valid_google_token():
     """Get a valid Google access token, refreshing if necessary"""
