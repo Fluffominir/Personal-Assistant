@@ -4,202 +4,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Companion Memory - Ask Questions</title>
+    <title>Companion Memory - AI Assistant</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-            line-height: 1.6;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #007acc;
-            padding-bottom: 10px;
-        }
-        .status-card {
-            background: #e8f4fd;
-            border: 1px solid #007acc;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .status-item {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .status-good { color: #28a745; }
-        .status-bad { color: #dc3545; }
-        .question-form {
-            margin: 20px 0;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        input[type="text"]:focus {
-            border-color: #007acc;
-            outline: none;
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
         }
-        button {
-            background: #007acc;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #005fa3;
-        }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .answer-section {
-            margin-top: 30px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #007acc;
-            display: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .answer-text {
-            font-size: 16px;
-            line-height: 1.6;
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-bottom: 15px;
         }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-good {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .status-bad {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .sample-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sample-question {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: none;
+        }
+
+        .sample-question:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+            background: #f8f9fa;
+            color: #2c3e50;
+            border: 1px solid #e9ecef;
+        }
+
         .sources {
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
         }
-        .sources h4 {
-            margin: 0 0 10px 0;
-            color: #555;
+
+        .sources h5 {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .source-item {
+
+        .source-tag {
+            display: inline-block;
             background: #e9ecef;
-            padding: 5px 10px;
-            margin: 5px 0;
-            border-radius: 3px;
-            font-family: monospace;
-            font-size: 14px;
+            color: #495057;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin: 2px;
         }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0 0 15px 15px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .question-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .question-input:focus {
+            border-color: #3498db;
+        }
+
+        .send-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .loading {
-            text-align: center;
-            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #6c757d;
             font-style: italic;
         }
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #f5c6cb;
-            margin: 10px 0;
+
+        .loading::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        .sample-questions {
-            margin: 20px 0;
-            padding: 15px;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 5px;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .sample-questions h4 {
-            margin: 0 0 10px 0;
-            color: #856404;
+
+        .welcome-message {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            margin: auto;
         }
-        .sample-question {
-            background: white;
-            padding: 8px 12px;
-            margin: 5px 0;
-            border-radius: 3px;
-            cursor: pointer;
-            border: 1px solid #ffeaa7;
-            transition: background 0.2s;
-        }
-        .sample-question:hover {
-            background: #f8f9fa;
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧠 Companion Memory System</h1>
-        
-        <div class="status-card">
-            <h3>System Status</h3>
-            <div id="status-content">Loading status...</div>
+        <div class="header">
+            <h1>🧠 Companion Memory</h1>
+            <div class="subtitle">Intelligent Document Analysis & Q&A Assistant</div>
         </div>
 
-        <div class="sample-questions">
-            <h4>💡 Try these sample questions:</h4>
-            <div class="sample-question" onclick="setQuestion('What is Michael\'s personality like?')">
-                What is Michael's personality like?
-            </div>
-            <div class="sample-question" onclick="setQuestion('Tell me about Michael\'s background and experience')">
-                Tell me about Michael's background and experience
-            </div>
-            <div class="sample-question" onclick="setQuestion('What are the key features of the companion memory system?')">
-                What are the key features of the companion memory system?
-            </div>
-            <div class="sample-question" onclick="setQuestion('How does the RAG architecture work?')">
-                How does the RAG architecture work?
-            </div>
-        </div>
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="card">
+                    <h3>📊 System Status</h3>
+                    <div id="status-content">
+                        <div class="loading">Checking system status...</div>
+                    </div>
+                </div>
 
-        <form class="question-form" onsubmit="askQuestion(event)">
-            <div class="form-group">
-                <label for="question">Ask a question about the uploaded documents:</label>
-                <input type="text" id="question" name="question" 
-                       placeholder="e.g., What is Michael's background?" required>
+                <div class="card">
+                    <h3>💡 Sample Questions</h3>
+                    <div class="sample-questions">
+                        <button class="sample-question" onclick="setQuestion('What is Michael\'s personality like?')">
+                            What is Michael's personality like?
+                        </button>
+                        <button class="sample-question" onclick="setQuestion('Tell me about Michael\'s background and experience')">
+                            Tell me about Michael's background and experience
+                        </button>
+                        <button class="sample-question" onclick="setQuestion('What are the key features of the companion memory system?')">
+                            What are the key features of the companion memory system?
+                        </button>
+                        <button class="sample-question" onclick="setQuestion('How does the RAG architecture work?')">
+                            How does the RAG architecture work?
+                        </button>
+                    </div>
+                </div>
             </div>
-            <button type="submit" id="submit-btn">Ask Question</button>
-        </form>
 
-        <div id="answer-section" class="answer-section">
-            <h3>Answer:</h3>
-            <div id="answer-text" class="answer-text"></div>
-            <div class="sources">
-                <h4>Sources:</h4>
-                <div id="sources-list"></div>
+            <div class="card chat-area">
+                <div class="messages" id="messages">
+                    <div class="welcome-message">
+                        👋 Welcome! I'm your AI companion ready to answer questions about the uploaded documents.
+                        <br><br>
+                        Ask me anything about Michael's profile, personality, or the system architecture.
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="question" class="question-input" 
+                           placeholder="Ask me anything about the documents..." 
+                           onkeypress="handleKeyPress(event)">
+                    <button onclick="askQuestion()" id="send-btn" class="send-btn">Send</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        let isLoading = false;
+
         // Load system status on page load
         loadStatus();
 
         function setQuestion(question) {
             document.getElementById('question').value = question;
+            document.getElementById('question').focus();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !isLoading) {
+                askQuestion();
+            }
         }
 
         async function loadStatus() {
@@ -207,76 +358,133 @@
                 const response = await fetch('/status');
                 const status = await response.json();
                 
-                let statusHtml = '';
-                statusHtml += `<div class="status-item">OpenAI API: <span class="${status.openai_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.openai_api_key}</span></div>`;
-                statusHtml += `<div class="status-item">Pinecone API: <span class="${status.pinecone_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.pinecone_api_key}</span></div>`;
-                statusHtml += `<div class="status-item">Index Ready: <span class="${status.index_exists === '✓' ? 'status-good' : 'status-bad'}">${status.index_exists}</span></div>`;
-                statusHtml += `<div class="status-item">PDF Files: <span class="status-good">${status.pdf_files_found} found</span></div>`;
-                statusHtml += `<div class="status-item">System Ready: <span class="${status.ready ? 'status-good' : 'status-bad'}">${status.ready ? '✓' : '✗'}</span></div>`;
+                let statusHtml = `
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span>OpenAI API</span>
+                            <span class="${status.openai_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.openai_api_key}</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Pinecone API</span>
+                            <span class="${status.pinecone_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.pinecone_api_key}</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Vector Index</span>
+                            <span class="${status.index_exists === '✓' ? 'status-good' : 'status-bad'}">${status.index_exists}</span>
+                        </div>
+                        <div class="status-item">
+                            <span>PDF Files</span>
+                            <span class="status-good">${status.pdf_files_found} found</span>
+                        </div>
+                    </div>
+                `;
                 
                 if (status.pdf_files && status.pdf_files.length > 0) {
-                    statusHtml += `<div class="status-item">Files: ${status.pdf_files.join(', ')}</div>`;
+                    statusHtml += `<div style="margin-top: 10px; font-size: 0.85rem; color: #6c757d;">
+                        <strong>Files:</strong> ${status.pdf_files.join(', ')}
+                    </div>`;
                 }
+                
+                const readyStatus = status.ready ? '✅ Ready' : '⚠️ Configuration needed';
+                statusHtml += `<div style="margin-top: 15px; padding: 10px; background: ${status.ready ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'}; border-radius: 8px; text-align: center; font-weight: 600;">
+                    ${readyStatus}
+                </div>`;
                 
                 document.getElementById('status-content').innerHTML = statusHtml;
             } catch (error) {
-                document.getElementById('status-content').innerHTML = '<div class="error">Failed to load status</div>';
+                document.getElementById('status-content').innerHTML = `
+                    <div class="status-item" style="color: #e74c3c;">
+                        Failed to load status: ${error.message}
+                    </div>
+                `;
             }
         }
 
-        async function askQuestion(event) {
-            event.preventDefault();
+        async function askQuestion() {
+            if (isLoading) return;
             
-            const question = document.getElementById('question').value.trim();
+            const questionInput = document.getElementById('question');
+            const question = questionInput.value.trim();
+            
             if (!question) return;
-
-            const submitBtn = document.getElementById('submit-btn');
-            const answerSection = document.getElementById('answer-section');
-            const answerText = document.getElementById('answer-text');
-            const sourcesList = document.getElementById('sources-list');
-
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Thinking...';
-            answerSection.style.display = 'block';
-            answerText.innerHTML = '<div class="loading">🤔 Processing your question...</div>';
-            sourcesList.innerHTML = '';
-
+            
+            isLoading = true;
+            const sendBtn = document.getElementById('send-btn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Thinking...';
+            
+            // Add user message
+            addMessage(question, 'user');
+            
+            // Clear input
+            questionInput.value = '';
+            
+            // Add loading message
+            const loadingMsg = addMessage('', 'assistant', true);
+            
             try {
                 const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.detail || 'Failed to get answer');
-                }
-
-                // Display answer
-                answerText.innerHTML = data.answer;
                 
-                // Display sources
-                if (data.sources && data.sources.length > 0) {
-                    sourcesList.innerHTML = data.sources
-                        .map(source => `<div class="source-item">${source}</div>`)
-                        .join('');
-                } else {
-                    sourcesList.innerHTML = '<div class="source-item">No sources found</div>';
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP ${response.status}`);
                 }
-
+                
+                const data = await response.json();
+                
+                // Remove loading message
+                loadingMsg.remove();
+                
+                // Add assistant response
+                addMessage(data.answer, 'assistant', false, data.sources);
+                
             } catch (error) {
-                answerText.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-                sourcesList.innerHTML = '';
+                // Remove loading message
+                loadingMsg.remove();
+                
+                // Add error message
+                addMessage(`Sorry, I encountered an error: ${error.message}`, 'assistant');
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Ask Question';
+                isLoading = false;
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+                questionInput.focus();
             }
         }
 
-        // Allow Enter key to submit form
-        document.getElementById('question').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                askQuestion(e);
+        function addMessage(content, sender, isLoading = false, sources = []) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            if (isLoading) {
+                messageDiv.innerHTML = '<div class="loading">Analyzing documents...</div>';
+            } else {
+                let html = content;
+                
+                if (sources && sources.length > 0) {
+                    html += `
+                        <div class="sources">
+                            <h5>Sources:</h5>
+                            ${sources.map(source => `<span class="source-tag">${source}</span>`).join('')}
+                        </div>
+                    `;
+                }
+                
+                messageDiv.innerHTML = html;
             }
-        });
+            
+            // Remove welcome message if it exists
+            const welcomeMsg = messagesContainer.querySelector('.welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.remove();
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return messageDiv;
+        }
     </script>
 </body>
 </html>

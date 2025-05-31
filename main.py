@@ -110,34 +110,57 @@ def ask(q: str = Query(..., description="Your question")):
         if not q.strip():
             raise HTTPException(status_code=400, detail="Question cannot be empty")
         
+        print(f"🔍 Processing question: {q}")
+        
         # Get embeddings
         qvec = openai_client.embeddings.create(model=EMBED_MD, input=q)\
                                        .data[0].embedding
+        print(f"✓ Generated embedding vector")
         
         # Query Pinecone
         hits = idx.query(vector=qvec, top_k=12, namespace=NS,
                          include_metadata=True).matches
+        print(f"✓ Found {len(hits)} initial matches")
+        
+        # Filter by relevance score
         hits = [h for h in hits if h.score > 0.25][:6]
+        print(f"✓ Filtered to {len(hits)} relevant matches")
         
         if not hits:
-            return {"answer": "I don't have enough information to answer that question. Please check if data has been ingested.", "sources": []}
+            return {"answer": "I don't have enough information to answer that question. This could mean:\n1. The PDFs haven't been processed yet\n2. Your question is about topics not covered in the documents\n3. Try rephrasing your question with different keywords", "sources": []}
         
-        # Build context
-        ctx  = "\n\n".join(f"[{h.metadata['source']}] {h.metadata['text']}"
-                           for h in hits)
+        # Build context with better formatting
+        ctx_pieces = []
+        for h in hits:
+            source = h.metadata.get('source', 'Unknown')
+            text = h.metadata.get('text', '')
+            ctx_pieces.append(f"Source: {source}\nContent: {text}")
         
-        # Generate answer
+        ctx = "\n\n---\n\n".join(ctx_pieces)
+        print(f"✓ Built context from {len(hits)} sources")
+        
+        # Generate answer with better system prompt
         msgs = [
-            {"role":"system","content":"Answer accurately and cite source."},
-            {"role":"system","content":ctx},
-            {"role":"user","content":q}
+            {"role": "system", "content": "You are a helpful AI assistant that answers questions based on the provided document context. Always provide accurate, helpful answers and cite your sources. If the information isn't in the context, say so clearly."},
+            {"role": "system", "content": f"Context from documents:\n\n{ctx}"},
+            {"role": "user", "content": q}
         ]
-        ans = openai_client.chat.completions.create(
-                model=CHAT_MD, messages=msgs, temperature=0.2
-              ).choices[0].message.content.strip()
         
-        srcs = list({h.metadata["source"].replace("#"," p") for h in hits})
+        response = openai_client.chat.completions.create(
+            model=CHAT_MD, 
+            messages=msgs, 
+            temperature=0.2,
+            max_tokens=1000
+        )
+        
+        ans = response.choices[0].message.content.strip()
+        print(f"✓ Generated answer: {ans[:100]}...")
+        
+        # Extract unique sources
+        srcs = list({h.metadata["source"].replace("#", " p") for h in hits})
+        
         return {"answer": ans, "sources": srcs}
         
     except Exception as e:
+        print(f"❌ Error processing question: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing question: {str(e)}")
