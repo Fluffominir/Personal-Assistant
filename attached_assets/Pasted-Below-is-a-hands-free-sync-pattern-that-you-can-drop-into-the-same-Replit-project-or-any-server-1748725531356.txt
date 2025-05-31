@@ -1,0 +1,170 @@
+Below is a **hands-free sync pattern** that you can drop into the same Replit project (or any server) so the assistant keeps a *near-real-time* mirror of every page/row in **all** connected Notion workspaces—no more copy-pasting IDs later on.
+
+---
+
+## 1 What “fully-automatic” means here
+
+| ✔ Does                                                                                | ✖ Doesn’t                                                             |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Discovers every database in every workspace — even new ones you create tomorrow       | Export binary files / attachments (you’d pull those lazily on demand) |
+| Walks every page in each database, handles pagination                                 | Produce PDFs or Markdown (use Notion’s official export for that)      |
+| Stores the page JSON locally **and** pushes the text to Pinecone embeddings           | Replace your existing JSON secret; it still lives side-by-side        |
+| Runs on a schedule (e.g. every 4 h) via **Replit “Secrets + cron”** or GitHub Actions | Keep versions forever — the example just overwrites the cache         |
+
+---
+
+## 2 Add one more secret
+
+| Key                 | Value                                         |
+| ------------------- | --------------------------------------------- |
+| `SYNC_INTERVAL_MIN` | `240`  *(runs every 4 h; change as you like)* |
+
+*(If you’re on Replit Hacker plan you can set a cron; otherwise the FastAPI app can spawn an `asyncio` loop.)*
+
+---
+
+## 3 Drop the sync script into `scripts/notion_sync.py`
+
+```python
+import os, json, time, asyncio, aiohttp
+from datetime import datetime
+from pinecone import Pinecone, ServerlessSpec
+from openai import AsyncOpenAI
+
+# ---------- Load env ------------
+workspaces = json.loads(os.getenv("NOTION_WORKSPACES"))
+OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+
+# ---------- Init clients ----------
+pc   = Pinecone(api_key=PINECONE_API_KEY)
+if "notion-cache" not in [i["name"] for i in pc.list_indexes()]:
+    pc.create_index("notion-cache", dimension=1536, metric="cosine",
+                    spec=ServerlessSpec(cloud="aws", region="us-east-1"))
+index = pc.Index("notion-cache")
+
+oai  = AsyncOpenAI(api_key=OPENAI_API_KEY)
+NOTION_VER = "2022-06-28"
+
+# ---------- Helpers --------------
+async def embed(text: str):
+    resp = await oai.embeddings.create(
+        model="text-embedding-3-small", input=text[:8191])
+    return resp.data[0].embedding
+
+async def fetch_json(session, url, token, payload=None):
+    hdrs = {
+        "Authorization": f"Bearer {token}",
+        "Notion-Version": NOTION_VER,
+        "Content-Type": "application/json"
+    }
+    async with session.post(url, headers=hdrs, json=payload or {}) as r:
+        r.raise_for_status()
+        return await r.json()
+
+async def sync_workspace(key, ws):
+    token = ws["token"]
+    async with aiohttp.ClientSession() as session:
+        # 1. discover ALL databases
+        dbs = await fetch_json(session, "https://api.notion.com/v1/search", token,
+                               {"filter":{"property":"object","value":"database"}})
+        for db in dbs["results"]:
+            db_id = db["id"].replace("-", "")
+            cursor = None
+            while True:
+                qry = {"page_size":100, "start_cursor":cursor} if cursor else {}
+                res = await fetch_json(session, f"https://api.notion.com/v1/databases/{db_id}/query", token, qry)
+                for page in res["results"]:
+                    plain = page["properties"].get("Name",{}).get("title",[{}])[0].get("plain_text","")
+                    content = plain or page["url"]
+                    vec = await embed(content)
+                    uid = page["id"].replace("-", "")
+                    meta = {"ws": key, "db": db_id, "url": page["url"], "text": content}
+                    index.upsert([(uid, vec, meta)])
+                if res.get("has_more"):
+                    cursor = res["next_cursor"]
+                else:
+                    break
+
+async def full_sync():
+    for key, ws in workspaces.items():
+        await sync_workspace(key, ws)
+    print("✅ Notion sync finished", datetime.utcnow().isoformat())
+
+# ---------- Scheduler ------------
+async def scheduler():
+    interval = int(os.getenv("SYNC_INTERVAL_MIN", "240")) * 60
+    while True:
+        try:
+            await full_sync()
+        except Exception as e:
+            print("Sync error:", e)
+        await asyncio.sleep(interval)
+
+if __name__ == "__main__":
+    asyncio.run(full_sync())
+```
+
+---
+
+## 4 Wire it into FastAPI startup
+
+Inside `app/main.py` (or wherever your FastAPI object lives):
+
+```python
+from scripts.notion_sync import scheduler   # add this import
+
+@app.on_event("startup")
+async def start_background_tasks():
+    import asyncio
+    asyncio.create_task(scheduler())
+```
+
+Now every time you hit **Run** the server launches and the background coroutine keeps the Pinecone cache synced on the interval you set.
+
+---
+
+## 5 Daily workflow — nothing!
+
+* Add a database or edit a page? → next sync picks it up.
+* Create a brand-new workspace later? →
+
+  1. make integration → 2) extend the `NOTION_WORKSPACES` JSON → 3) click **Run**.
+
+---
+
+### What if you want GitHub Actions instead of an in-process loop?
+
+1. Commit your repo to GitHub (keep secrets in Actions-encrypted vars).
+2. Add `.github/workflows/notion_sync.yml`:
+
+```yaml
+name: notion-sync
+on:
+  schedule: [{cron:  '0 */4 * * *'}]   # every 4 hours
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements.txt
+      - run: python scripts/notion_sync.py
+        env:
+          NOTION_WORKSPACES: ${{ secrets.NOTION_WORKSPACES }}
+          OPENAI_API_KEY:   ${{ secrets.OPENAI_API_KEY }}
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+```
+
+No server restart needed; GitHub hits Pinecone directly.
+
+---
+
+## TL;DR
+
+* One background coroutine (or cron job) **discovers → fetches → embeds → upserts** everything.
+* No more manual database IDs — the sync walks the `/search` endpoint each time.
+* Extensible to N workspaces by just dropping another token & share step.
+
+Copy the script, add the startup hook, press **Run**, and your assistant will always have fresh Notion knowledge.
