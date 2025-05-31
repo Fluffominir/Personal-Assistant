@@ -58,6 +58,33 @@ if os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY"):
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Background sync task
+sync_task = None
+
+@app.on_event("startup")
+async def start_background_tasks():
+    global sync_task
+    # Only start if we have the required configuration
+    if os.environ.get("NOTION_WORKSPACES") and os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY"):
+        try:
+            from scripts.notion_sync import scheduler
+            sync_task = asyncio.create_task(scheduler())
+            print("🔄 Background Notion sync started")
+        except ImportError as e:
+            print(f"⚠️  Could not start background sync: {e}")
+    else:
+        print("⚠️  Background sync disabled - missing configuration")
+
+@app.on_event("shutdown")
+async def shutdown_background_tasks():
+    global sync_task
+    if sync_task:
+        sync_task.cancel()
+        try:
+            await sync_task
+        except asyncio.CancelledError:
+            pass
+
 # Models
 class Answer(BaseModel):
     answer: str
@@ -339,13 +366,14 @@ def ask(q: str = Query(..., description="Your question")):
         qvec = openai_client.embeddings.create(model=EMBED_MD, input=q).data[0].embedding
         print(f"✓ Generated embedding vector")
         
-        # Query Pinecone
-        hits = idx.query(vector=qvec, top_k=12, namespace=NS, include_metadata=True).matches
-        print(f"✓ Found {len(hits)} initial matches")
+        # Query Pinecone - search both main documents and Notion data
+        main_hits = idx.query(vector=qvec, top_k=6, namespace=NS, include_metadata=True).matches
+        notion_hits = idx.query(vector=qvec, top_k=6, namespace="notion", include_metadata=True).matches
         
-        # Filter by relevance score
-        hits = [h for h in hits if h.score > 0.25][:6]
-        print(f"✓ Filtered to {len(hits)} relevant matches")
+        # Combine and filter by relevance score
+        all_hits = main_hits + notion_hits
+        hits = [h for h in all_hits if h.score > 0.25][:8]
+        print(f"✓ Found {len(hits)} relevant matches ({len(main_hits)} from docs, {len(notion_hits)} from Notion)")
         
         if not hits:
             return {
