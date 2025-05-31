@@ -1,6 +1,10 @@
 import os, openai, pinecone
 from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 EMBED_MD   = "text-embedding-3-small"
 CHAT_MD    = os.getenv("COMPANION_VOICE_MODEL", "gpt-4o-mini")
@@ -8,15 +12,22 @@ INDEX_NM   = "companion-memory"
 NS         = "v1"
 
 # Check environment variables
+print("🔍 Checking environment variables...")
+openai_key = os.environ.get("OPENAI_API_KEY")
+pinecone_key = os.environ.get("PINECONE_API_KEY")
+
+print(f"   OPENAI_API_KEY: {'✓ Set' if openai_key else '✗ Missing'}")
+print(f"   PINECONE_API_KEY: {'✓ Set' if pinecone_key else '✗ Missing'}")
+
 missing_vars = []
-if not os.environ.get("OPENAI_API_KEY"):
+if not openai_key:
     missing_vars.append("OPENAI_API_KEY")
-if not os.environ.get("PINECONE_API_KEY"):
+if not pinecone_key:
     missing_vars.append("PINECONE_API_KEY")
 
 if missing_vars:
     print(f"⚠️  Missing environment variables: {', '.join(missing_vars)}")
-    print("   Please set these in the Secrets tool")
+    print("   Please check the Secrets tool in your Replit workspace")
     # Initialize with dummy clients to allow app to start
     openai_client = None
     pc = None
@@ -53,10 +64,17 @@ def root():
 
 @app.get("/status")
 def status():
+    import pathlib
+    raw_dir = pathlib.Path("data/raw")
+    pdf_files = list(raw_dir.glob("*.pdf")) if raw_dir.exists() else []
+    
     return {
         "openai_api_key": "✓" if os.environ.get("OPENAI_API_KEY") else "✗ Missing",
         "pinecone_api_key": "✓" if os.environ.get("PINECONE_API_KEY") else "✗ Missing",
         "index_exists": "✓" if idx is not None else "✗ Missing or not accessible",
+        "pdf_files_found": len(pdf_files),
+        "pdf_files": [f.name for f in pdf_files],
+        "data_directory_exists": raw_dir.exists(),
         "ready": idx is not None and openai_client is not None
     }
 
