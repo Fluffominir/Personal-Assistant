@@ -1,0 +1,61 @@
+I would like to make an AI assistant for personal and professional use. I would like it to be able to:
+
+Access my calendar for reference, reminders, auto scheduling, giving me daily or weekly breakdowns
+
+be able to access and read my email, CRM messages, texts, slack to be able to remind me of things or know me better or help keep me on task and optimize my life and workflow
+
+be able to reference past work for quick questions, knowing me and my work better, being able to catalogue and learn about my work and progress and give suggestions
+
+be trained on extensive data about me, my psychological profile, life story, preferences, looks, routine, relationships, habits, health data and more
+
+be trained on everything about my business, be able to know about and access current project data, be able to access CRM, be able to reference and understand my work, be able to know all SOPs, know employees and their work, have access to gear list, know financials, understand business model, reference and know website, know all aobut our processes and style and internal resources, give feedback on improving the business, catch blindspots, help organize business systems, help schedule out business tasks and meetings, help give adjenda and breakdowns and give feedback and auto update project management tools and pull from company files and projects. be able to sytemize and automate tasks and work. be able to help keep deadlines and take care of admin tasks and remind when soemthing is forgotten or is coming up
+
+I want it to be able to update and learn and access the intetnet for reference and be able to be trained on thigns I like or that resonate like books or such.
+
+I want it to really know my preferences and style and whatnot. I want it to be an expert on my industry and about me. I want it to have access to all assets of my business to help me automate and run things
+
+I would like it to help keep me on routine and tasks. I would like it to automatically, with my input, schedule out my weeks, be easy to access, be able to send me a text or email breakdown or agenda for each day. be able to automate things with employees when needed. be able to have access to all relevant data to help it understand and be best from calendar to health to screentime or anything you think is beneficial. I would like it to be able to give me great tailored feedback and auto update my project manager platform on notion or anything better.
+
+I use:
+
+Google workspace
+Gmail
+Google Calendar
+Webflow
+GoDaddy
+QuickBooks
+Synology NAS
+Macbook Pro M4
+iPhone 16 Pro Max
+Apple Watch
+Dubsado
+Frameio
+ChatGPT PRO
+Chase Bank
+Adobe Creative Cloud with all apps I use indesign illustrator photoshop bridge camera raw audition after effects premiere etc
+PostHaste
+Hazel
+Hedge DIT Bundle
+Davinci Resolve
+Slack
+Zoom
+Good Notes
+Notion
+Google Chrome
+Sony Cameras fx6 and fx3
+Movieslate pro 8
+ipad pro
+Google Drive
+Zapier
+
+Heres my company notion: https://www.notion.so/Rocket-Launch-Studio-Dashboard-1859de66e9048000b6e2e6d6c0195490?source=copy_link
+
+Heres my personal notion: https://www.notion.so/michaelslusher/fe686d01a20545339a92b25832875fd5?v=5da0f837026544379c62b286b99c658e&source=copy_link
+
+I am open to any other programs too and there may be some I am forgetting to mention
+
+I am not a coder and would like detailed steps on how to make the very best and most reliable and comprehensively trained and helpful personal and professional AI assistant.
+
+Do comprehensive research and tell me step by step exactly how to set this up. I have attached some references about me and my company. know that much of the data may be oustutdated but its just a general reference so you can get an idea about what were looking at here.
+
+Ask absolutely anything else you need to know to make this happen. double check for accuracy as of May 30,2025. be thorough and organized and clear and detailed and help me make the best Ai assistant for my needs. Even if it expands and you think of other features I could use. I want it to be comprehensive.
