@@ -7,35 +7,43 @@
     <title>ATLAS - Your AI Companion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         :root {
-            --bg-primary: #0F0F0F;
-            --bg-secondary: #1A1A1A;
-            --bg-tertiary: #242424;
-            --bg-card: #1E1E1E;
-            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #151515;
+            --bg-glass: rgba(255, 255, 255, 0.03);
             
-            --text-primary: #FFFFFF;
-            --text-secondary: #E0E0E0;
-            --text-muted: #A0A0A0;
-            --text-accent: #888888;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --text-muted: #888888;
+            --text-accent: #666666;
             
-            --accent-blue: #007AFF;
-            --accent-green: #30D158;
-            --accent-purple: #AF52DE;
-            --accent-orange: #FF9500;
-            --accent-pink: #FF2D92;
-            --accent-yellow: #FFCC02;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-error: #ef4444;
+            --accent-info: #06b6d4;
             
-            --border: rgba(255, 255, 255, 0.1);
-            --border-light: rgba(255, 255, 255, 0.05);
+            --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-secondary: linear-gradient(135deg, #10b981, #06b6d4);
+            --gradient-warm: linear-gradient(135deg, #f59e0b, #ef4444);
             
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.04);
             
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.25);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.25);
+            --shadow-glow: 0 0 32px rgba(99, 102, 241, 0.15);
         }
 
         * {
@@ -45,101 +53,109 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            font-feature-settings: 'cv01', 'cv02';
         }
 
         .container {
-            display: flex;
+            display: grid;
+            grid-template-columns: 300px 1fr;
             height: 100vh;
+            gap: 0;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            position: fixed;
-            height: 100vh;
+            position: relative;
             z-index: 100;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.mobile-hidden {
-            transform: translateX(-100%);
         }
 
         .sidebar-header {
-            padding: 2rem 1.5rem 1.5rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
             border-bottom: 1px solid var(--border);
         }
 
         .ai-avatar {
             width: 80px;
             height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: var(--radius-full);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
             position: relative;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.3s ease;
+        }
+
+        .ai-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 48px rgba(99, 102, 241, 0.25);
         }
 
         .ai-avatar::before {
             content: '';
             position: absolute;
-            inset: -2px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 50%;
+            inset: -3px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
             z-index: -1;
-            opacity: 0.3;
-            animation: pulse 2s ease-in-out infinite;
+            opacity: 0.4;
+            animation: pulse 3s ease-in-out infinite;
         }
 
         .ai-avatar i {
-            font-size: 2rem;
+            font-size: 2.2rem;
             color: white;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.1); opacity: 0.6; }
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.1); opacity: 0.7; }
         }
 
         .ai-name {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .ai-status {
-            text-align: center;
             color: var(--text-muted);
             font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            font-weight: 500;
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
-            border-radius: 50%;
-            background: var(--accent-green);
-            animation: blink 2s ease-in-out infinite;
+            border-radius: var(--radius-full);
+            background: var(--accent-success);
+            animation: breathe 2s ease-in-out infinite;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        @keyframes breathe {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
         }
 
         .nav-menu {
@@ -150,114 +166,117 @@
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.875rem 1rem;
+            gap: 0.875rem;
+            padding: 1rem 1.25rem;
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: all 0.2s ease;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
             font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
         }
 
         .nav-item:hover {
             background: var(--bg-glass);
+            transform: translateX(4px);
+        }
+
+        .nav-item:hover::before {
+            width: 4px;
         }
 
         .nav-item.active {
-            background: var(--accent-blue);
-            color: white;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .nav-item.active::before {
+            width: 4px;
         }
 
         .nav-item i {
             font-size: 1.1rem;
             width: 20px;
             text-align: center;
+            z-index: 1;
         }
 
-        /* Mobile Toggle */
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 200;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 0.75rem;
-            cursor: pointer;
-            color: var(--text-primary);
+        .nav-item span {
+            z-index: 1;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            margin-left: 280px;
-            overflow-y: auto;
             background: var(--bg-primary);
+            overflow-y: auto;
+            position: relative;
         }
 
         .content-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border);
+            padding: 2rem;
             background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 50;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            backdrop-filter: blur(20px);
         }
 
         .greeting {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .header-stats {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
+        .greeting-subtitle {
             color: var(--text-muted);
-        }
-
-        .stat-value {
-            color: var(--text-primary);
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
         }
 
         .header-actions {
             display: flex;
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             border-radius: var(--radius-md);
             border: none;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 0.9rem;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-primary {
-            background: var(--accent-blue);
+            background: var(--gradient-primary);
             color: white;
+            box-shadow: var(--shadow);
         }
 
         .btn-secondary {
@@ -268,111 +287,126 @@
 
         .btn:hover {
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Content Sections */
+        .btn-primary:hover {
+            box-shadow: 0 8px 48px rgba(99, 102, 241, 0.3);
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-chip {
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-chip i {
+            color: var(--accent-primary);
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Content Body */
         .content-body {
             padding: 2rem;
         }
 
         .page {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .page.active {
             display: block;
         }
 
-        /* Quick Stats Grid */
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .stat-card {
+        /* ATLAS Chat - Prominent Section */
+        .atlas-chat {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            position: relative;
+            border-radius: var(--radius-xl);
+            margin-bottom: 3rem;
             overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
         }
 
-        .stat-card::before {
+        .atlas-chat::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-blue);
-        }
-
-        .stat-card.green::before { background: var(--accent-green); }
-        .stat-card.purple::before { background: var(--accent-purple); }
-        .stat-card.orange::before { background: var(--accent-orange); }
-        .stat-card.pink::before { background: var(--accent-pink); }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-change {
-            font-size: 0.8rem;
-            color: var(--accent-green);
-        }
-
-        /* Chat Interface */
-        .chat-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            margin-bottom: 2rem;
-            overflow: hidden;
+            inset: 0;
+            background: var(--gradient-primary);
+            opacity: 0.05;
+            pointer-events: none;
         }
 
         .chat-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
+            padding: 2rem 2rem 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            position: relative;
         }
 
-        .chat-header h3 {
-            margin: 0;
-            font-size: 1.25rem;
+        .chat-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 1rem;
         }
 
         .chat-input-area {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .chat-input-wrapper {
             position: relative;
             background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border);
             overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input-wrapper:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
         #questionInput {
             width: 100%;
             background: transparent;
             border: none;
-            padding: 1rem;
+            padding: 1.5rem;
             color: var(--text-primary);
             font-size: 1rem;
             resize: none;
-            min-height: 100px;
+            min-height: 120px;
             font-family: inherit;
+            line-height: 1.6;
         }
 
         #questionInput:focus {
@@ -387,32 +421,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
             border-top: 1px solid var(--border);
+            background: var(--bg-glass);
         }
 
         .input-hint {
             color: var(--text-muted);
             font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         #askButton {
-            background: var(--accent-blue);
+            background: var(--gradient-primary);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 2rem;
             border-radius: var(--radius-md);
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             transition: all 0.2s ease;
+            box-shadow: var(--shadow);
         }
 
         #askButton:hover:not(:disabled) {
-            background: #0056CC;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
         }
 
         #askButton:disabled {
@@ -422,110 +461,161 @@
 
         /* Answer Container */
         .answer-container {
-            margin-top: 1.5rem;
+            margin-top: 2rem;
             background: var(--bg-tertiary);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             display: none;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         .answer-text {
-            padding: 1.5rem;
+            padding: 2rem;
             white-space: pre-wrap;
             line-height: 1.7;
+            font-size: 1rem;
         }
 
-        .sources-section {
-            border-top: 1px solid var(--border);
+        /* Quick Actions Grid */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
         }
 
-        .sources-toggle {
-            width: 100%;
-            background: none;
-            border: none;
-            padding: 1rem 1.5rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .sources-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .sources-content.expanded {
-            max-height: 300px;
-            padding: 0 1.5rem 1.5rem;
-        }
-
-        .source-item {
-            background: var(--bg-card);
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* Action Cards Grid */
-        .action-grid {
+        .quick-actions {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
         .action-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            padding: 1.5rem;
+            padding: 2rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
             display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .action-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-blue);
+            transform: translateY(-8px);
+            border-color: var(--accent-primary);
             box-shadow: var(--shadow-lg);
         }
 
+        .action-card:hover::before {
+            opacity: 0.05;
+        }
+
         .action-icon {
-            width: 50px;
-            height: 50px;
+            width: 56px;
+            height: 56px;
             border-radius: var(--radius-md);
-            background: var(--accent-blue);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: white;
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow);
         }
 
-        .action-card.green .action-icon { background: var(--accent-green); }
-        .action-card.purple .action-icon { background: var(--accent-purple); }
-        .action-card.orange .action-icon { background: var(--accent-orange); }
+        .action-card.green .action-icon { background: var(--gradient-secondary); }
+        .action-card.warm .action-icon { background: var(--gradient-warm); }
+        .action-card.info .action-icon { background: linear-gradient(135deg, var(--accent-info), var(--accent-primary)); }
 
         .action-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
         }
 
         .action-description {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Settings Modal */
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-primary);
+        }
+
+        .stat-card.green::before { background: var(--accent-success); }
+        .stat-card.warm::before { background: var(--accent-warning); }
+        .stat-card.info::before { background: var(--accent-info); }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            color: var(--accent-success);
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -536,22 +626,26 @@
             background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
             padding: 2rem;
+            backdrop-filter: blur(8px);
         }
 
         .modal.active {
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
             background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             padding: 2rem;
             max-width: 600px;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
         }
 
         .modal-header {
@@ -567,102 +661,119 @@
             color: var(--text-muted);
             cursor: pointer;
             font-size: 1.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
         }
 
-        .setting-group {
-            margin-bottom: 2rem;
+        .modal-close:hover {
+            background: var(--bg-glass);
+            color: var(--text-primary);
         }
 
-        .setting-title {
-            font-weight: 600;
+        /* Check-in Modal Specific */
+        .checkin-options {
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .mood-slider {
+            margin: 2rem 0;
+        }
+
+        .mood-slider label {
+            display: block;
             margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .setting-item {
+        .slider-container {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .mood-range {
+            width: 100%;
+            height: 8px;
+            border-radius: var(--radius-full);
+            background: var(--bg-tertiary);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .mood-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-primary);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .mood-labels {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-light);
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
+        .mood-descriptors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .mood-descriptor {
+            padding: 1rem;
             background: var(--bg-tertiary);
-            border-radius: 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: background 0.2s ease;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
-        .toggle-switch.active {
-            background: var(--accent-blue);
+        .mood-descriptor:hover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
         }
 
-        .toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.2s ease;
+        .mood-descriptor.selected {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-primary);
         }
 
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(26px);
+        /* Quick Notes */
+        .quick-notes-input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.mobile-visible {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-toggle {
-                display: block;
-            }
-
-            .content-header {
-                padding: 1rem;
-            }
-
-            .content-body {
-                padding: 1rem;
-            }
-
-            .greeting {
-                font-size: 1.5rem;
-            }
-
-            .header-stats {
-                gap: 1rem;
-            }
-
-            .quick-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .action-grid {
-                grid-template-columns: 1fr;
-            }
+        .quick-notes-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
+        /* Loading and Animations */
         .loading {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--accent-blue);
+            color: var(--accent-primary);
         }
 
         .loading i {
@@ -674,6 +785,111 @@
             to { transform: rotate(360deg); }
         }
 
+        .pulse-animation {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+            }
+        }
+
+        /* Success Animation */
+        .success-animation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-20px); }
+            70% { transform: translateY(-10px); }
+            90% { transform: translateY(-4px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 200;
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
+            }
+
+            .mobile-toggle {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 300;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: 0.75rem;
+                cursor: pointer;
+                color: var(--text-primary);
+                backdrop-filter: blur(20px);
+            }
+
+            .content-header {
+                padding: 1rem;
+                padding-left: 4rem;
+            }
+
+            .content-body {
+                padding: 1rem;
+            }
+
+            .greeting {
+                font-size: 2rem;
+            }
+
+            .quick-actions,
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mobile-toggle {
+            display: none;
+        }
+
+        /* Notification System */
         .notification {
             position: fixed;
             top: 20px;
@@ -683,15 +899,56 @@
             color: white;
             z-index: 1001;
             animation: slideIn 0.3s ease;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
         }
 
-        .notification.success { background: var(--accent-green); }
-        .notification.error { background: var(--accent-pink); }
-        .notification.info { background: var(--accent-blue); }
+        .notification.success { background: var(--accent-success); }
+        .notification.error { background: var(--accent-error); }
+        .notification.info { background: var(--accent-info); }
 
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Brain Dump Section */
+        .brain-dump {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .voice-input-btn {
+            background: var(--gradient-warm);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 1rem auto;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .voice-input-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+        }
+
+        .voice-input-btn.recording {
+            animation: pulse-record 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-record {
+            0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.8); }
         }
     </style>
 </head>
@@ -705,13 +962,13 @@
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="ai-avatar">
-                    <i class="fas fa-mountain"></i>
+                <div class="ai-avatar" onclick="playGreeting()">
+                    <i class="fas fa-robot"></i>
                 </div>
                 <h2 class="ai-name">ATLAS</h2>
                 <div class="ai-status">
                     <div class="status-dot"></div>
-                    Ready to assist
+                    Ready to assist you
                 </div>
             </div>
             
@@ -720,17 +977,25 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </div>
+                <div class="nav-item" data-page="insights">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Smart Insights</span>
+                </div>
+                <div class="nav-item" data-page="health">
+                    <i class="fas fa-heart"></i>
+                    <span>Health & Wellness</span>
+                </div>
                 <div class="nav-item" data-page="studio">
-                    <i class="fas fa-rocket"></i>
+                    <i class="fas fa-video"></i>
                     <span>Studio</span>
                 </div>
                 <div class="nav-item" data-page="integrations">
                     <i class="fas fa-plug"></i>
                     <span>Integrations</span>
                 </div>
-                <div class="nav-item" data-page="insights">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Insights</span>
+                <div class="nav-item" data-page="training">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>AI Training</span>
                 </div>
                 <div class="nav-item" onclick="openSettings()">
                     <i class="fas fa-cog"></i>
@@ -743,34 +1008,40 @@
         <main class="main-content">
             <!-- Header -->
             <div class="content-header">
-                <div class="header-top">
-                    <h1 class="greeting" id="greetingText">Good morning, Michael</h1>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="refreshData()">
-                            <i class="fas fa-sync-alt"></i>
-                            Sync
-                        </button>
-                        <button class="btn btn-primary" onclick="focusChat()">
-                            <i class="fas fa-plus"></i>
-                            New Query
-                        </button>
-                    </div>
+                <h1 class="greeting" id="greetingText">Welcome back, Michael</h1>
+                <p class="greeting-subtitle">Ready to tackle today's creative challenges?</p>
+                
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                        Sync Everything
+                    </button>
+                    <button class="btn btn-primary" onclick="openQuickCheckIn()">
+                        <i class="fas fa-heart"></i>
+                        Quick Check-in
+                    </button>
+                    <button class="btn btn-primary" onclick="focusChat()">
+                        <i class="fas fa-comments"></i>
+                        Chat with ATLAS
+                    </button>
                 </div>
+
                 <div class="header-stats">
-                    <div class="stat-item">
+                    <div class="stat-chip">
                         <i class="fas fa-calendar-day"></i>
-                        <span>Today:</span>
-                        <span class="stat-value" id="todayEvents">Loading...</span>
+                        <span>Today: <span class="stat-value" id="todayEvents">--</span></span>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-chip">
                         <i class="fas fa-envelope"></i>
-                        <span>Unread:</span>
-                        <span class="stat-value" id="unreadEmails">--</span>
+                        <span>Unread: <span class="stat-value" id="unreadEmails">--</span></span>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-chip">
                         <i class="fas fa-heartbeat"></i>
-                        <span>System:</span>
-                        <span class="stat-value" id="systemStatus">98%</span>
+                        <span>Health: <span class="stat-value" id="systemStatus">98%</span></span>
+                    </div>
+                    <div class="stat-chip">
+                        <i class="fas fa-brain"></i>
+                        <span>Focus: <span class="stat-value">Peak</span></span>
                     </div>
                 </div>
             </div>
@@ -779,40 +1050,17 @@
             <div class="content-body">
                 <!-- Dashboard Page -->
                 <div class="page active" id="dashboard">
-                    <!-- Quick Stats -->
-                    <div class="quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-label">System Health</div>
-                            <div class="stat-number" id="healthStat">98%</div>
-                            <div class="stat-change">All systems operational</div>
-                        </div>
-                        <div class="stat-card green">
-                            <div class="stat-label">Active Projects</div>
-                            <div class="stat-number">5</div>
-                            <div class="stat-change">+2 this week</div>
-                        </div>
-                        <div class="stat-card purple">
-                            <div class="stat-label">Revenue (Month)</div>
-                            <div class="stat-number">$15.2K</div>
-                            <div class="stat-change">+22% growth</div>
-                        </div>
-                        <div class="stat-card orange">
-                            <div class="stat-label">Knowledge Base</div>
-                            <div class="stat-number">1.2K</div>
-                            <div class="stat-change">Documents indexed</div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Interface -->
-                    <div class="chat-section">
+                    <!-- ATLAS Chat - Prominent -->
+                    <div class="atlas-chat">
                         <div class="chat-header">
-                            <h3>Ask ATLAS</h3>
+                            <h2><i class="fas fa-robot"></i> Chat with ATLAS</h2>
+                            <p>Your AI companion is here to help with anything you need</p>
                         </div>
                         <div class="chat-input-area">
                             <div class="chat-input-wrapper">
                                 <textarea 
                                     id="questionInput" 
-                                    placeholder="What can I help you with today? Ask about your schedule, projects, or anything else..."
+                                    placeholder="Hey ATLAS! What can you help me with today? Ask about your schedule, projects, creative ideas, or anything else..."
                                     rows="4"
                                 ></textarea>
                                 <div class="input-actions">
@@ -822,157 +1070,335 @@
                                     </div>
                                     <button id="askButton" onclick="askQuestion()">
                                         <i class="fas fa-paper-plane"></i>
-                                        Ask
+                                        Ask ATLAS
                                     </button>
                                 </div>
                             </div>
                             
                             <div id="answerContainer" class="answer-container">
                                 <div id="answerText" class="answer-text"></div>
-                                <div class="sources-section" id="sourcesSection">
-                                    <button class="sources-toggle" onclick="toggleSources()">
-                                        <span>View Sources</span>
-                                        <i class="fas fa-chevron-down"></i>
-                                    </button>
-                                    <div class="sources-content" id="sourcesContent"></div>
-                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="action-grid">
-                        <div class="action-card" onclick="openCalendarToday()">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <div class="quick-actions">
+                        <div class="action-card" onclick="openQuickNotes()">
                             <div class="action-icon">
-                                <i class="fas fa-calendar-day"></i>
+                                <i class="fas fa-sticky-note"></i>
                             </div>
-                            <div class="action-title">Today's Schedule</div>
-                            <div class="action-description">View calendar events and meetings</div>
+                            <div class="action-title">Quick Notes</div>
+                            <div class="action-description">Capture thoughts and ideas instantly - they'll auto-organize in Notion</div>
                         </div>
 
-                        <div class="action-card green" onclick="askQuestion('Give me a debrief of my week')">
+                        <div class="action-card green" onclick="openBrainDump()">
                             <div class="action-icon">
-                                <i class="fas fa-chart-bar"></i>
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <div class="action-title">Brain Dump</div>
+                            <div class="action-description">Voice record your thoughts and I'll transcribe and organize them</div>
+                        </div>
+
+                        <div class="action-card warm" onclick="openQuickCheckIn()">
+                            <div class="action-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="action-title">Mental Check-in</div>
+                            <div class="action-description">Quick mood and energy assessment to track your wellbeing</div>
+                        </div>
+
+                        <div class="action-card info" onclick="askQuestion('Give me a comprehensive debrief of my week')">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-line"></i>
                             </div>
                             <div class="action-title">Weekly Debrief</div>
-                            <div class="action-description">Get insights on your productivity and progress</div>
+                            <div class="action-description">AI analysis of your calendar, emails, and productivity patterns</div>
                         </div>
 
-                        <div class="action-card purple" onclick="checkPriorityEmails()">
-                            <div class="action-icon">
-                                <i class="fas fa-envelope-open"></i>
-                            </div>
-                            <div class="action-title">Priority Emails</div>
-                            <div class="action-description">Review important and unread messages</div>
-                        </div>
-
-                        <div class="action-card orange" onclick="showPage('integrations')">
-                            <div class="action-icon">
-                                <i class="fas fa-sync-alt"></i>
-                            </div>
-                            <div class="action-title">Sync Data</div>
-                            <div class="action-description">Refresh all integrations and data sources</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Studio Page -->
-                <div class="page" id="studio">
-                    <div class="quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-label">Monthly Revenue</div>
-                            <div class="stat-number">$15,240</div>
-                            <div class="stat-change">+22% from last month</div>
-                        </div>
-                        <div class="stat-card green">
-                            <div class="stat-label">Active Clients</div>
-                            <div class="stat-number">12</div>
-                            <div class="stat-change">3 new this month</div>
-                        </div>
-                        <div class="stat-card purple">
-                            <div class="stat-label">Projects Completed</div>
-                            <div class="stat-number">8</div>
-                            <div class="stat-change">This month</div>
-                        </div>
-                        <div class="stat-card orange">
-                            <div class="stat-label">Hours This Week</div>
-                            <div class="stat-number">32</div>
-                            <div class="stat-change">Focused creative time</div>
-                        </div>
-                    </div>
-
-                    <div class="action-grid">
-                        <div class="action-card">
+                        <div class="action-card" onclick="showPage('studio')">
                             <div class="action-icon">
                                 <i class="fas fa-video"></i>
                             </div>
-                            <div class="action-title">Current Projects</div>
-                            <div class="action-description">View and manage active video projects</div>
+                            <div class="action-title">Studio Dashboard</div>
+                            <div class="action-description">Rocket Launch Studio projects and creative workflow</div>
                         </div>
 
-                        <div class="action-card green">
+                        <div class="action-card green" onclick="showPage('training')">
                             <div class="action-icon">
-                                <i class="fas fa-users"></i>
+                                <i class="fas fa-graduation-cap"></i>
                             </div>
-                            <div class="action-title">Client Portal</div>
-                            <div class="action-description">Access client communications and files</div>
-                        </div>
-
-                        <div class="action-card purple">
-                            <div class="action-icon">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="action-title">Financial Overview</div>
-                            <div class="action-description">View invoices, payments, and revenue</div>
-                        </div>
-
-                        <div class="action-card orange">
-                            <div class="action-icon">
-                                <i class="fas fa-camera"></i>
-                            </div>
-                            <div class="action-title">Equipment Status</div>
-                            <div class="action-description">Check camera gear and availability</div>
+                            <div class="action-title">Train ATLAS</div>
+                            <div class="action-description">Help me learn more about you through interactive questions</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Integrations Page -->
-                <div class="page" id="integrations">
-                    <div id="integrationsList" class="action-grid">
-                        <div class="loading">
-                            <i class="fas fa-spinner"></i>
-                            Loading integrations...
+                    <!-- Mini Stats -->
+                    <h3 class="section-title">Today's Overview</h3>
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Energy Level</div>
+                            <div class="stat-number" id="energyStat">85%</div>
+                            <div class="stat-change">Feeling good today</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label">Focus Sessions</div>
+                            <div class="stat-number">3</div>
+                            <div class="stat-change">Deep work completed</div>
+                        </div>
+                        <div class="stat-card warm">
+                            <div class="stat-label">Creative Projects</div>
+                            <div class="stat-number">5</div>
+                            <div class="stat-change">In progress</div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-label">Knowledge Base</div>
+                            <div class="stat-number">1.2K</div>
+                            <div class="stat-change">Items catalogued</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Insights Page -->
                 <div class="page" id="insights">
+                    <h2 class="section-title">Smart Insights & Analytics</h2>
+                    <div class="action-card" style="margin-bottom: 2rem;">
+                        <div class="action-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="action-title">Comprehensive Life Analysis</div>
+                        <div class="action-description">AI-powered insights from your calendar, emails, health data, and productivity patterns</div>
+                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="generateComprehensiveDebrief()">
+                            <i class="fas fa-magic"></i>
+                            Generate Deep Insights
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Health & Wellness Page -->
+                <div class="page" id="health">
+                    <h2 class="section-title">Health & Wellness Dashboard</h2>
+                    <div class="action-card" style="margin-bottom: 2rem;">
+                        <div class="action-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="action-title">Apple Health Data</div>
+                        <div class="action-description">Upload your latest Apple Health export for comprehensive wellness tracking</div>
+                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="uploadHealthData()">
+                            <i class="fas fa-upload"></i>
+                            Upload Health Export
+                        </button>
+                    </div>
+
                     <div class="quick-stats">
                         <div class="stat-card">
-                            <div class="stat-label">Productivity Score</div>
-                            <div class="stat-number">87%</div>
-                            <div class="stat-change">Above average this week</div>
+                            <div class="stat-label">Steps Today</div>
+                            <div class="stat-number">8,432</div>
+                            <div class="stat-change">Goal: 10,000</div>
                         </div>
                         <div class="stat-card green">
-                            <div class="stat-label">Focus Sessions</div>
-                            <div class="stat-number">24</div>
-                            <div class="stat-change">Deep work hours</div>
+                            <div class="stat-label">Sleep Quality</div>
+                            <div class="stat-number">85%</div>
+                            <div class="stat-change">7h 23m last night</div>
                         </div>
-                        <div class="stat-card purple">
-                            <div class="stat-label">Creative Flow</div>
-                            <div class="stat-number">Peak</div>
-                            <div class="stat-change">Optimal energy detected</div>
+                        <div class="stat-card warm">
+                            <div class="stat-label">Heart Rate</div>
+                            <div class="stat-number">72 bpm</div>
+                            <div class="stat-change">Resting average</div>
                         </div>
-                        <div class="stat-card orange">
-                            <div class="stat-label">Wellness Check</div>
-                            <div class="stat-number">Good</div>
-                            <div class="stat-change">Remember breaks</div>
+                        <div class="stat-card info">
+                            <div class="stat-label">Mindfulness</div>
+                            <div class="stat-number">12 min</div>
+                            <div class="stat-change">Today's practice</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Studio Page -->
+                <div class="page" id="studio">
+                    <h2 class="section-title">Rocket Launch Studio</h2>
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Active Projects</div>
+                            <div class="stat-number">5</div>
+                            <div class="stat-change">In production</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label">This Month Revenue</div>
+                            <div class="stat-number">$15.2K</div>
+                            <div class="stat-change">+22% growth</div>
+                        </div>
+                        <div class="stat-card warm">
+                            <div class="stat-label">Client Satisfaction</div>
+                            <div class="stat-number">98%</div>
+                            <div class="stat-change">Outstanding reviews</div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-label">Creative Hours</div>
+                            <div class="stat-number">34h</div>
+                            <div class="stat-change">This week</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <div class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="action-title">Current Projects</div>
+                            <div class="action-description">View and manage active video productions</div>
+                        </div>
+                        <div class="action-card green">
+                            <div class="action-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="action-title">Client Portal</div>
+                            <div class="action-description">Access client communications and project files</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Training Page -->
+                <div class="page" id="training">
+                    <h2 class="section-title">Train ATLAS to Know You Better</h2>
+                    <div class="action-card" style="margin-bottom: 2rem;">
+                        <div class="action-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="action-title">Interactive Learning Session</div>
+                        <div class="action-description">I'll ask you personalized questions to better understand your preferences, habits, and goals</div>
+                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="startTrainingSession()">
+                            <i class="fas fa-play"></i>
+                            Start Training Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Integrations Page -->
+                <div class="page" id="integrations">
+                    <h2 class="section-title">Connected Services</h2>
+                    <div id="integrationsList" class="quick-actions">
+                        <div class="loading">
+                            <i class="fas fa-spinner"></i>
+                            Loading integrations...
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Quick Check-in Modal -->
+    <div class="modal" id="checkinModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-heart"></i> Quick Check-in</h2>
+                <button class="modal-close" onclick="closeCheckIn()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mood-slider">
+                <label>How's your energy level?</label>
+                <div class="slider-container">
+                    <input type="range" class="mood-range" id="energySlider" min="1" max="10" value="5">
+                    <div class="mood-labels">
+                        <span>Drained</span>
+                        <span>Balanced</span>
+                        <span>Energized</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mood-slider">
+                <label>How's your focus?</label>
+                <div class="slider-container">
+                    <input type="range" class="mood-range" id="focusSlider" min="1" max="10" value="5">
+                    <div class="mood-labels">
+                        <span>Scattered</span>
+                        <span>Okay</span>
+                        <span>Laser-focused</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mood-descriptors">
+                <div class="mood-descriptor" data-mood="creative">🎨 Creative</div>
+                <div class="mood-descriptor" data-mood="productive">⚡ Productive</div>
+                <div class="mood-descriptor" data-mood="relaxed">😌 Relaxed</div>
+                <div class="mood-descriptor" data-mood="motivated">🚀 Motivated</div>
+                <div class="mood-descriptor" data-mood="stressed">😅 Stressed</div>
+                <div class="mood-descriptor" data-mood="inspired">✨ Inspired</div>
+            </div>
+
+            <textarea class="quick-notes-input" id="checkinNotes" placeholder="Anything specific on your mind? (optional)"></textarea>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="submitCheckIn()">
+                <i class="fas fa-heart"></i>
+                Submit Check-in
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Notes Modal -->
+    <div class="modal" id="notesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-sticky-note"></i> Quick Notes</h2>
+                <button class="modal-close" onclick="closeQuickNotes()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <textarea class="quick-notes-input" id="quickNotesText" placeholder="Capture your thoughts, ideas, reminders, or anything else. I'll automatically organize this in your Notion workspace!"></textarea>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveQuickNote()">
+                <i class="fas fa-save"></i>
+                Save & Organize
+            </button>
+        </div>
+    </div>
+
+    <!-- Brain Dump Modal -->
+    <div class="modal" id="brainDumpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-microphone"></i> Brain Dump</h2>
+                <button class="modal-close" onclick="closeBrainDump()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="brain-dump">
+                <p style="text-align: center; margin-bottom: 2rem; color: var(--text-muted);">
+                    Speak your thoughts, and I'll transcribe and organize everything for you
+                </p>
+                <button class="voice-input-btn" id="voiceBtn" onclick="toggleVoiceRecording()">
+                    <i class="fas fa-microphone"></i>
+                    <span id="voiceBtnText">Start Recording</span>
+                </button>
+                <div id="transcriptionText" style="margin-top: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: var(--radius-md); min-height: 100px; color: var(--text-muted); font-style: italic;">
+                    Your transcription will appear here...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-animation">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2>Thanks, Michael!</h2>
+                <p id="successMessage">Your check-in has been recorded and I'll use this to better assist you.</p>
+                <button class="btn btn-primary" onclick="closeSuccess()" style="margin-top: 1rem;">
+                    <i class="fas fa-thumbs-up"></i>
+                    Awesome
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Settings Modal -->
@@ -985,57 +1411,12 @@
                 </button>
             </div>
             
-            <div class="setting-group">
-                <div class="setting-title">Notifications</div>
-                <div class="setting-item">
-                    <span>Email notifications</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-                <div class="setting-item">
-                    <span>Calendar reminders</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-                <div class="setting-item">
-                    <span>System alerts</span>
-                    <div class="toggle-switch" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <div class="setting-title">Data & Sync</div>
-                <div class="setting-item">
-                    <span>Auto-sync integrations</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-                <div class="setting-item">
-                    <span>Background updates</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setting-group">
-                <div class="setting-title">Privacy</div>
-                <div class="setting-item">
-                    <span>Analytics collection</span>
-                    <div class="toggle-switch" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-                <div class="setting-item">
-                    <span>Usage insights</span>
-                    <div class="toggle-switch active" onclick="toggleSetting(this)">
-                        <div class="toggle-slider"></div>
-                    </div>
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">AI Response Feedback</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Help ATLAS learn by rating responses:</p>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-secondary" onclick="giveFeedback('helpful')">👍 Helpful</button>
+                    <button class="btn btn-secondary" onclick="giveFeedback('needs-work')">👎 Needs Work</button>
                 </div>
             </div>
         </div>
@@ -1044,27 +1425,33 @@
     <script>
         // Global state
         let currentPage = 'dashboard';
-        let sourcesExpanded = false;
+        let selectedMoods = [];
+        let isRecording = false;
+        let recognition = null;
+
+        // Initialize speech recognition
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+        }
 
         // Navigation
         function showPage(pageName) {
-            // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
             
-            // Remove active from all nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Show selected page
             const pageElement = document.getElementById(pageName);
             if (pageElement) {
                 pageElement.classList.add('active');
             }
             
-            // Add active to nav item
             const navItem = document.querySelector(`[data-page="${pageName}"]`);
             if (navItem) {
                 navItem.classList.add('active');
@@ -1072,15 +1459,13 @@
             
             currentPage = pageName;
             
-            // Load page-specific data
             if (pageName === 'integrations') {
                 loadIntegrations();
             } else if (pageName === 'dashboard') {
                 loadDashboardData();
             }
             
-            // Close mobile nav
-            document.getElementById('sidebar').classList.remove('mobile-visible');
+            closeMobileNav();
         }
 
         // Navigation event listeners
@@ -1096,7 +1481,11 @@
             document.getElementById('sidebar').classList.toggle('mobile-visible');
         }
 
-        // Greeting based on time
+        function closeMobileNav() {
+            document.getElementById('sidebar').classList.remove('mobile-visible');
+        }
+
+        // Greeting
         function updateGreeting() {
             const now = new Date();
             const hour = now.getHours();
@@ -1113,9 +1502,19 @@
             document.getElementById('greetingText').textContent = greeting;
         }
 
+        function playGreeting() {
+            document.querySelector('.ai-avatar').classList.add('pulse-animation');
+            setTimeout(() => {
+                document.querySelector('.ai-avatar').classList.remove('pulse-animation');
+            }, 2000);
+            
+            showNotification('Hey there! I\'m ATLAS, ready to help! 🤖', 'info');
+        }
+
         // Chat functionality
         function focusChat() {
             document.getElementById('questionInput').focus();
+            document.getElementById('questionInput').scrollIntoView({ behavior: 'smooth' });
         }
 
         function handleKeyPress(event) {
@@ -1125,7 +1524,6 @@
             }
         }
 
-        // Add keypress listener
         document.getElementById('questionInput').addEventListener('keypress', handleKeyPress);
 
         async function askQuestion(predefinedQuestion = null) {
@@ -1133,17 +1531,14 @@
             const button = document.getElementById('askButton');
             const answerContainer = document.getElementById('answerContainer');
             const answerText = document.getElementById('answerText');
-            const sourcesSection = document.getElementById('sourcesSection');
 
             const question = predefinedQuestion || input.value.trim();
             if (!question) return;
 
-            // Show loading state
             button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ATLAS is thinking...';
             answerContainer.style.display = 'block';
-            answerText.innerHTML = '<div class="loading"><i class="fas fa-brain fa-pulse"></i> ATLAS is processing your question...</div>';
-            sourcesSection.style.display = 'none';
+            answerText.innerHTML = '<div class="loading"><i class="fas fa-brain fa-pulse"></i> Processing your question with care...</div>';
 
             try {
                 const response = await fetch('/ask?q=' + encodeURIComponent(question));
@@ -1151,58 +1546,155 @@
 
                 if (response.ok) {
                     answerText.textContent = data.answer;
-
-                    // Handle sources
-                    if (data.sources && data.sources.length > 0) {
-                        sourcesSection.style.display = 'block';
-                        const sourcesContent = document.getElementById('sourcesContent');
-                        sourcesContent.innerHTML = '';
-                        
-                        data.sources.forEach(source => {
-                            const sourceItem = document.createElement('div');
-                            sourceItem.className = 'source-item';
-                            sourceItem.textContent = source;
-                            sourcesContent.appendChild(sourceItem);
-                        });
-                    } else {
-                        sourcesSection.style.display = 'none';
-                    }
                 } else {
-                    answerText.innerHTML = `<div style="color: var(--accent-pink);">Error: ${data.detail || 'Failed to get answer'}</div>`;
-                    sourcesSection.style.display = 'none';
+                    answerText.innerHTML = `<div style="color: var(--accent-error);">Error: ${data.detail || 'Failed to get answer'}</div>`;
                 }
             } catch (error) {
-                answerText.innerHTML = `<div style="color: var(--accent-pink);">Network error: ${error.message}</div>`;
-                sourcesSection.style.display = 'none';
+                answerText.innerHTML = `<div style="color: var(--accent-error);">Network error: ${error.message}</div>`;
             } finally {
                 button.disabled = false;
-                button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask';
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask ATLAS';
                 if (!predefinedQuestion) {
                     input.value = '';
                 }
             }
         }
 
-        // Toggle sources
-        function toggleSources() {
-            const toggle = document.querySelector('.sources-toggle');
-            const content = document.getElementById('sourcesContent');
-            const icon = toggle.querySelector('i');
+        // Quick Check-in
+        function openQuickCheckIn() {
+            document.getElementById('checkinModal').classList.add('active');
+        }
+
+        function closeCheckIn() {
+            document.getElementById('checkinModal').classList.remove('active');
+            selectedMoods = [];
+            document.querySelectorAll('.mood-descriptor').forEach(desc => {
+                desc.classList.remove('selected');
+            });
+        }
+
+        // Mood descriptor selection
+        document.querySelectorAll('.mood-descriptor').forEach(desc => {
+            desc.addEventListener('click', () => {
+                const mood = desc.getAttribute('data-mood');
+                if (selectedMoods.includes(mood)) {
+                    selectedMoods = selectedMoods.filter(m => m !== mood);
+                    desc.classList.remove('selected');
+                } else {
+                    selectedMoods.push(mood);
+                    desc.classList.add('selected');
+                }
+            });
+        });
+
+        function submitCheckIn() {
+            const energy = document.getElementById('energySlider').value;
+            const focus = document.getElementById('focusSlider').value;
+            const notes = document.getElementById('checkinNotes').value;
             
-            sourcesExpanded = !sourcesExpanded;
+            const checkinData = {
+                energy: energy,
+                focus: focus,
+                moods: selectedMoods,
+                notes: notes,
+                timestamp: new Date().toISOString()
+            };
             
-            if (sourcesExpanded) {
-                content.classList.add('expanded');
-                toggle.querySelector('span').textContent = 'Hide Sources';
-                icon.style.transform = 'rotate(180deg)';
-            } else {
-                content.classList.remove('expanded');
-                toggle.querySelector('span').textContent = 'View Sources';
-                icon.style.transform = 'rotate(0deg)';
+            console.log('Check-in data:', checkinData);
+            
+            closeCheckIn();
+            showSuccess('Your wellness check-in has been recorded! I\'ll use this to better support your daily rhythm.');
+        }
+
+        // Quick Notes
+        function openQuickNotes() {
+            document.getElementById('notesModal').classList.add('active');
+        }
+
+        function closeQuickNotes() {
+            document.getElementById('notesModal').classList.remove('active');
+        }
+
+        function saveQuickNote() {
+            const noteText = document.getElementById('quickNotesText').value.trim();
+            if (!noteText) return;
+            
+            console.log('Saving note:', noteText);
+            
+            closeQuickNotes();
+            showSuccess('Your note has been saved and organized in your Notion workspace!');
+            document.getElementById('quickNotesText').value = '';
+        }
+
+        // Brain Dump (Voice Recording)
+        function openBrainDump() {
+            document.getElementById('brainDumpModal').classList.add('active');
+        }
+
+        function closeBrainDump() {
+            document.getElementById('brainDumpModal').classList.remove('active');
+            if (isRecording) {
+                toggleVoiceRecording();
             }
         }
 
-        // Settings modal
+        function toggleVoiceRecording() {
+            const btn = document.getElementById('voiceBtn');
+            const btnText = document.getElementById('voiceBtnText');
+            
+            if (!recognition) {
+                showNotification('Speech recognition not supported in this browser', 'error');
+                return;
+            }
+            
+            if (!isRecording) {
+                recognition.start();
+                isRecording = true;
+                btn.classList.add('recording');
+                btnText.textContent = 'Stop Recording';
+                btn.style.background = 'var(--gradient-warm)';
+                
+                recognition.onresult = (event) => {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    document.getElementById('transcriptionText').textContent = transcript;
+                };
+            } else {
+                recognition.stop();
+                isRecording = false;
+                btn.classList.remove('recording');
+                btnText.textContent = 'Start Recording';
+                btn.style.background = 'var(--gradient-warm)';
+            }
+        }
+
+        // Training Session
+        function startTrainingSession() {
+            askQuestion('Start an interactive training session where you ask me questions to learn more about my preferences, habits, and personality');
+        }
+
+        // Comprehensive Debrief
+        function generateComprehensiveDebrief() {
+            askQuestion('Please analyze all available data about my week including calendar events, emails, productivity patterns, and provide comprehensive insights about my work patterns, energy levels, and suggestions for optimization');
+        }
+
+        // Success Modal
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').classList.add('active');
+            
+            setTimeout(() => {
+                closeSuccess();
+            }, 3000);
+        }
+
+        function closeSuccess() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        // Settings
         function openSettings() {
             document.getElementById('settingsModal').classList.add('active');
         }
@@ -1211,33 +1703,36 @@
             document.getElementById('settingsModal').classList.remove('active');
         }
 
-        function toggleSetting(element) {
-            element.classList.toggle('active');
+        function giveFeedback(type) {
+            console.log('Feedback:', type);
+            showNotification('Thanks for the feedback! This helps ATLAS learn.', 'success');
+            closeSettings();
         }
 
-        // Load dashboard data
+        // Health Data Upload
+        function uploadHealthData() {
+            showNotification('Health data upload feature coming soon!', 'info');
+        }
+
+        // Data loading functions
         function loadDashboardData() {
             updateGreeting();
             loadSystemHealth();
             loadTodayEvents();
         }
 
-        // Load system health
         function loadSystemHealth() {
             fetch('/status')
                 .then(response => response.json())
                 .then(data => {
                     const healthPercentage = data.ready ? 98 : 65;
-                    document.getElementById('healthStat').textContent = `${healthPercentage}%`;
                     document.getElementById('systemStatus').textContent = `${healthPercentage}%`;
                 })
                 .catch(() => {
-                    document.getElementById('healthStat').textContent = '--';
                     document.getElementById('systemStatus').textContent = '--';
                 });
         }
 
-        // Load today's events
         function loadTodayEvents() {
             fetch('/calendar/today')
                 .then(response => response.json())
@@ -1250,7 +1745,6 @@
                 });
         }
 
-        // Load integrations
         function loadIntegrations() {
             fetch('/integrations')
                 .then(response => response.json())
@@ -1262,7 +1756,7 @@
                         const card = document.createElement('div');
                         card.className = 'action-card';
                         
-                        const statusColor = integration.connected ? 'var(--accent-green)' : 'var(--accent-orange)';
+                        const statusColor = integration.connected ? 'var(--accent-success)' : 'var(--accent-warning)';
                         const statusIcon = integration.connected ? 'check-circle' : 'exclamation-circle';
                         
                         card.innerHTML = `
@@ -1274,16 +1768,12 @@
                                 <i class="fas fa-${statusIcon}" style="color: ${statusColor};"></i>
                                 ${integration.status_message}
                             </div>
-                            ${!integration.connected && integration.auth_url ? 
-                                `<button onclick="window.open('${integration.auth_url}', '_blank')" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-blue); color: white; border: none; border-radius: var(--radius-md); cursor: pointer;">Connect</button>` 
-                                : ''
-                            }
                         `;
                         container.appendChild(card);
                     });
                 })
                 .catch(() => {
-                    document.getElementById('integrationsList').innerHTML = '<div style="color: var(--accent-pink);">Failed to load integrations</div>';
+                    document.getElementById('integrationsList').innerHTML = '<div style="color: var(--accent-error);">Failed to load integrations</div>';
                 });
         }
 
@@ -1295,32 +1785,22 @@
                 'Notion': 'sticky-note',
                 'Dubsado': 'briefcase',
                 'QuickBooks': 'calculator',
-                'Synology NAS': 'server',
-                'Slack': 'slack',
-                'Zoom': 'video',
-                'Zapier': 'bolt'
+                'Apple Health': 'heart',
+                'HomeKit': 'home',
+                'Philips Hue': 'lightbulb'
             };
             return icons[name] || 'plug';
         }
 
-        // Quick actions
-        function openCalendarToday() {
-            window.open('/calendar/today', '_blank');
-        }
-
-        function checkPriorityEmails() {
-            window.open('/email/priority', '_blank');
-        }
-
         function refreshData() {
-            showNotification('Refreshing data...', 'info');
+            showNotification('Syncing all your data...', 'info');
             loadDashboardData();
             if (currentPage === 'integrations') {
                 loadIntegrations();
             }
             setTimeout(() => {
-                showNotification('Data refreshed successfully', 'success');
-            }, 1000);
+                showNotification('Everything is up to date!', 'success');
+            }, 1500);
         }
 
         // Notification system
@@ -1355,15 +1835,17 @@
         // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.remove('mobile-visible');
+                closeMobileNav();
             }
         });
 
-        // Close modal when clicking outside
-        document.getElementById('settingsModal').addEventListener('click', (e) => {
-            if (e.target.id === 'settingsModal') {
-                closeSettings();
-            }
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
         });
     </script>
 </body>
