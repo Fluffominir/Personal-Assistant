@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companion Memory - Ask Questions</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 10px;
+        }
+        .status-card {
+            background: #e8f4fd;
+            border: 1px solid #007acc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .status-good { color: #28a745; }
+        .status-bad { color: #dc3545; }
+        .question-form {
+            margin: 20px 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            border-color: #007acc;
+            outline: none;
+        }
+        button {
+            background: #007acc;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #005fa3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .answer-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007acc;
+            display: none;
+        }
+        .answer-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .sources {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .sources h4 {
+            margin: 0 0 10px 0;
+            color: #555;
+        }
+        .source-item {
+            background: #e9ecef;
+            padding: 5px 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            margin: 10px 0;
+        }
+        .sample-questions {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+        }
+        .sample-questions h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+        .sample-question {
+            background: white;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 1px solid #ffeaa7;
+            transition: background 0.2s;
+        }
+        .sample-question:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Companion Memory System</h1>
+        
+        <div class="status-card">
+            <h3>System Status</h3>
+            <div id="status-content">Loading status...</div>
+        </div>
+
+        <div class="sample-questions">
+            <h4>💡 Try these sample questions:</h4>
+            <div class="sample-question" onclick="setQuestion('What is Michael\'s personality like?')">
+                What is Michael's personality like?
+            </div>
+            <div class="sample-question" onclick="setQuestion('Tell me about Michael\'s background and experience')">
+                Tell me about Michael's background and experience
+            </div>
+            <div class="sample-question" onclick="setQuestion('What are the key features of the companion memory system?')">
+                What are the key features of the companion memory system?
+            </div>
+            <div class="sample-question" onclick="setQuestion('How does the RAG architecture work?')">
+                How does the RAG architecture work?
+            </div>
+        </div>
+
+        <form class="question-form" onsubmit="askQuestion(event)">
+            <div class="form-group">
+                <label for="question">Ask a question about the uploaded documents:</label>
+                <input type="text" id="question" name="question" 
+                       placeholder="e.g., What is Michael's background?" required>
+            </div>
+            <button type="submit" id="submit-btn">Ask Question</button>
+        </form>
+
+        <div id="answer-section" class="answer-section">
+            <h3>Answer:</h3>
+            <div id="answer-text" class="answer-text"></div>
+            <div class="sources">
+                <h4>Sources:</h4>
+                <div id="sources-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load system status on page load
+        loadStatus();
+
+        function setQuestion(question) {
+            document.getElementById('question').value = question;
+        }
+
+        async function loadStatus() {
+            try {
+                const response = await fetch('/status');
+                const status = await response.json();
+                
+                let statusHtml = '';
+                statusHtml += `<div class="status-item">OpenAI API: <span class="${status.openai_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.openai_api_key}</span></div>`;
+                statusHtml += `<div class="status-item">Pinecone API: <span class="${status.pinecone_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.pinecone_api_key}</span></div>`;
+                statusHtml += `<div class="status-item">Index Ready: <span class="${status.index_exists === '✓' ? 'status-good' : 'status-bad'}">${status.index_exists}</span></div>`;
+                statusHtml += `<div class="status-item">PDF Files: <span class="status-good">${status.pdf_files_found} found</span></div>`;
+                statusHtml += `<div class="status-item">System Ready: <span class="${status.ready ? 'status-good' : 'status-bad'}">${status.ready ? '✓' : '✗'}</span></div>`;
+                
+                if (status.pdf_files && status.pdf_files.length > 0) {
+                    statusHtml += `<div class="status-item">Files: ${status.pdf_files.join(', ')}</div>`;
+                }
+                
+                document.getElementById('status-content').innerHTML = statusHtml;
+            } catch (error) {
+                document.getElementById('status-content').innerHTML = '<div class="error">Failed to load status</div>';
+            }
+        }
+
+        async function askQuestion(event) {
+            event.preventDefault();
+            
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+
+            const submitBtn = document.getElementById('submit-btn');
+            const answerSection = document.getElementById('answer-section');
+            const answerText = document.getElementById('answer-text');
+            const sourcesList = document.getElementById('sources-list');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Thinking...';
+            answerSection.style.display = 'block';
+            answerText.innerHTML = '<div class="loading">🤔 Processing your question...</div>';
+            sourcesList.innerHTML = '';
+
+            try {
+                const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Failed to get answer');
+                }
+
+                // Display answer
+                answerText.innerHTML = data.answer;
+                
+                // Display sources
+                if (data.sources && data.sources.length > 0) {
+                    sourcesList.innerHTML = data.sources
+                        .map(source => `<div class="source-item">${source}</div>`)
+                        .join('');
+                } else {
+                    sourcesList.innerHTML = '<div class="source-item">No sources found</div>';
+                }
+
+            } catch (error) {
+                answerText.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+                sourcesList.innerHTML = '';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Ask Question';
+            }
+        }
+
+        // Allow Enter key to submit form
+        document.getElementById('question').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                askQuestion(e);
+            }
+        });
+    </script>
+</body>
+</html>

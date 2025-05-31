@@ -1,5 +1,7 @@
 import os, openai, pinecone
 from fastapi import FastAPI, Query, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 try:
@@ -57,8 +59,16 @@ else:
 
 app = FastAPI()
 
+# Mount static files (CSS, JS, images)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/")
 def root():
+    # Serve the main HTML interface
+    return FileResponse("static/index.html")
+
+@app.get("/api")
+def api_root():
     status = {
         "message": "Companion Memory API",
         "endpoints": ["/ask", "/status"],
