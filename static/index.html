@@ -3,30 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michael's Executive Assistant - AI Companion</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Michael's AI Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #1a1a2e;
-            --secondary-color: #16213e;
-            --accent-color: #0f3460;
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border-color: #30363d;
             --success-color: #00d4aa;
-            --warning-color: #ff6b35;
-            --danger-color: #e94560;
-            --text-primary: #ffffff;
-            --text-secondary: #b8c1ec;
-            --text-muted: #8892b0;
-            --background-dark: #0a0e27;
-            --surface-dark: rgba(22, 33, 62, 0.6);
-            --surface-light: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(184, 193, 236, 0.1);
-            --shadow-primary: 0 8px 32px rgba(0, 0, 0, 0.4);
-            --shadow-secondary: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --danger-color: #ff6b6b;
+            --warning-color: #ffa726;
             --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #0f9b8e 100%);
-            --border-radius: 16px;
+            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #00a8ff 100%);
+            --shadow-primary: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-secondary: 0 5px 15px rgba(0, 212, 170, 0.2);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -37,325 +31,190 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--background-dark);
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(0, 212, 170, 0.1) 0%, transparent 50%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 100%;
-            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: clamp(16px, 3vw, 24px);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
             min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .main-content {
             display: flex;
             flex-direction: column;
-            box-sizing: border-box;
+            gap: 20px;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-            background: var(--surface-dark);
-            backdrop-filter: blur(20px);
-            border-radius: var(--border-radius);
-            padding: 48px;
-            box-shadow: var(--shadow-primary);
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
             border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
+            box-shadow: var(--shadow-primary);
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-accent);
+        .header-card {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            text-align: center;
         }
 
-        .header h1 {
-            font-size: 3.2rem;
+        .header-card h1 {
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #fff, #e3f2fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .header .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.3rem;
-            font-weight: 400;
+        .header-card p {
+            font-size: 1.1rem;
             opacity: 0.9;
         }
 
-        .main-content {
-            display: grid;
-            grid-template-columns: minmax(300px, 380px) 1fr minmax(280px, 320px);
-            gap: clamp(16px, 3vw, 32px);
-            flex: 1;
-            width: 100%;
-            max-width: 100%;
-        }
-
-        .sidebar, .integrations-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .card {
-            background: var(--surface-dark);
-            backdrop-filter: blur(20px);
-            border-radius: var(--border-radius);
-            padding: 28px;
-            box-shadow: var(--shadow-primary);
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            opacity: 0.6;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-            border-color: rgba(184, 193, 236, 0.2);
-        }
-
-        .card h3 {
-            color: var(--text-primary);
-            margin-bottom: 24px;
-            font-weight: 600;
+        .status-section h3 {
+            color: var(--success-color);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card h3 i {
-            color: var(--success-color);
-            width: 20px;
-            font-size: 1.2rem;
+            gap: 8px;
         }
 
         .status-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 12px;
         }
 
         .status-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
-            background: var(--surface-light);
-            border-radius: 12px;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
             font-size: 0.9rem;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
         }
 
-        .status-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--success-color);
+        .status-item i {
+            width: 16px;
+            text-align: center;
         }
 
-        .status-good {
-            color: var(--success-color);
-            font-weight: 600;
+        .integrations-section {
+            margin-top: 24px;
         }
 
-        .status-bad {
-            color: var(--danger-color);
-            font-weight: 600;
+        .integrations-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .integration-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 20px;
-            background: var(--surface-light);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-            font-size: 0.9rem;
-        }
-
-        .integration-item:hover {
-            background: rgba(0, 212, 170, 0.1);
-            border-color: var(--success-color);
-            transform: translateX(4px);
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 0.85rem;
         }
 
         .integration-status {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            margin-left: 12px;
-            box-shadow: 0 0 8px currentColor;
+            background: var(--text-muted);
         }
 
         .integration-connected {
-            background-color: var(--success-color);
+            background: var(--success-color);
         }
 
         .integration-disconnected {
-            background-color: var(--text-muted);
-        }
-
-        .sample-questions {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .sample-question {
-            padding: 18px 22px;
-            background: var(--gradient-secondary);
-            color: var(--text-primary);
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.9rem;
-            border: 1px solid var(--border-color);
-            text-align: left;
-            font-weight: 500;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sample-question::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .sample-question:hover::before {
-            left: 100%;
-        }
-
-        .sample-question:hover {
-            transform: translateY(-2px);
-            background: var(--gradient-primary);
-            box-shadow: var(--shadow-secondary);
-            border-color: var(--success-color);
+            background: var(--danger-color);
         }
 
         .chat-area {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            height: 750px;
+            min-height: 500px;
         }
 
         .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 32px;
-            background: var(--surface-dark);
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            backdrop-filter: blur(20px);
+            margin-bottom: 20px;
+            padding-right: 8px;
         }
 
         .message {
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 12px;
             max-width: 85%;
-            padding: 20px 24px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            line-height: 1.7;
-            box-shadow: var(--shadow-secondary);
-            position: relative;
         }
 
         .message.user {
-            align-self: flex-end;
             background: var(--gradient-accent);
-            color: var(--text-primary);
-            border: 1px solid rgba(0, 212, 170, 0.3);
+            color: white;
+            margin-left: auto;
         }
 
         .message.assistant {
-            align-self: flex-start;
-            background: var(--surface-light);
-            color: var(--text-primary);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
         }
 
-        .sources {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-color);
+        .message-content {
+            white-space: pre-wrap;
+            line-height: 1.5;
         }
 
-        .sources h5 {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
+        .sources {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
         }
 
         .source-tag {
             display: inline-block;
-            background: var(--surface-light);
-            color: var(--text-secondary);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            margin: 4px;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .source-tag:hover {
             background: var(--success-color);
-            color: var(--background-dark);
+            color: var(--bg-primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin: 2px;
+            font-weight: 500;
         }
 
         .input-area {
             display: flex;
-            gap: 16px;
-            padding: 32px;
-            background: var(--surface-dark);
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-            border-top: 1px solid var(--border-color);
-            backdrop-filter: blur(20px);
+            gap: 12px;
+            align-items: stretch;
         }
 
         .question-input {
@@ -363,11 +222,13 @@
             padding: 18px 24px;
             border: 2px solid var(--border-color);
             border-radius: 28px;
-            font-size: 1rem;
-            outline: none;
-            transition: var(--transition);
-            background: var(--surface-light);
+            background: var(--bg-tertiary);
             color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            resize: none;
+            min-height: 56px;
+            max-height: 150px;
             font-family: inherit;
         }
 
@@ -430,360 +291,145 @@
         .welcome-message {
             text-align: center;
             color: var(--text-secondary);
-            font-style: italic;
-            margin: auto;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            padding: 32px;
-            background: var(--surface-light);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
+            padding: 40px 20px;
+        }
+
+        .welcome-message h3 {
+            color: var(--success-color);
+            margin-bottom: 12px;
         }
 
         .quick-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
             margin-top: 20px;
         }
 
         .quick-action-btn {
-            padding: 14px 16px;
-            background: var(--surface-light);
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            transition: var(--transition);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quick-action-btn:hover {
-            background: var(--gradient-primary);
             color: var(--text-primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-secondary);
-        }
-
-        .quick-action-btn i {
-            font-size: 1.2rem;
-        }
-
-        .executive-summary {
-            background: var(--gradient-secondary);
-            border-radius: var(--border-radius);
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border-color);
-        }
-
-        .executive-summary h4 {
-            color: var(--success-color);
-            margin-bottom: 16px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metric {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .metric:last-child {
-            border-bottom: none;
-        }
-
-        .metric-value {
-            color: var(--success-color);
-            font-weight: 600;
-        }
-
-        .daily-agenda {
-            font-size: 0.9rem;
-        }
-
-        .agenda-item {
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            background: var(--surface-light);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 3px solid var(--success-color);
         }
 
-        .agenda-time {
-            color: var(--success-color);
-            font-weight: 600;
-            min-width: 60px;
-        }
-
-        @media (max-width: 1400px) {
-            .main-content {
-                grid-template-columns: minmax(280px, 320px) 1fr;
-                gap: clamp(12px, 2vw, 24px);
-            }
-            .integrations-panel {
-                display: none;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .sidebar {
-                order: 2;
-            }
-
-            .chat-area {
-                order: 1;
-                height: clamp(400px, 60vh, 600px);
-            }
+        .quick-action-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--success-color);
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: clamp(2rem, 6vw, 2.4rem);
-            }
-
-            .header .subtitle {
-                font-size: clamp(1rem, 3vw, 1.3rem);
-            }
-
-            .chat-area {
-                height: clamp(350px, 50vh, 500px);
-            }
-
             .container {
-                padding: clamp(12px, 3vw, 16px);
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 16px;
             }
 
-            .card {
-                padding: clamp(16px, 4vw, 28px);
-            }
-
-            .input-area {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .send-btn {
-                width: 100%;
+            .sidebar {
+                position: static;
                 order: 2;
             }
 
-            .question-input {
+            .main-content {
                 order: 1;
             }
 
-            .sample-questions {
-                grid-template-columns: 1fr;
-            }
-
-            .quick-actions {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: clamp(24px, 6vw, 32px);
+            .header-card h1 {
+                font-size: 2rem;
             }
 
             .quick-actions {
                 grid-template-columns: 1fr;
             }
-
-            .status-grid {
-                gap: 8px;
-            }
-
-            .messages {
-                padding: clamp(16px, 4vw, 24px);
-            }
-
-            .input-area {
-                padding: clamp(16px, 4vw, 24px);
-            }
-        }
-
-        /* Custom scrollbar */
-        .messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .messages::-webkit-scrollbar-track {
-            background: var(--surface-light);
-            border-radius: 4px;
-        }
-
-        .messages::-webkit-scrollbar-thumb {
-            background: var(--success-color);
-            border-radius: 4px;
-        }
-
-        .messages::-webkit-scrollbar-thumb:hover {
-            background: var(--warning-color);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Michael's Executive Assistant</h1>
-            <div class="subtitle">Comprehensive Life & Business Intelligence Platform</div>
+        <div class="sidebar">
+            <div class="status-section">
+                <h3><i class="fas fa-chart-line"></i> System Status</h3>
+                <div class="status-grid" id="status-display">
+                    <div class="status-item">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </div>
+                </div>
+            </div>
+
+            <div class="integrations-section">
+                <h3><i class="fas fa-plug"></i> Integrations</h3>
+                <div class="integrations-grid">
+                    <div class="integration-item">
+                        <span>Google Calendar</span>
+                        <div class="integration-status" id="google-calendar-status"></div>
+                    </div>
+                    <div class="integration-item">
+                        <span>Gmail</span>
+                        <div class="integration-status" id="gmail-status"></div>
+                    </div>
+                    <div class="integration-item">
+                        <span>Notion</span>
+                        <div class="integration-status" id="notion-status"></div>
+                    </div>
+                    <div class="integration-item">
+                        <span>Dubsado</span>
+                        <div class="integration-status" id="dubsado-status"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="main-content">
-            <div class="sidebar">
-                <div class="card">
-                    <h3><i class="fas fa-tachometer-alt"></i>System Analytics</h3>
-                    <div id="status-content">
-                        <div class="loading">Analyzing system performance...</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-brain"></i>Intelligent Queries</h3>
-                    <div class="sample-questions">
-                        <button class="sample-question" onclick="setQuestion('Analyze my calendar for optimization opportunities')">
-                            Analyze my calendar for optimization opportunities
-                        </button>
-                        <button class="sample-question" onclick="setQuestion('What are my strategic priorities this week?')">
-                            What are my strategic priorities this week?
-                        </button>
-                        <button class="sample-question" onclick="setQuestion('Review my email patterns and suggest improvements')">
-                            Review my email patterns and suggest improvements
-                        </button>
-                        <button class="sample-question" onclick="setQuestion('Generate a weekly executive summary')">
-                            Generate a weekly executive summary
-                        </button>
-                        <button class="sample-question" onclick="setQuestion('What insights can you provide from my recent activities?')">
-                            What insights can you provide from my recent activities?
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-rocket"></i>Executive Actions</h3>
-                    <div class="quick-actions">
-                        <button class="quick-action-btn" onclick="quickAction('schedule')">
-                            <i class="fas fa-calendar-check"></i>
-                            Strategic Planning
-                        </button>
-                        <button class="quick-action-btn" onclick="quickAction('email')">
-                            <i class="fas fa-envelope-open-text"></i>
-                            Priority Inbox
-                        </button>
-                        <button class="quick-action-btn" onclick="quickAction('notes')">
-                            <i class="fas fa-lightbulb"></i>
-                            Knowledge Base
-                        </button>
-                        <button class="quick-action-btn" onclick="quickAction('tasks')">
-                            <i class="fas fa-bullseye"></i>
-                            Goal Tracking
-                        </button>
-                    </div>
-                </div>
+            <div class="card header-card">
+                <h1><i class="fas fa-robot"></i> Michael's AI Companion</h1>
+                <p>Your intelligent assistant for personal and professional productivity</p>
             </div>
 
             <div class="card chat-area">
                 <div class="messages" id="messages">
                     <div class="welcome-message">
-                        Welcome back, Michael. Your comprehensive AI assistant is ready to help you optimize your personal and professional life.
-                        <br><br>
-                        I have access to your calendar, email, documents, and integrated systems to provide intelligent insights, automate routine tasks, and help you make data-driven decisions.
-                        <br><br>
-                        How can I assist you in maximizing your productivity and achieving your goals today?
+                        <h3>👋 Hello Michael!</h3>
+                        <p>I'm your AI companion, ready to help with your schedule, emails, projects, and anything else you need.</p>
+
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" onclick="quickAction('schedule')">
+                                <i class="fas fa-calendar-check"></i>
+                                Strategic Planning
+                            </button>
+                            <button class="quick-action-btn" onclick="quickAction('email')">
+                                <i class="fas fa-envelope-open-text"></i>
+                                Priority Inbox
+                            </button>
+                            <button class="quick-action-btn" onclick="quickAction('notes')">
+                                <i class="fas fa-lightbulb"></i>
+                                Knowledge Base
+                            </button>
+                            <button class="quick-action-btn" onclick="quickAction('tasks')">
+                                <i class="fas fa-bullseye"></i>
+                                Goal Tracking
+                            </button>
+                        </div>
                     </div>
                 </div>
+
                 <div class="input-area">
-                    <input type="text" id="question" class="question-input" 
-                           placeholder="Ask about your systems, request analysis, or delegate tasks..." 
-                           onkeypress="handleKeyPress(event)">
-                    <button onclick="askQuestion()" id="send-btn" class="send-btn">
+                    <textarea 
+                        id="question"
+                        class="question-input"
+                        placeholder="Ask me anything about your schedule, emails, projects, or get help with tasks..."
+                        onkeypress="handleKeyPress(event)"
+                        rows="1"
+                    ></textarea>
+                    <button id="send-btn" class="send-btn" onclick="askQuestion()">
                         <i class="fas fa-paper-plane"></i>
                     </button>
-                </div>
-            </div>
-
-            <div class="integrations-panel">
-                <div class="card">
-                    <div class="executive-summary">
-                        <h4><i class="fas fa-chart-line"></i> Today's Overview</h4>
-                        <div class="metric">
-                            <span>Calendar Density</span>
-                            <span class="metric-value">68%</span>
-                        </div>
-                        <div class="metric">
-                            <span>Priority Emails</span>
-                            <span class="metric-value">12</span>
-                        </div>
-                        <div class="metric">
-                            <span>Active Projects</span>
-                            <span class="metric-value">7</span>
-                        </div>
-                        <div class="metric">
-                            <span>Focus Score</span>
-                            <span class="metric-value">85%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-network-wired"></i>System Integrations</h3>
-                    <div id="integrations-list">
-                        <div class="integration-item">
-                            <span><i class="fab fa-google"></i> Google Workspace</span>
-                            <div id="google-calendar-status" class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fas fa-brain"></i> Notion</span>
-                            <div class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fas fa-server"></i> Synology NAS</span>
-                            <div class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fas fa-handshake"></i> Dubsado CRM</span>
-                            <div class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fab fa-slack"></i> Slack</span>
-                            <div class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fas fa-video"></i> Zoom</span>
-                            <div class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fas fa-bolt"></i> Zapier</span>
-                            <div class="integration-status integration-disconnected"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-clock"></i>Today's Agenda</h3>
-                    <div id="daily-overview" class="daily-agenda">
-                        <p style="color: var(--text-secondary); font-style: italic; text-align: center; padding: 20px;">
-                            Connect your integrations to see your intelligent daily briefing.
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -792,79 +438,64 @@
     <script>
         let isLoading = false;
 
-        // Load system status on page load
-        loadStatus();
-        loadIntegrations();
-
-        function setQuestion(question) {
-            document.getElementById('question').value = question;
-            document.getElementById('question').focus();
-        }
+        // Auto-resize textarea
+        document.getElementById('question').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
 
         function handleKeyPress(event) {
-            if (event.key === 'Enter' && !isLoading) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
                 askQuestion();
             }
         }
 
-        function quickAction(action) {
-            const actions = {
-                'schedule': 'Analyze my calendar and suggest strategic time blocks for high-impact work',
-                'email': 'Prioritize my inbox and draft responses for critical communications',
-                'notes': 'Review my recent notes and extract actionable insights and follow-ups',
-                'tasks': 'Assess my current goals and suggest optimization strategies'
+        function quickAction(type) {
+            const questions = {
+                'schedule': "What's on my calendar today and this week?",
+                'email': "Show me my most important unread emails",
+                'notes': "What information do you have about my current projects?",
+                'tasks': "Help me prioritize my tasks for today"
             };
 
-            if (actions[action]) {
-                setQuestion(actions[action]);
-            }
+            const questionInput = document.getElementById('question');
+            questionInput.value = questions[type];
+            questionInput.focus();
         }
 
-        async function loadStatus() {
-            try {
-                const response = await fetch('/status');
-                const status = await response.json();
+        function addMessage(content, sender, isLoading = false, sources = []) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
 
-                let statusHtml = `
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <span><i class="fas fa-robot"></i> AI Engine</span>
-                            <span class="${status.openai_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.openai_api_key}</span>
-                        </div>
-                        <div class="status-item">
-                            <span><i class="fas fa-database"></i> Vector Database</span>
-                            <span class="${status.pinecone_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.pinecone_api_key}</span>
-                        </div>
-                        <div class="status-item">
-                            <span><i class="fas fa-search"></i> Knowledge Index</span>
-                            <span class="${status.index_exists === '✓' ? 'status-good' : 'status-bad'}">${status.index_exists}</span>
-                        </div>
-                        <div class="status-item">
-                            <span><i class="fas fa-file-alt"></i> Documents</span>
-                            <span class="status-good">${status.pdf_files_found} indexed</span>
-                        </div>
-                    </div>
-                `;
+            if (isLoading) {
+                messageDiv.innerHTML = '<div class="loading">Thinking...</div>';
+            } else {
+                let html = `<div class="message-content">${content}</div>`;
 
-                if (status.pdf_files && status.pdf_files.length > 0) {
-                    statusHtml += `<div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary);">
-                        <strong>Knowledge Base:</strong> ${status.pdf_files.join(', ')}
-                    </div>`;
+                if (sources && sources.length > 0) {
+                    html += `
+                        <div class="sources">
+                            <strong>Sources:</strong><br>
+                            ${sources.map(source => `<span class="source-tag">${source}</span>`).join('')}
+                        </div>
+                    `;
                 }
 
-                const readyStatus = status.ready ? 'System Operational' : 'Configuration Required';
-                statusHtml += `<div style="margin-top: 24px; padding: 16px; background: ${status.ready ? 'var(--gradient-accent)' : 'linear-gradient(135deg, var(--danger-color), #c73650)'}; border-radius: 12px; text-align: center; font-weight: 600; color: var(--text-primary);">
-                    <i class="fas fa-${status.ready ? 'check-circle' : 'exclamation-triangle'}"></i> ${readyStatus}
-                </div>`;
-
-                document.getElementById('status-content').innerHTML = statusHtml;
-            } catch (error) {
-                document.getElementById('status-content').innerHTML = `
-                    <div class="status-item" style="color: var(--danger-color);">
-                        <i class="fas fa-exclamation-triangle"></i> System Status Unavailable
-                    </div>
-                `;
+                messageDiv.innerHTML = html;
             }
+
+            // Remove welcome message if it exists
+            const welcomeMsg = messagesContainer.querySelector('.welcome-message');
+            if (welcomeMsg) {
+                welcomeMsg.remove();
+            }
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            return messageDiv;
         }
 
         async function askQuestion() {
@@ -885,6 +516,7 @@
 
             // Clear input
             questionInput.value = '';
+            questionInput.style.height = 'auto';
 
             // Add loading message
             const loadingMsg = addMessage('', 'assistant', true);
@@ -910,7 +542,10 @@
                 loadingMsg.remove();
 
                 // Add error message
-                addMessage(`I encountered an error while processing your request: ${error.message}`, 'assistant');
+                addMessage(
+                    `Sorry, I encountered an error: ${error.message}\n\nPlease check that the system is properly configured and try again.`,
+                    'assistant'
+                );
             } finally {
                 isLoading = false;
                 sendBtn.disabled = false;
@@ -919,38 +554,37 @@
             }
         }
 
-        function addMessage(content, sender, isLoading = false, sources = []) {
-            const messagesContainer = document.getElementById('messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
+        function loadStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    const statusDisplay = document.getElementById('status-display');
 
-            if (isLoading) {
-                messageDiv.innerHTML = '<div class="loading">Processing your request and analyzing available data...</div>';
-            } else {
-                let html = content;
-
-                if (sources && sources.length > 0) {
-                    html += `
-                        <div class="sources">
-                            <h5><i class="fas fa-link"></i> Data Sources:</h5>
-                            ${sources.map(source => `<span class="source-tag">${source}</span>`).join('')}
+                    if (data.ready) {
+                        statusDisplay.innerHTML = `
+                            <div class="status-item" style="color: var(--success-color);">
+                                <i class="fas fa-check-circle"></i> System Ready
+                            </div>
+                            <div class="status-item" style="color: var(--success-color);">
+                                <i class="fas fa-database"></i> ${data.pdf_files_found} documents loaded
+                            </div>
+                        `;
+                    } else {
+                        statusDisplay.innerHTML = `
+                            <div class="status-item" style="color: var(--warning-color);">
+                                <i class="fas fa-exclamation-triangle"></i> Configuration needed
+                            </div>
+                        `;
+                    }
+                })
+                .catch(() => {
+                    const statusDisplay = document.getElementById('status-display');
+                    statusDisplay.innerHTML = `
+                        <div class="status-item" style="color: var(--danger-color);">
+                            <i class="fas fa-exclamation-triangle"></i> System Status Unavailable
                         </div>
                     `;
-                }
-
-                messageDiv.innerHTML = html;
-            }
-
-            // Remove welcome message if it exists
-            const welcomeMsg = messagesContainer.querySelector('.welcome-message');
-            if (welcomeMsg) {
-                welcomeMsg.remove();
-            }
-
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            return messageDiv;
+                });
         }
 
         function loadIntegrations() {
@@ -964,6 +598,15 @@
                             case 'Google Calendar':
                                 statusElement = document.getElementById('google-calendar-status');
                                 break;
+                            case 'Gmail':
+                                statusElement = document.getElementById('gmail-status');
+                                break;
+                            case 'Notion':
+                                statusElement = document.getElementById('notion-status');
+                                break;
+                            case 'Dubsado':
+                                statusElement = document.getElementById('dubsado-status');
+                                break;
                         }
 
                         if (statusElement) {
@@ -976,55 +619,21 @@
                             }
                         }
                     });
-
-                    // Load calendar if authenticated
-                    loadTodayCalendar();
                 })
-                .catch(error => console.error('Error loading integrations:', error));
-        }
-
-        function loadTodayCalendar() {
-            fetch('/calendar/today')
-                .then(response => response.json())
-                .then(data => {
-                    const overviewDiv = document.getElementById('daily-overview');
-
-                    if (data.error) {
-                        overviewDiv.innerHTML = `
-                            <p style="color: var(--danger-color); font-size: 14px; text-align: center; padding: 20px;">
-                                ${data.error}
-                                ${data.auth_url ? `<br><br><a href="${data.auth_url}" style="color: var(--success-color); text-decoration: none;">→ Connect Google Calendar</a>` : ''}
-                            </p>
-                        `;
-                    } else if (data.events && data.events.length > 0) {
-                        overviewDiv.innerHTML = `
-                            ${data.events.map(event => `
-                                <div class="agenda-item">
-                                    <div class="agenda-time">${new Date(event.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                                    <div>
-                                        <strong>${event.title}</strong>
-                                        ${event.description ? `<br><span style="color: var(--text-muted); font-size: 0.8rem;">${event.description.substring(0, 80)}...</span>` : ''}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        `;
-                    } else {
-                        overviewDiv.innerHTML = `
-                            <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
-                                <i class="fas fa-calendar-check" style="font-size: 2rem; margin-bottom: 12px; color: var(--success-color);"></i>
-                                <p>Clear schedule today</p>
-                                <p style="font-size: 0.8rem; margin-top: 8px;">Perfect time for deep work</p>
-                            </div>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading calendar:', error);
-                    document.getElementById('daily-overview').innerHTML = `
-                        <p style="color: var(--danger-color); font-size: 14px; text-align: center; padding: 20px;">Calendar unavailable</p>
-                    `;
+                .catch(() => {
+                    // Set all integrations to unknown status
+                    document.querySelectorAll('.integration-status').forEach(el => {
+                        el.className = 'integration-status';
+                        el.title = 'Status unknown';
+                    });
                 });
         }
+
+        // Load status and integrations when page loads
+        window.addEventListener('load', () => {
+            loadStatus();
+            loadIntegrations();
+        });
     </script>
 </body>
 </html>
