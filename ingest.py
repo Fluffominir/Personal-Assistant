@@ -3,6 +3,12 @@ from pypdf import PdfReader
 from PIL import Image
 import pytesseract, openai, pinecone
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 RAW       = pathlib.Path("data/raw")
 EMBED_MD  = "text-embedding-3-small"
 INDEX_NM  = "companion-memory"

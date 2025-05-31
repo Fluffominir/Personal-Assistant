@@ -1,7 +1,13 @@
 import os, openai, pinecone
 from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel
-from dotenv import load_dotenv
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not available, environment variables should come from system
+    pass
 
 # Load environment variables from .env file if it exists
 load_dotenv()
