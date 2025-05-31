@@ -1,0 +1,103 @@
+You’re my code-formatter. Patch the current Repl as follows
+— keep syntax valid, run “Format” after every edit.
+
+──────────────────────── ingest.py ────────────────────────
+1. At top add:  import re, textwrap, uuid
+2. Replace the whole pdf_to_chunks() with:
+
+def pdf_to_chunks(path: Path, chunk_size: int = 600) -> list[tuple[str,int]]:
+    """
+    Return [(text, page_number), …] where each text chunk ≈ chunk_size chars
+    and never crosses a blank-line boundary.
+    """
+    from PyPDF2 import PdfReader
+    chunks = []
+    for pnum, page in enumerate(PdfReader(path).pages, start=1):
+        raw = (page.extract_text() or "").replace("-\n", "")
+        for para in re.split(r"\n\s*\n", raw):
+            for piece in textwrap.wrap(para.strip(), chunk_size,
+                                       break_long_words=False):
+                if piece:
+                    chunks.append((piece, pnum))
+    return chunks
+
+3. Inside build_vectors() change the upsert loop to:
+
+for txt, pnum in chunks:
+    vectors.append(
+        (str(uuid.uuid4()), embed(txt),
+         {"source": file.name, "page": pnum})
+    )
+
+──────────────────────── main.py ──────────────────────────
+1. Replace fetch_memories() with:
+
+def fetch_memories(query: str, top_k: int = 5) -> list[Dict]:
+    res = index.query(
+        vector=embed(query),
+        top_k=top_k,
+        include_metadata=True,
+    )
+    return [m for m in res.matches if m.score > 0.30]
+
+2. When you build messages[], delete the old “system” and insert exactly:
+
+messages = [{
+    "role": "system",
+    "content": (
+        "You answer **only** from the (Memory …) items provided. "
+        "If none apply, reply: 'I don’t have that information yet.'"
+    )
+}]
+
+──────────────── integrations.py  (Google section) ─────────
+1. At top of file add:
+    import datetime
+    from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
+
+2. In google_callback(code) **after** flow.fetch_token replace the
+   db.save line with:
+
+creds = flow.credentials
+db.save("google_creds", {
+    "token": creds.token,
+    "refresh_token": creds.refresh_token,
+    "expiry": creds.expiry.isoformat()
+})
+
+3. Replace google_health() body with:
+
+record = db.load("google_creds")
+if not record:
+    return False
+
+creds = Credentials(
+    token=record["token"],
+    refresh_token=record["refresh_token"],
+    token_uri="https://oauth2.googleapis.com/token",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+    scopes=scopes,
+    expiry=datetime.datetime.fromisoformat(record["expiry"])
+)
+if creds.expired and creds.refresh_token:
+    creds.refresh(Request())
+    db.save("google_creds", {
+        **record,
+        "token": creds.token,
+        "expiry": creds.expiry.isoformat()
+    })
+
+try:
+    build("calendar","v3",credentials=creds)\
+        .calendarList().list(maxResults=1).execute()
+    return True
+except Exception:
+    return False
+
+──────────────────────── end patch ─────────────────────────
+After edits: run ingest.py again to rebuild vectors, then restart the server.
+Expected test:
+POST /chat {"message":"Who is my sister?"}  →  "Audrey." with citation.
+Also: Google Calendar / Gmail dots stay green after 1 hour (refresh-token stored).
