@@ -590,14 +590,16 @@ def ask(q: str = Query(..., description="Your question")):
         main_hits = idx.query(vector=qvec, top_k=6, namespace=NS, include_metadata=True).matches
         notion_hits = idx.query(vector=qvec, top_k=6, namespace="notion", include_metadata=True).matches
         
-        # Combine and filter by relevance score
+        # Combine and filter by relevance score with higher threshold
         all_hits = main_hits + notion_hits
-        hits = [h for h in all_hits if h.score > 0.25][:8]
+        # Use higher relevance threshold to prevent hallucinations
+        hits = [h for h in all_hits if h.score > 0.75][:8]
         print(f"✓ Found {len(hits)} relevant matches ({len(main_hits)} from docs, {len(notion_hits)} from Notion)")
+        print(f"✓ Relevance scores: {[f'{h.score:.3f}' for h in hits]}")
         
         if not hits:
             return {
-                "answer": "I don't have enough information to answer that question based on your uploaded documents. However, I can help you with:\n\n1. Calendar management\n2. Email prioritization\n3. Project tracking\n4. General questions about your business\n\nTry asking something like 'What's my schedule like?' or 'Help me plan my week.'",
+                "answer": "I don't have that specific information in your knowledge base yet. To get accurate answers, please:\n\n1. Add the relevant documents to data/raw/ and run ingest.py\n2. Update your Notion pages with the correct information\n3. Or ask me about something I do know from your uploaded documents\n\nI can help with calendar management, email prioritization, and questions about content that's already in your system.",
                 "sources": []
             }
         
@@ -611,8 +613,10 @@ def ask(q: str = Query(..., description="Your question")):
         ctx = "\n\n---\n\n".join(ctx_pieces)
         print(f"✓ Built context from {len(hits)} sources")
         
-        # Enhanced system prompt for Michael
+        # Enhanced system prompt for Michael with strict fact-checking
         system_prompt = f"""You are Michael Slusher's personal AI companion and executive assistant. You know Michael intimately and should respond as his trusted advisor and helper.
+
+CRITICAL INSTRUCTION: Only use information found in the provided context below. If the answer is not in the context, you MUST say "I don't have that information in your knowledge base yet" rather than guessing or making up facts.
 
 KEY CONTEXT ABOUT MICHAEL:
 - You are speaking directly to Michael Slusher, founder of Rocket Launch Studio
@@ -623,17 +627,17 @@ KEY CONTEXT ABOUT MICHAEL:
 
 YOUR ROLE:
 - Act as Michael's personal assistant, not a generic AI
-- Provide personalized advice based on his personality and preferences
+- Provide personalized advice based ONLY on information in the context
 - Help him stay organized and on track with his goals
 - Be encouraging and supportive, understanding his neurodivergent needs
-- Suggest improvements to his workflow and business
+- NEVER make up or guess personal information about Michael
 
 COMMUNICATION STYLE:
 - Be direct but warm and supportive
 - Break down complex information into digestible chunks
-- Offer actionable advice and next steps
-- Reference his goals and values when relevant
-- Don't just recite information - provide insights and suggestions
+- Offer actionable advice and next steps based on available context
+- Reference his goals and values when relevant from the provided information
+- If you don't know something, be honest about it
 
 Context from Michael's documents:
 {ctx}"""
@@ -661,3 +665,44 @@ Context from Michael's documents:
     except Exception as e:
         print(f"❌ Error processing question: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing question: {str(e)}")
+
+
+
+@app.get("/debug/search")
+def debug_search(q: str = Query(..., description="Search term to debug")):
+    """Debug endpoint to see what's actually in the knowledge base"""
+    if not openai_client or not idx:
+        raise HTTPException(status_code=503, detail="System not configured")
+    
+    try:
+        # Get embeddings
+        qvec = openai_client.embeddings.create(model=EMBED_MD, input=q).data[0].embedding
+        
+        # Query both namespaces
+        main_hits = idx.query(vector=qvec, top_k=10, namespace=NS, include_metadata=True).matches
+        notion_hits = idx.query(vector=qvec, top_k=10, namespace="notion", include_metadata=True).matches
+        
+        return {
+            "query": q,
+            "main_namespace_results": [
+                {
+                    "score": h.score,
+                    "source": h.metadata.get("source", "Unknown"),
+                    "text_preview": h.metadata.get("text", "")[:200] + "..."
+                }
+                for h in main_hits
+            ],
+            "notion_namespace_results": [
+                {
+                    "score": h.score,
+                    "source": h.metadata.get("source", "Unknown"),
+                    "text_preview": h.metadata.get("text", "")[:200] + "..."
+                }
+                for h in notion_hits
+            ],
+            "high_relevance_count": len([h for h in main_hits + notion_hits if h.score > 0.75])
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Debug search failed: {str(e)}")
+
