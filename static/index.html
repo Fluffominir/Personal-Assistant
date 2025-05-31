@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +44,7 @@
             margin: 0 auto;
             padding: 20px;
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 20px;
             min-height: 100vh;
         }
@@ -136,10 +137,28 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 12px;
             background: var(--bg-tertiary);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .integration-item:hover {
+            background: var(--bg-primary);
+        }
+
+        .integration-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .integration-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .integration-status {
@@ -155,6 +174,57 @@
 
         .integration-disconnected {
             background: var(--danger-color);
+        }
+
+        .integration-warning {
+            background: var(--warning-color);
+        }
+
+        .auth-btn, .test-btn {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-btn:hover, .test-btn:hover {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: var(--bg-primary);
+        }
+
+        .quick-access {
+            margin-top: 24px;
+        }
+
+        .quick-access-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-access-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+
+        .quick-access-btn:hover {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: var(--bg-primary);
         }
 
         .chat-area {
@@ -237,6 +307,7 @@
         }
 
         .question-input:focus {
+            outline: none;
             border-color: var(--success-color);
             box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.1);
             background: rgba(255, 255, 255, 0.08);
@@ -365,23 +436,32 @@
 
             <div class="integrations-section">
                 <h3><i class="fas fa-plug"></i> Integrations</h3>
-                <div class="integrations-grid">
-                    <div class="integration-item">
-                        <span>Google Calendar</span>
-                        <div class="integration-status" id="google-calendar-status"></div>
-                    </div>
-                    <div class="integration-item">
-                        <span>Gmail</span>
-                        <div class="integration-status" id="gmail-status"></div>
-                    </div>
-                    <div class="integration-item">
-                        <span>Notion</span>
-                        <div class="integration-status" id="notion-status"></div>
-                    </div>
-                    <div class="integration-item">
-                        <span>Dubsado</span>
-                        <div class="integration-status" id="dubsado-status"></div>
-                    </div>
+                <div class="integrations-grid" id="integrations-list">
+                    <!-- Integrations will be populated here -->
+                </div>
+            </div>
+
+            <div class="quick-access">
+                <h3><i class="fas fa-bolt"></i> Quick Access</h3>
+                <div class="quick-access-grid">
+                    <button class="quick-access-btn" onclick="testEndpoint('/calendar/today')">
+                        <i class="fas fa-calendar-day"></i> Today's Calendar
+                    </button>
+                    <button class="quick-access-btn" onclick="testEndpoint('/calendar/week')">
+                        <i class="fas fa-calendar-week"></i> This Week
+                    </button>
+                    <button class="quick-access-btn" onclick="testEndpoint('/email/priority')">
+                        <i class="fas fa-envelope"></i> Priority Emails
+                    </button>
+                    <button class="quick-access-btn" onclick="testEndpoint('/notion/status')">
+                        <i class="fas fa-database"></i> Notion Status
+                    </button>
+                    <button class="quick-access-btn" onclick="triggerNotionSync()">
+                        <i class="fas fa-sync"></i> Sync Notion
+                    </button>
+                    <button class="quick-access-btn" onclick="testEndpoint('/debug/search?q=michael')">
+                        <i class="fas fa-search"></i> Debug Search
+                    </button>
                 </div>
             </div>
         </div>
@@ -554,6 +634,40 @@
             }
         }
 
+        async function testEndpoint(endpoint) {
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                // Display result in chat
+                addMessage(`Test result for ${endpoint}:\n\n${JSON.stringify(data, null, 2)}`, 'assistant');
+            } catch (error) {
+                addMessage(`Error testing ${endpoint}: ${error.message}`, 'assistant');
+            }
+        }
+
+        async function triggerNotionSync() {
+            try {
+                addMessage('Starting Notion sync...', 'assistant');
+                const response = await fetch('/notion/sync', { method: 'POST' });
+                const data = await response.json();
+                
+                addMessage(`Notion sync result:\n\n${JSON.stringify(data, null, 2)}`, 'assistant');
+            } catch (error) {
+                addMessage(`Error syncing Notion: ${error.message}`, 'assistant');
+            }
+        }
+
+        function authenticateIntegration(name, authUrl) {
+            if (authUrl) {
+                window.open(authUrl, '_blank');
+                // Reload integrations after auth (user will need to refresh)
+                setTimeout(() => {
+                    loadIntegrations();
+                }, 5000);
+            }
+        }
+
         function loadStatus() {
             fetch('/status')
                 .then(response => response.json())
@@ -568,11 +682,25 @@
                             <div class="status-item" style="color: var(--success-color);">
                                 <i class="fas fa-database"></i> ${data.pdf_files_found} documents loaded
                             </div>
+                            <div class="status-item" style="color: var(--success-color);">
+                                <i class="fas fa-brain"></i> OpenAI Connected
+                            </div>
+                            <div class="status-item" style="color: var(--success-color);">
+                                <i class="fas fa-vector-square"></i> Pinecone Connected
+                            </div>
                         `;
                     } else {
+                        const issues = [];
+                        if (data.openai_api_key.includes('Missing')) issues.push('OpenAI');
+                        if (data.pinecone_api_key.includes('Missing')) issues.push('Pinecone');
+                        if (data.index_exists.includes('Missing')) issues.push('Vector Index');
+
                         statusDisplay.innerHTML = `
                             <div class="status-item" style="color: var(--warning-color);">
                                 <i class="fas fa-exclamation-triangle"></i> Configuration needed
+                            </div>
+                            <div class="status-item" style="color: var(--danger-color); font-size: 0.8rem;">
+                                Missing: ${issues.join(', ')}
                             </div>
                         `;
                     }
@@ -591,42 +719,77 @@
             fetch('/integrations')
                 .then(response => response.json())
                 .then(data => {
-                    data.integrations.forEach(integration => {
-                        let statusElement;
+                    const integrationsContainer = document.getElementById('integrations-list');
+                    integrationsContainer.innerHTML = '';
 
-                        switch(integration.name) {
-                            case 'Google Calendar':
-                                statusElement = document.getElementById('google-calendar-status');
-                                break;
-                            case 'Gmail':
-                                statusElement = document.getElementById('gmail-status');
-                                break;
-                            case 'Notion':
-                                statusElement = document.getElementById('notion-status');
-                                break;
-                            case 'Dubsado':
-                                statusElement = document.getElementById('dubsado-status');
-                                break;
+                    data.integrations.forEach(integration => {
+                        const item = document.createElement('div');
+                        item.className = 'integration-item';
+                        
+                        let statusClass = 'integration-status';
+                        if (integration.connected) {
+                            statusClass += ' integration-connected';
+                        } else if (integration.configured) {
+                            statusClass += ' integration-warning';
+                        } else {
+                            statusClass += ' integration-disconnected';
                         }
 
-                        if (statusElement) {
-                            if (integration.connected) {
-                                statusElement.className = 'integration-status integration-connected';
-                                statusElement.title = 'Connected';
-                            } else {
-                                statusElement.className = 'integration-status integration-disconnected';
-                                statusElement.title = integration.status_message;
+                        const controls = [];
+                        if (integration.auth_url && !integration.connected) {
+                            controls.push(`<button class="auth-btn" onclick="authenticateIntegration('${integration.name}', '${integration.auth_url}')">Connect</button>`);
+                        }
+                        if (integration.connected) {
+                            const testEndpoint = getTestEndpoint(integration.name);
+                            if (testEndpoint) {
+                                controls.push(`<button class="test-btn" onclick="testEndpoint('${testEndpoint}')">Test</button>`);
                             }
                         }
+
+                        item.innerHTML = `
+                            <div class="integration-info">
+                                <i class="${getIntegrationIcon(integration.name)}"></i>
+                                <span>${integration.name}</span>
+                            </div>
+                            <div class="integration-controls">
+                                ${controls.join('')}
+                                <div class="${statusClass}" title="${integration.status_message}"></div>
+                            </div>
+                        `;
+
+                        integrationsContainer.appendChild(item);
                     });
                 })
                 .catch(() => {
-                    // Set all integrations to unknown status
-                    document.querySelectorAll('.integration-status').forEach(el => {
-                        el.className = 'integration-status';
-                        el.title = 'Status unknown';
-                    });
+                    const integrationsContainer = document.getElementById('integrations-list');
+                    integrationsContainer.innerHTML = '<div class="status-item" style="color: var(--danger-color);">Integration status unavailable</div>';
                 });
+        }
+
+        function getIntegrationIcon(name) {
+            const icons = {
+                'Google Calendar': 'fas fa-calendar',
+                'Gmail': 'fas fa-envelope',
+                'Google Drive': 'fas fa-cloud',
+                'Notion': 'fas fa-sticky-note',
+                'Dubsado': 'fas fa-briefcase',
+                'QuickBooks': 'fas fa-calculator',
+                'Slack': 'fab fa-slack',
+                'Zoom': 'fas fa-video',
+                'Synology NAS': 'fas fa-server',
+                'Zapier': 'fas fa-bolt'
+            };
+            return icons[name] || 'fas fa-plug';
+        }
+
+        function getTestEndpoint(name) {
+            const endpoints = {
+                'Google Calendar': '/calendar/today',
+                'Gmail': '/email/priority',
+                'Google Drive': '/api',
+                'Notion': '/notion/status'
+            };
+            return endpoints[name] || null;
         }
 
         // Load status and integrations when page loads
@@ -634,6 +797,11 @@
             loadStatus();
             loadIntegrations();
         });
+
+        // Refresh integrations every 30 seconds
+        setInterval(() => {
+            loadIntegrations();
+        }, 30000);
     </script>
 </body>
 </html>
