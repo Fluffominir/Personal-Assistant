@@ -1,15 +1,23 @@
+
 fastapi==0.112.1
-uvicorn[standard]==0.30.1          # includes httptools, websockets, etc.
-openai==1.82.1                     # latest stable
-pinecone-client==5.0.1             # newest production release (5.1.0 doesn't exist)
+uvicorn[standard]==0.30.1
+openai==1.82.1
+pinecone-client==5.0.1
 pypdf==5.5.0
 pillow==11.2.1
 pytesseract==0.3.13
 python-dotenv==1.1.0
 aiofiles==24.1.0
+aiohttp==3.9.1
 google-auth==2.34.0
 google-auth-oauthlib==1.2.1
 google-auth-httplib2==0.2.0
 google-api-python-client==2.147.0
 requests==2.32.3
 schedule==1.2.2
+notion-client==2.2.1
+slack-sdk==3.26.2
+quickbooks-python==2.2.0
+pydantic==2.11.5
+python-multipart==0.0.9
+cryptography==42.0.8
