@@ -1,28 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michael's AI Companion</title>
+    <title>Michael's AI Assistant Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --text-primary: #f0f6fc;
-            --text-secondary: #8b949e;
-            --text-muted: #6e7681;
-            --border-color: #30363d;
-            --success-color: #00d4aa;
-            --danger-color: #ff6b6b;
-            --warning-color: #ffa726;
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #00a8ff 100%);
-            --shadow-primary: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --shadow-secondary: 0 5px 15px rgba(0, 212, 170, 0.2);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #ecf0f1;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #bdc3c7;
         }
 
         * {
@@ -32,392 +25,259 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #d5dbdb 100%);
+            color: var(--text-color);
             line-height: 1.6;
-            min-height: 100vh;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 20px;
+            grid-template-columns: 350px 1fr;
             min-height: 100vh;
+            gap: 20px;
+            padding: 20px;
         }
 
         .sidebar {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             height: fit-content;
-            position: sticky;
-            top: 20px;
         }
 
         .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        .card {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-primary);
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 300;
         }
 
-        .header-card {
-            background: var(--gradient-primary);
-            border: none;
-            color: white;
-            text-align: center;
-        }
-
-        .header-card h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(45deg, #fff, #e3f2fd);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header-card p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .status-section h3 {
-            color: var(--success-color);
-            margin-bottom: 16px;
+        h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .status-section, .integrations-section, .quick-access {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 10px;
         }
 
         .status-grid {
             display: grid;
-            gap: 12px;
+            gap: 10px;
         }
 
         .status-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid var(--success-color);
+            font-size: 0.9em;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
-        .status-item i {
-            width: 16px;
-            text-align: center;
-        }
-
-        .integrations-section {
-            margin-top: 24px;
+            gap: 8px;
         }
 
         .integrations-grid {
             display: grid;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 10px;
         }
 
         .integration-item {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 12px;
-            background: var(--bg-tertiary);
+            align-items: center;
+            padding: 15px;
+            background: white;
             border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition);
+            border-left: 4px solid var(--border-color);
+            transition: all 0.3s ease;
         }
 
         .integration-item:hover {
-            background: var(--bg-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .integration-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 500;
         }
 
         .integration-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .integration-status {
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background: var(--text-muted);
+            background: var(--border-color);
         }
 
         .integration-connected {
             background: var(--success-color);
         }
 
-        .integration-disconnected {
-            background: var(--danger-color);
-        }
-
         .integration-warning {
             background: var(--warning-color);
         }
 
+        .integration-disconnected {
+            background: var(--danger-color);
+        }
+
         .auth-btn, .test-btn {
-            padding: 4px 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border-radius: 4px;
-            font-size: 0.75rem;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: var(--transition);
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .auth-btn {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .test-btn {
+            background: var(--success-color);
+            color: white;
         }
 
         .auth-btn:hover, .test-btn:hover {
-            background: var(--success-color);
-            border-color: var(--success-color);
-            color: var(--bg-primary);
-        }
-
-        .quick-access {
-            margin-top: 24px;
-        }
-
-        .quick-access-grid {
-            display: grid;
-            gap: 8px;
-            margin-top: 12px;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .quick-access-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.85rem;
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
         .quick-access-btn:hover {
-            background: var(--success-color);
-            border-color: var(--success-color);
-            color: var(--bg-primary);
+            background: #2980b9;
+            transform: translateY(-1px);
         }
 
-        .chat-area {
-            flex: 1;
+        .chat-container {
+            max-width: 800px;
+        }
+
+        .chat-input-container {
             display: flex;
-            flex-direction: column;
-            min-height: 500px;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .messages {
+        #questionInput {
             flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding-right: 8px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
         }
 
-        .message {
-            margin-bottom: 20px;
-            padding: 16px;
-            border-radius: 12px;
-            max-width: 85%;
+        #questionInput:focus {
+            outline: none;
+            border-color: var(--secondary-color);
         }
 
-        .message.user {
-            background: var(--gradient-accent);
+        #askButton {
+            padding: 15px 30px;
+            background: var(--secondary-color);
             color: white;
-            margin-left: auto;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
         }
 
-        .message.assistant {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
+        #askButton:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
         }
 
-        .message-content {
+        #askButton:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .answer-container {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .answer-text {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 20px;
             white-space: pre-wrap;
-            line-height: 1.5;
         }
 
         .sources {
-            margin-top: 12px;
-            padding-top: 12px;
+            padding-top: 15px;
             border-top: 1px solid var(--border-color);
         }
 
-        .source-tag {
-            display: inline-block;
-            background: var(--success-color);
-            color: var(--bg-primary);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin: 2px;
-            font-weight: 500;
-        }
-
-        .input-area {
-            display: flex;
-            gap: 12px;
-            align-items: stretch;
-        }
-
-        .question-input {
-            flex: 1;
-            padding: 18px 24px;
-            border: 2px solid var(--border-color);
-            border-radius: 28px;
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: var(--transition);
-            resize: none;
-            min-height: 56px;
-            max-height: 150px;
-            font-family: inherit;
-        }
-
-        .question-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .question-input:focus {
-            outline: none;
-            border-color: var(--success-color);
-            box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.1);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .send-btn {
-            padding: 18px 28px;
-            background: var(--gradient-accent);
-            color: var(--text-primary);
-            border: none;
-            border-radius: 28px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-            box-shadow: var(--shadow-secondary);
-            font-size: 1rem;
-        }
-
-        .send-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 212, 170, 0.4);
-        }
-
-        .send-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .source-item {
+            background: white;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: var(--secondary-color);
         }
 
         .loading {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .loading::after {
-            content: "";
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color);
-            border-top: 2px solid var(--success-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .welcome-message {
-            text-align: center;
-            color: var(--text-secondary);
-            padding: 40px 20px;
-        }
-
-        .welcome-message h3 {
-            color: var(--success-color);
-            margin-bottom: 12px;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .quick-action-btn {
-            padding: 12px 16px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .quick-action-btn:hover {
-            background: var(--bg-primary);
-            border-color: var(--success-color);
+            gap: 10px;
+            color: var(--secondary-color);
         }
 
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
-                gap: 16px;
-                padding: 16px;
             }
 
-            .sidebar {
-                position: static;
-                order: 2;
-            }
-
-            .main-content {
-                order: 1;
-            }
-
-            .header-card h1 {
-                font-size: 2rem;
-            }
-
-            .quick-actions {
-                grid-template-columns: 1fr;
+            .chat-input-container {
+                flex-direction: column;
             }
         }
     </style>
@@ -443,228 +303,110 @@
 
             <div class="quick-access">
                 <h3><i class="fas fa-bolt"></i> Quick Access</h3>
-                <div class="quick-access-grid">
-                    <button class="quick-access-btn" onclick="testEndpoint('/calendar/today')">
-                        <i class="fas fa-calendar-day"></i> Today's Calendar
-                    </button>
-                    <button class="quick-access-btn" onclick="testEndpoint('/calendar/week')">
-                        <i class="fas fa-calendar-week"></i> This Week
-                    </button>
-                    <button class="quick-access-btn" onclick="testEndpoint('/email/priority')">
-                        <i class="fas fa-envelope"></i> Priority Emails
-                    </button>
-                    <button class="quick-access-btn" onclick="testEndpoint('/notion/status')">
-                        <i class="fas fa-database"></i> Notion Status
-                    </button>
-                    <button class="quick-access-btn" onclick="triggerNotionSync()">
-                        <i class="fas fa-sync"></i> Sync Notion
-                    </button>
-                    <button class="quick-access-btn" onclick="testEndpoint('/debug/search?q=michael')">
-                        <i class="fas fa-search"></i> Debug Search
-                    </button>
-                </div>
+                <a href="/calendar/today" class="quick-access-btn">
+                    <i class="fas fa-calendar-day"></i> Today's Schedule
+                </a>
+                <a href="/email/priority" class="quick-access-btn">
+                    <i class="fas fa-envelope"></i> Priority Emails
+                </a>
+                <a href="/notion/status" class="quick-access-btn">
+                    <i class="fas fa-sticky-note"></i> Notion Status
+                </a>
+                <a href="/api" class="quick-access-btn">
+                    <i class="fas fa-cog"></i> API Status
+                </a>
             </div>
         </div>
 
         <div class="main-content">
-            <div class="card header-card">
-                <h1><i class="fas fa-robot"></i> Michael's AI Companion</h1>
-                <p>Your intelligent assistant for personal and professional productivity</p>
-            </div>
+            <h1><i class="fas fa-robot"></i> Michael's AI Assistant</h1>
 
-            <div class="card chat-area">
-                <div class="messages" id="messages">
-                    <div class="welcome-message">
-                        <h3>👋 Hello Michael!</h3>
-                        <p>I'm your AI companion, ready to help with your schedule, emails, projects, and anything else you need.</p>
-
-                        <div class="quick-actions">
-                            <button class="quick-action-btn" onclick="quickAction('schedule')">
-                                <i class="fas fa-calendar-check"></i>
-                                Strategic Planning
-                            </button>
-                            <button class="quick-action-btn" onclick="quickAction('email')">
-                                <i class="fas fa-envelope-open-text"></i>
-                                Priority Inbox
-                            </button>
-                            <button class="quick-action-btn" onclick="quickAction('notes')">
-                                <i class="fas fa-lightbulb"></i>
-                                Knowledge Base
-                            </button>
-                            <button class="quick-action-btn" onclick="quickAction('tasks')">
-                                <i class="fas fa-bullseye"></i>
-                                Goal Tracking
-                            </button>
-                        </div>
-                    </div>
+            <div class="chat-container">
+                <div class="chat-input-container">
+                    <input type="text" id="questionInput" placeholder="Ask me anything about your schedule, projects, or personal information..." onkeypress="handleKeyPress(event)">
+                    <button id="askButton" onclick="askQuestion()">
+                        <i class="fas fa-paper-plane"></i> Ask
+                    </button>
                 </div>
 
-                <div class="input-area">
-                    <textarea 
-                        id="question"
-                        class="question-input"
-                        placeholder="Ask me anything about your schedule, emails, projects, or get help with tasks..."
-                        onkeypress="handleKeyPress(event)"
-                        rows="1"
-                    ></textarea>
-                    <button id="send-btn" class="send-btn" onclick="askQuestion()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+                <div id="answerContainer" class="answer-container">
+                    <div id="answerText" class="answer-text"></div>
+                    <div id="sources" class="sources"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let isLoading = false;
-
-        // Auto-resize textarea
-        document.getElementById('question').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
-        });
-
         function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
+            if (event.key === 'Enter') {
                 askQuestion();
             }
         }
 
-        function quickAction(type) {
-            const questions = {
-                'schedule': "What's on my calendar today and this week?",
-                'email': "Show me my most important unread emails",
-                'notes': "What information do you have about my current projects?",
-                'tasks': "Help me prioritize my tasks for today"
-            };
-
-            const questionInput = document.getElementById('question');
-            questionInput.value = questions[type];
-            questionInput.focus();
-        }
-
-        function addMessage(content, sender, isLoading = false, sources = []) {
-            const messagesContainer = document.getElementById('messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-
-            if (isLoading) {
-                messageDiv.innerHTML = '<div class="loading">Thinking...</div>';
-            } else {
-                let html = `<div class="message-content">${content}</div>`;
-
-                if (sources && sources.length > 0) {
-                    html += `
-                        <div class="sources">
-                            <strong>Sources:</strong><br>
-                            ${sources.map(source => `<span class="source-tag">${source}</span>`).join('')}
-                        </div>
-                    `;
-                }
-
-                messageDiv.innerHTML = html;
-            }
-
-            // Remove welcome message if it exists
-            const welcomeMsg = messagesContainer.querySelector('.welcome-message');
-            if (welcomeMsg) {
-                welcomeMsg.remove();
-            }
-
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            return messageDiv;
-        }
-
         async function askQuestion() {
-            if (isLoading) return;
+            const input = document.getElementById('questionInput');
+            const button = document.getElementById('askButton');
+            const answerContainer = document.getElementById('answerContainer');
+            const answerText = document.getElementById('answerText');
+            const sourcesDiv = document.getElementById('sources');
 
-            const questionInput = document.getElementById('question');
-            const question = questionInput.value.trim();
-
+            const question = input.value.trim();
             if (!question) return;
 
-            isLoading = true;
-            const sendBtn = document.getElementById('send-btn');
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            // Add user message
-            addMessage(question, 'user');
-
-            // Clear input
-            questionInput.value = '';
-            questionInput.style.height = 'auto';
-
-            // Add loading message
-            const loadingMsg = addMessage('', 'assistant', true);
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+            answerContainer.style.display = 'block';
+            answerText.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Processing your question...</div>';
+            sourcesDiv.innerHTML = '';
 
             try {
                 const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
+                const data = await response.json();
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || `HTTP ${response.status}`);
+                if (response.ok) {
+                    answerText.textContent = data.answer;
+
+                    // Display sources
+                    if (data.sources && data.sources.length > 0) {
+                        sourcesDiv.innerHTML = '<strong>Sources:</strong>';
+                        data.sources.forEach(source => {
+                            const sourceItem = document.createElement('div');
+                            sourceItem.className = 'source-item';
+                            sourceItem.textContent = source;
+                            sourcesDiv.appendChild(sourceItem);
+                        });
+                    }
+                } else {
+                    answerText.innerHTML = `<div style="color: var(--danger-color);">Error: ${data.detail || 'Failed to get answer'}</div>`;
                 }
-
-                const data = await response.json();
-
-                // Remove loading message
-                loadingMsg.remove();
-
-                // Add assistant response
-                addMessage(data.answer, 'assistant', false, data.sources);
-
             } catch (error) {
-                // Remove loading message
-                loadingMsg.remove();
-
-                // Add error message
-                addMessage(
-                    `Sorry, I encountered an error: ${error.message}\n\nPlease check that the system is properly configured and try again.`,
-                    'assistant'
-                );
+                answerText.innerHTML = `<div style="color: var(--danger-color);">Network error: ${error.message}</div>`;
             } finally {
-                isLoading = false;
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                questionInput.focus();
-            }
-        }
-
-        async function testEndpoint(endpoint) {
-            try {
-                const response = await fetch(endpoint);
-                const data = await response.json();
-                
-                // Display result in chat
-                addMessage(`Test result for ${endpoint}:\n\n${JSON.stringify(data, null, 2)}`, 'assistant');
-            } catch (error) {
-                addMessage(`Error testing ${endpoint}: ${error.message}`, 'assistant');
-            }
-        }
-
-        async function triggerNotionSync() {
-            try {
-                addMessage('Starting Notion sync...', 'assistant');
-                const response = await fetch('/notion/sync', { method: 'POST' });
-                const data = await response.json();
-                
-                addMessage(`Notion sync result:\n\n${JSON.stringify(data, null, 2)}`, 'assistant');
-            } catch (error) {
-                addMessage(`Error syncing Notion: ${error.message}`, 'assistant');
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask';
+                input.value = '';
             }
         }
 
         function authenticateIntegration(name, authUrl) {
-            if (authUrl) {
-                window.open(authUrl, '_blank');
-                // Reload integrations after auth (user will need to refresh)
-                setTimeout(() => {
-                    loadIntegrations();
-                }, 5000);
+            window.location.href = authUrl;
+        }
+
+        async function testIntegration(name, endpoint) {
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`${name} test successful! Check the console for details.`);
+                    console.log(`${name} test result:`, data);
+                } else {
+                    alert(`${name} test failed: ${data.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                alert(`${name} test error: ${error.message}`);
             }
         }
 
@@ -672,42 +414,39 @@
             fetch('/status')
                 .then(response => response.json())
                 .then(data => {
-                    const statusDisplay = document.getElementById('status-display');
+                    const statusContainer = document.getElementById('status-display');
+                    statusContainer.innerHTML = '';
 
-                    if (data.ready) {
-                        statusDisplay.innerHTML = `
-                            <div class="status-item" style="color: var(--success-color);">
-                                <i class="fas fa-check-circle"></i> System Ready
-                            </div>
-                            <div class="status-item" style="color: var(--success-color);">
-                                <i class="fas fa-database"></i> ${data.pdf_files_found} documents loaded
-                            </div>
-                            <div class="status-item" style="color: var(--success-color);">
-                                <i class="fas fa-brain"></i> OpenAI Connected
-                            </div>
-                            <div class="status-item" style="color: var(--success-color);">
-                                <i class="fas fa-vector-square"></i> Pinecone Connected
-                            </div>
-                        `;
-                    } else {
-                        const issues = [];
-                        if (data.openai_api_key.includes('Missing')) issues.push('OpenAI');
-                        if (data.pinecone_api_key.includes('Missing')) issues.push('Pinecone');
-                        if (data.index_exists.includes('Missing')) issues.push('Vector Index');
+                    const statusItems = [
+                        { label: 'OpenAI API', value: data.openai_api_key, icon: 'fas fa-brain' },
+                        { label: 'Pinecone API', value: data.pinecone_api_key, icon: 'fas fa-database' },
+                        { label: 'Vector Index', value: data.index_exists, icon: 'fas fa-search' },
+                        { label: 'PDF Files', value: `${data.pdf_files_found} found`, icon: 'fas fa-file-pdf' },
+                        { label: 'System Ready', value: data.ready ? '✓' : '✗ Not Ready', icon: 'fas fa-check-circle' }
+                    ];
 
-                        statusDisplay.innerHTML = `
-                            <div class="status-item" style="color: var(--warning-color);">
-                                <i class="fas fa-exclamation-triangle"></i> Configuration needed
-                            </div>
-                            <div class="status-item" style="color: var(--danger-color); font-size: 0.8rem;">
-                                Missing: ${issues.join(', ')}
-                            </div>
+                    statusItems.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'status-item';
+
+                        let color = 'var(--success-color)';
+                        if (item.value.includes('✗') || item.value.includes('Missing')) {
+                            color = 'var(--danger-color)';
+                        } else if (item.value.includes('0 found')) {
+                            color = 'var(--warning-color)';
+                        }
+
+                        div.style.borderLeftColor = color;
+                        div.innerHTML = `
+                            <i class="${item.icon}"></i>
+                            <span><strong>${item.label}:</strong> ${item.value}</span>
                         `;
-                    }
+                        statusContainer.appendChild(div);
+                    });
                 })
                 .catch(() => {
-                    const statusDisplay = document.getElementById('status-display');
-                    statusDisplay.innerHTML = `
+                    const statusContainer = document.getElementById('status-display');
+                    statusContainer.innerHTML = `
                         <div class="status-item" style="color: var(--danger-color);">
                             <i class="fas fa-exclamation-triangle"></i> System Status Unavailable
                         </div>
@@ -725,7 +464,7 @@
                     data.integrations.forEach(integration => {
                         const item = document.createElement('div');
                         item.className = 'integration-item';
-                        
+
                         let statusClass = 'integration-status';
                         if (integration.connected) {
                             statusClass += ' integration-connected';
@@ -739,11 +478,10 @@
                         if (integration.auth_url && !integration.connected) {
                             controls.push(`<button class="auth-btn" onclick="authenticateIntegration('${integration.name}', '${integration.auth_url}')">Connect</button>`);
                         }
-                        if (integration.connected) {
-                            const testEndpoint = getTestEndpoint(integration.name);
-                            if (testEndpoint) {
-                                controls.push(`<button class="test-btn" onclick="testEndpoint('${testEndpoint}')">Test</button>`);
-                            }
+
+                        const testEndpoint = getTestEndpoint(integration.name);
+                        if (integration.connected && testEndpoint) {
+                            controls.push(`<button class="test-btn" onclick="testIntegration('${integration.name}', '${testEndpoint}')">Test</button>`);
                         }
 
                         item.innerHTML = `
