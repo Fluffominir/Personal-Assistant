@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -362,7 +363,7 @@
             sourcesDiv.innerHTML = '';
 
             try {
-                const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
+                const response = await fetch('/ask?q=' + encodeURIComponent(question));
                 const data = await response.json();
 
                 if (response.ok) {
@@ -379,10 +380,10 @@
                         });
                     }
                 } else {
-                    answerText.innerHTML = `<div style="color: var(--danger-color);">Error: ${data.detail || 'Failed to get answer'}</div>`;
+                    answerText.innerHTML = '<div style="color: var(--danger-color);">Error: ' + (data.detail || 'Failed to get answer') + '</div>';
                 }
             } catch (error) {
-                answerText.innerHTML = `<div style="color: var(--danger-color);">Network error: ${error.message}</div>`;
+                answerText.innerHTML = '<div style="color: var(--danger-color);">Network error: ' + error.message + '</div>';
             } finally {
                 button.disabled = false;
                 button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask';
@@ -400,13 +401,13 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(`${name} test successful! Check the console for details.`);
-                    console.log(`${name} test result:`, data);
+                    alert(name + ' test successful! Check the console for details.');
+                    console.log(name + ' test result:', data);
                 } else {
-                    alert(`${name} test failed: ${data.error || 'Unknown error'}`);
+                    alert(name + ' test failed: ' + (data.error || 'Unknown error'));
                 }
             } catch (error) {
-                alert(`${name} test error: ${error.message}`);
+                alert(name + ' test error: ' + error.message);
             }
         }
 
@@ -421,7 +422,7 @@
                         { label: 'OpenAI API', value: data.openai_api_key, icon: 'fas fa-brain' },
                         { label: 'Pinecone API', value: data.pinecone_api_key, icon: 'fas fa-database' },
                         { label: 'Vector Index', value: data.index_exists, icon: 'fas fa-search' },
-                        { label: 'PDF Files', value: `${data.pdf_files_found} found`, icon: 'fas fa-file-pdf' },
+                        { label: 'PDF Files', value: data.pdf_files_found + ' found', icon: 'fas fa-file-pdf' },
                         { label: 'System Ready', value: data.ready ? '✓' : '✗ Not Ready', icon: 'fas fa-check-circle' }
                     ];
 
@@ -437,20 +438,13 @@
                         }
 
                         div.style.borderLeftColor = color;
-                        div.innerHTML = `
-                            <i class="${item.icon}"></i>
-                            <span><strong>${item.label}:</strong> ${item.value}</span>
-                        `;
+                        div.innerHTML = '<i class="' + item.icon + '"></i><span><strong>' + item.label + ':</strong> ' + item.value + '</span>';
                         statusContainer.appendChild(div);
                     });
                 })
                 .catch(() => {
                     const statusContainer = document.getElementById('status-display');
-                    statusContainer.innerHTML = `
-                        <div class="status-item" style="color: var(--danger-color);">
-                            <i class="fas fa-exclamation-triangle"></i> System Status Unavailable
-                        </div>
-                    `;
+                    statusContainer.innerHTML = '<div class="status-item" style="color: var(--danger-color);"><i class="fas fa-exclamation-triangle"></i> System Status Unavailable</div>';
                 });
         }
 
@@ -476,24 +470,15 @@
 
                         const controls = [];
                         if (integration.auth_url && !integration.connected) {
-                            controls.push(`<button class="auth-btn" onclick="authenticateIntegration('${integration.name}', '${integration.auth_url}')">Connect</button>`);
+                            controls.push('<button class="auth-btn" onclick="authenticateIntegration(\'' + integration.name + '\', \'' + integration.auth_url + '\')">Connect</button>');
                         }
 
                         const testEndpoint = getTestEndpoint(integration.name);
                         if (integration.connected && testEndpoint) {
-                            controls.push(`<button class="test-btn" onclick="testIntegration('${integration.name}', '${testEndpoint}')">Test</button>`);
+                            controls.push('<button class="test-btn" onclick="testIntegration(\'' + integration.name + '\', \'' + testEndpoint + '\')">Test</button>');
                         }
 
-                        item.innerHTML = `
-                            <div class="integration-info">
-                                <i class="${getIntegrationIcon(integration.name)}"></i>
-                                <span>${integration.name}</span>
-                            </div>
-                            <div class="integration-controls">
-                                ${controls.join('')}
-                                <div class="${statusClass}" title="${integration.status_message}"></div>
-                            </div>
-                        `;
+                        item.innerHTML = '<div class="integration-info"><i class="' + getIntegrationIcon(integration.name) + '"></i><span>' + integration.name + '</span></div><div class="integration-controls">' + controls.join('') + '<div class="' + statusClass + '" title="' + integration.status_message + '"></div></div>';
 
                         integrationsContainer.appendChild(item);
                     });
@@ -531,13 +516,13 @@
         }
 
         // Load status and integrations when page loads
-        window.addEventListener('load', () => {
+        window.addEventListener('load', function() {
             loadStatus();
             loadIntegrations();
         });
 
         // Refresh integrations every 30 seconds
-        setInterval(() => {
+        setInterval(function() {
             loadIntegrations();
         }, 30000);
     </script>

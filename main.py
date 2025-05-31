@@ -229,11 +229,15 @@ async def get_notion_data(notion_token: str, database_id: str) -> Dict[str, Any]
             async with session.post(url, headers=headers, json={}) as response:
                 if response.status == 200:
                     return await response.json()
+                elif response.status == 401:
+                    print(f"❌ Notion API 401 Unauthorized - Check your NOTION_API_KEY token")
+                    return {}
                 else:
-                    print(f"Notion API error: {response.status}")
+                    response_text = await response.text()
+                    print(f"❌ Notion API error: {response.status} - {response_text}")
                     return {}
     except Exception as e:
-        print(f"Error fetching Notion data: {e}")
+        print(f"❌ Error fetching Notion data: {e}")
         return {}
 
 # Routes
