@@ -98,6 +98,43 @@ class Answer(BaseModel):
     answer: str
     sources: list[str]
 
+class IntegrationStatus(BaseModel):
+    name: str
+    connected: bool
+    last_sync: str = None
+    status_message: str = None
+
+@app.get("/integrations")
+def get_integrations():
+    """Get status of all integrations"""
+    integrations = [
+        {"name": "Google Calendar", "connected": False, "status_message": "Not configured"},
+        {"name": "Gmail", "connected": False, "status_message": "Not configured"},
+        {"name": "Google Drive", "connected": False, "status_message": "Not configured"},
+        {"name": "Notion", "connected": False, "status_message": "Not configured"},
+        {"name": "Synology NAS", "connected": False, "status_message": "Not configured"},
+        {"name": "Dubsado", "connected": False, "status_message": "Not configured"},
+        {"name": "Slack", "connected": False, "status_message": "Not configured"},
+        {"name": "Zoom", "connected": False, "status_message": "Not configured"},
+        {"name": "Zapier", "connected": False, "status_message": "Not configured"}
+    ]
+    return {"integrations": integrations}
+
+@app.get("/calendar/today")
+def get_today_calendar():
+    """Get today's calendar events (placeholder for Google Calendar integration)"""
+    return {"message": "Calendar integration not yet configured", "events": []}
+
+@app.get("/email/priority")
+def get_priority_emails():
+    """Get priority emails (placeholder for Gmail integration)"""
+    return {"message": "Email integration not yet configured", "emails": []}
+
+@app.get("/tasks")
+def get_tasks():
+    """Get tasks and priorities (placeholder for task management integration)"""
+    return {"message": "Task management integration not yet configured", "tasks": []}
+
 @app.get("/ask", response_model=Answer)
 def ask(q: str = Query(..., description="Your question")):
     if not openai_client:
@@ -139,10 +176,10 @@ def ask(q: str = Query(..., description="Your question")):
         ctx = "\n\n---\n\n".join(ctx_pieces)
         print(f"✓ Built context from {len(hits)} sources")
         
-        # Generate answer with better system prompt
+        # Generate answer with Michael-specific context
         msgs = [
-            {"role": "system", "content": "You are a helpful AI assistant that answers questions based on the provided document context. Always provide accurate, helpful answers and cite your sources. If the information isn't in the context, say so clearly."},
-            {"role": "system", "content": f"Context from documents:\n\n{ctx}"},
+            {"role": "system", "content": "You are Michael Slusher's personal AI companion and assistant. When Michael asks questions in first person (like 'who is my mother', 'what's my schedule', 'tell me about myself'), understand that HE is Michael Slusher, the person all the uploaded documents are about. Provide personalized, helpful responses as his personal assistant. Always be accurate and cite your sources when answering from documents."},
+            {"role": "system", "content": f"Context from Michael's documents:\n\n{ctx}"},
             {"role": "user", "content": q}
         ]
         
