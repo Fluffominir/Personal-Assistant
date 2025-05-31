@@ -1,23 +1,33 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michael's AI Companion - Personal Assistant</title>
+    <title>Michael's Executive Assistant - AI Companion</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-background: rgba(255, 255, 255, 0.95);
-            --text-primary: #2c3e50;
-            --text-secondary: #6c757d;
-            --border-radius: 12px;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f3460;
+            --success-color: #00d4aa;
+            --warning-color: #ff6b35;
+            --danger-color: #e94560;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c1ec;
+            --text-muted: #8892b0;
+            --background-dark: #0a0e27;
+            --surface-dark: rgba(22, 33, 62, 0.6);
+            --surface-light: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(184, 193, 236, 0.1);
+            --shadow-primary: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-secondary: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #0f9b8e 100%);
+            --border-radius: 16px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -29,16 +39,20 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--background-gradient);
+            background: var(--background-dark);
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 212, 170, 0.1) 0%, transparent 50%);
             min-height: 100vh;
             color: var(--text-primary);
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -46,88 +60,127 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            background: var(--card-background);
-            backdrop-filter: blur(15px);
+            margin-bottom: 32px;
+            background: var(--surface-dark);
+            backdrop-filter: blur(20px);
             border-radius: var(--border-radius);
-            padding: 40px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 48px;
+            box-shadow: var(--shadow-primary);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-accent);
         }
 
         .header h1 {
-            color: var(--primary-color);
-            font-size: 2.8rem;
+            font-size: 3.2rem;
             font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header .subtitle {
             color: var(--text-secondary);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 400;
+            opacity: 0.9;
         }
 
         .main-content {
             display: grid;
-            grid-template-columns: 350px 1fr 300px;
-            gap: 30px;
+            grid-template-columns: 380px 1fr 320px;
+            gap: 32px;
             flex: 1;
         }
 
         .sidebar, .integrations-panel {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
 
         .card {
-            background: var(--card-background);
-            backdrop-filter: blur(15px);
+            background: var(--surface-dark);
+            backdrop-filter: blur(20px);
             border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 28px;
+            box-shadow: var(--shadow-primary);
+            border: 1px solid var(--border-color);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            opacity: 0.6;
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(184, 193, 236, 0.2);
         }
 
         .card h3 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            color: var(--text-primary);
+            margin-bottom: 24px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
             font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .card h3 i {
-            color: var(--secondary-color);
+            color: var(--success-color);
             width: 20px;
+            font-size: 1.2rem;
         }
 
         .status-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .status-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(52, 152, 219, 0.08);
-            border-radius: 8px;
+            padding: 16px 20px;
+            background: var(--surface-light);
+            border-radius: 12px;
             font-size: 0.9rem;
-            border-left: 3px solid var(--secondary-color);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .status-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--success-color);
         }
 
         .status-good {
@@ -136,7 +189,7 @@
         }
 
         .status-bad {
-            color: var(--accent-color);
+            color: var(--danger-color);
             font-weight: 600;
         }
 
@@ -144,22 +197,27 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            background: rgba(108, 117, 125, 0.08);
-            border-radius: 8px;
-            margin-bottom: 8px;
+            padding: 16px 20px;
+            background: var(--surface-light);
+            border-radius: 12px;
+            margin-bottom: 12px;
             transition: var(--transition);
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
         }
 
         .integration-item:hover {
-            background: rgba(52, 152, 219, 0.1);
+            background: rgba(0, 212, 170, 0.1);
+            border-color: var(--success-color);
+            transform: translateX(4px);
         }
 
         .integration-status {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            margin-left: 10px;
+            margin-left: 12px;
+            box-shadow: 0 0 8px currentColor;
         }
 
         .integration-connected {
@@ -167,82 +225,104 @@
         }
 
         .integration-disconnected {
-            background-color: var(--text-secondary);
+            background-color: var(--text-muted);
         }
 
         .sample-questions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .sample-question {
-            padding: 14px 18px;
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-            color: white;
+            padding: 18px 22px;
+            background: var(--gradient-secondary);
+            color: var(--text-primary);
             border-radius: var(--border-radius);
             cursor: pointer;
             transition: var(--transition);
             font-size: 0.9rem;
-            border: none;
+            border: 1px solid var(--border-color);
             text-align: left;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sample-question::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .sample-question:hover::before {
+            left: 100%;
         }
 
         .sample-question:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-secondary);
+            border-color: var(--success-color);
         }
 
         .chat-area {
             display: flex;
             flex-direction: column;
-            height: 700px;
+            height: 750px;
         }
 
         .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 25px;
-            background: var(--card-background);
+            padding: 32px;
+            background: var(--surface-dark);
             border-radius: var(--border-radius) var(--border-radius) 0 0;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
+            backdrop-filter: blur(20px);
         }
 
         .message {
             max-width: 85%;
-            padding: 18px 22px;
-            border-radius: 18px;
+            padding: 20px 24px;
+            border-radius: 20px;
             font-size: 0.95rem;
-            line-height: 1.6;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            line-height: 1.7;
+            box-shadow: var(--shadow-secondary);
+            position: relative;
         }
 
         .message.user {
             align-self: flex-end;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: var(--gradient-accent);
+            color: var(--text-primary);
+            border: 1px solid rgba(0, 212, 170, 0.3);
         }
 
         .message.assistant {
             align-self: flex-start;
-            background: #f8f9fa;
+            background: var(--surface-light);
             color: var(--text-primary);
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--border-color);
         }
 
         .sources {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #dee2e6;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
         }
 
         .sources h5 {
             color: var(--text-secondary);
             font-size: 0.8rem;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
@@ -250,55 +330,70 @@
 
         .source-tag {
             display: inline-block;
-            background: #e9ecef;
-            color: #495057;
-            padding: 4px 12px;
-            border-radius: 15px;
+            background: var(--surface-light);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 0.75rem;
-            margin: 3px;
-            border: 1px solid #dee2e6;
+            margin: 4px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .source-tag:hover {
+            background: var(--success-color);
+            color: var(--background-dark);
         }
 
         .input-area {
             display: flex;
-            gap: 12px;
-            padding: 25px;
-            background: var(--card-background);
+            gap: 16px;
+            padding: 32px;
+            background: var(--surface-dark);
             border-radius: 0 0 var(--border-radius) var(--border-radius);
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
         }
 
         .question-input {
             flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e9ecef;
-            border-radius: 25px;
+            padding: 18px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 28px;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
-            background: white;
+            background: var(--surface-light);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .question-input::placeholder {
+            color: var(--text-muted);
         }
 
         .question-input:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.1);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .send-btn {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-            color: white;
+            padding: 18px 28px;
+            background: var(--gradient-accent);
+            color: var(--text-primary);
             border: none;
-            border-radius: 25px;
+            border-radius: 28px;
             cursor: pointer;
             font-weight: 600;
             transition: var(--transition);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            box-shadow: var(--shadow-secondary);
+            font-size: 1rem;
         }
 
         .send-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+            box-shadow: 0 8px 24px rgba(0, 212, 170, 0.4);
         }
 
         .send-btn:disabled {
@@ -318,8 +413,8 @@
             content: "";
             width: 20px;
             height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--secondary-color);
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--success-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -335,33 +430,103 @@
             font-style: italic;
             margin: auto;
             font-size: 1.1rem;
+            line-height: 1.8;
+            padding: 32px;
+            background: var(--surface-light);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
         }
 
         .quick-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .quick-action-btn {
-            padding: 10px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 1px solid rgba(52, 152, 219, 0.2);
-            border-radius: 8px;
+            padding: 14px 16px;
+            background: var(--surface-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 0.8rem;
-            color: var(--secondary-color);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
             transition: var(--transition);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
 
         .quick-action-btn:hover {
-            background: rgba(52, 152, 219, 0.2);
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-secondary);
         }
 
-        @media (max-width: 1200px) {
+        .quick-action-btn i {
+            font-size: 1.2rem;
+        }
+
+        .executive-summary {
+            background: var(--gradient-secondary);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .executive-summary h4 {
+            color: var(--success-color);
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-value {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .daily-agenda {
+            font-size: 0.9rem;
+        }
+
+        .agenda-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--surface-light);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--success-color);
+        }
+
+        .agenda-time {
+            color: var(--success-color);
+            font-weight: 600;
+            min-width: 60px;
+        }
+
+        @media (max-width: 1400px) {
             .main-content {
-                grid-template-columns: 300px 1fr;
+                grid-template-columns: 320px 1fr;
             }
             .integrations-panel {
                 display: none;
@@ -374,66 +539,93 @@
             }
 
             .header h1 {
-                font-size: 2.2rem;
+                font-size: 2.4rem;
             }
 
             .chat-area {
-                height: 500px;
+                height: 600px;
             }
+
+            .container {
+                padding: 16px;
+            }
+        }
+
+        /* Custom scrollbar */
+        .messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: var(--surface-light);
+            border-radius: 4px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: var(--success-color);
+            border-radius: 4px;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: var(--warning-color);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Michael's AI Companion</h1>
-            <div class="subtitle">Personal Life Management & Intelligence Assistant</div>
+            <h1>Michael's Executive Assistant</h1>
+            <div class="subtitle">Comprehensive Life & Business Intelligence Platform</div>
         </div>
 
         <div class="main-content">
             <div class="sidebar">
                 <div class="card">
-                    <h3><i class="fas fa-chart-line"></i>System Status</h3>
+                    <h3><i class="fas fa-tachometer-alt"></i>System Analytics</h3>
                     <div id="status-content">
-                        <div class="loading">Checking system status...</div>
+                        <div class="loading">Analyzing system performance...</div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-lightbulb"></i>Quick Questions</h3>
+                    <h3><i class="fas fa-brain"></i>Intelligent Queries</h3>
                     <div class="sample-questions">
-                        <button class="sample-question" onclick="setQuestion('What\'s on my calendar today?')">
-                            What's on my calendar today?
+                        <button class="sample-question" onclick="setQuestion('Analyze my calendar for optimization opportunities')">
+                            Analyze my calendar for optimization opportunities
                         </button>
-                        <button class="sample-question" onclick="setQuestion('Tell me about my personality traits')">
-                            Tell me about my personality traits
+                        <button class="sample-question" onclick="setQuestion('What are my strategic priorities this week?')">
+                            What are my strategic priorities this week?
                         </button>
-                        <button class="sample-question" onclick="setQuestion('What are my recent email priorities?')">
-                            What are my recent email priorities?
+                        <button class="sample-question" onclick="setQuestion('Review my email patterns and suggest improvements')">
+                            Review my email patterns and suggest improvements
                         </button>
-                        <button class="sample-question" onclick="setQuestion('Help me plan my week')">
-                            Help me plan my week
+                        <button class="sample-question" onclick="setQuestion('Generate a weekly executive summary')">
+                            Generate a weekly executive summary
                         </button>
-                        <button class="sample-question" onclick="setQuestion('What files did I work on recently?')">
-                            What files did I work on recently?
+                        <button class="sample-question" onclick="setQuestion('What insights can you provide from my recent activities?')">
+                            What insights can you provide from my recent activities?
                         </button>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-bolt"></i>Quick Actions</h3>
+                    <h3><i class="fas fa-rocket"></i>Executive Actions</h3>
                     <div class="quick-actions">
                         <button class="quick-action-btn" onclick="quickAction('schedule')">
-                            <i class="fas fa-calendar-plus"></i> Schedule
+                            <i class="fas fa-calendar-check"></i>
+                            Strategic Planning
                         </button>
                         <button class="quick-action-btn" onclick="quickAction('email')">
-                            <i class="fas fa-envelope"></i> Email
+                            <i class="fas fa-envelope-open-text"></i>
+                            Priority Inbox
                         </button>
                         <button class="quick-action-btn" onclick="quickAction('notes')">
-                            <i class="fas fa-sticky-note"></i> Notes
+                            <i class="fas fa-lightbulb"></i>
+                            Knowledge Base
                         </button>
                         <button class="quick-action-btn" onclick="quickAction('tasks')">
-                            <i class="fas fa-tasks"></i> Tasks
+                            <i class="fas fa-bullseye"></i>
+                            Goal Tracking
                         </button>
                     </div>
                 </div>
@@ -442,14 +634,16 @@
             <div class="card chat-area">
                 <div class="messages" id="messages">
                     <div class="welcome-message">
-                        Welcome back, Michael! I'm here to help you manage your life, answer questions about your documents, and assist with your daily tasks.
+                        Welcome back, Michael. Your comprehensive AI assistant is ready to help you optimize your personal and professional life.
                         <br><br>
-                        Ask me anything about your schedule, emails, documents, or let me help you organize your day.
+                        I have access to your calendar, email, documents, and integrated systems to provide intelligent insights, automate routine tasks, and help you make data-driven decisions.
+                        <br><br>
+                        How can I assist you in maximizing your productivity and achieving your goals today?
                     </div>
                 </div>
                 <div class="input-area">
                     <input type="text" id="question" class="question-input" 
-                           placeholder="Ask about your schedule, emails, documents, or anything else..." 
+                           placeholder="Ask about your systems, request analysis, or delegate tasks..." 
                            onkeypress="handleKeyPress(event)">
                     <button onclick="askQuestion()" id="send-btn" class="send-btn">
                         <i class="fas fa-paper-plane"></i>
@@ -459,23 +653,36 @@
 
             <div class="integrations-panel">
                 <div class="card">
-                    <h3><i class="fas fa-puzzle-piece"></i>Integrations</h3>
+                    <div class="executive-summary">
+                        <h4><i class="fas fa-chart-line"></i> Today's Overview</h4>
+                        <div class="metric">
+                            <span>Calendar Density</span>
+                            <span class="metric-value">68%</span>
+                        </div>
+                        <div class="metric">
+                            <span>Priority Emails</span>
+                            <span class="metric-value">12</span>
+                        </div>
+                        <div class="metric">
+                            <span>Active Projects</span>
+                            <span class="metric-value">7</span>
+                        </div>
+                        <div class="metric">
+                            <span>Focus Score</span>
+                            <span class="metric-value">85%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-network-wired"></i>System Integrations</h3>
                     <div id="integrations-list">
                         <div class="integration-item">
-                            <span><i class="fab fa-google"></i> Google Calendar</span>
+                            <span><i class="fab fa-google"></i> Google Workspace</span>
                             <div id="google-calendar-status" class="integration-status integration-disconnected"></div>
-                            <button id="google-auth-btn" onclick="authenticateGoogle()" style="display: none;">Authenticate</button>
                         </div>
                         <div class="integration-item">
-                            <span><i class="fas fa-envelope"></i> Gmail</span>
-                            <div id="gmail-status" class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fab fa-google-drive"></i> Google Drive</span>
-                            <div id="gdrive-status" class="integration-status integration-disconnected"></div>
-                        </div>
-                        <div class="integration-item">
-                            <span><i class="fas fa-database"></i> Notion</span>
+                            <span><i class="fas fa-brain"></i> Notion</span>
                             <div class="integration-status integration-disconnected"></div>
                         </div>
                         <div class="integration-item">
@@ -483,7 +690,7 @@
                             <div class="integration-status integration-disconnected"></div>
                         </div>
                         <div class="integration-item">
-                            <span><i class="fas fa-handshake"></i> Dubsado</span>
+                            <span><i class="fas fa-handshake"></i> Dubsado CRM</span>
                             <div class="integration-status integration-disconnected"></div>
                         </div>
                         <div class="integration-item">
@@ -502,10 +709,10 @@
                 </div>
 
                 <div class="card">
-                    <h3><i class="fas fa-clock"></i>Today's Overview</h3>
-                    <div id="daily-overview">
-                        <p style="color: var(--text-secondary); font-style: italic;">
-                            Connect your integrations to see today's schedule and priorities.
+                    <h3><i class="fas fa-clock"></i>Today's Agenda</h3>
+                    <div id="daily-overview" class="daily-agenda">
+                        <p style="color: var(--text-secondary); font-style: italic; text-align: center; padding: 20px;">
+                            Connect your integrations to see your intelligent daily briefing.
                         </p>
                     </div>
                 </div>
@@ -518,6 +725,7 @@
 
         // Load system status on page load
         loadStatus();
+        loadIntegrations();
 
         function setQuestion(question) {
             document.getElementById('question').value = question;
@@ -532,10 +740,10 @@
 
         function quickAction(action) {
             const actions = {
-                'schedule': 'Show me my schedule for today and help me plan',
-                'email': 'What are my most important emails to respond to?',
-                'notes': 'Help me organize my recent notes and thoughts',
-                'tasks': 'What are my pending tasks and priorities?'
+                'schedule': 'Analyze my calendar and suggest strategic time blocks for high-impact work',
+                'email': 'Prioritize my inbox and draft responses for critical communications',
+                'notes': 'Review my recent notes and extract actionable insights and follow-ups',
+                'tasks': 'Assess my current goals and suggest optimization strategies'
             };
 
             if (actions[action]) {
@@ -551,7 +759,7 @@
                 let statusHtml = `
                     <div class="status-grid">
                         <div class="status-item">
-                            <span><i class="fas fa-robot"></i> OpenAI API</span>
+                            <span><i class="fas fa-robot"></i> AI Engine</span>
                             <span class="${status.openai_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.openai_api_key}</span>
                         </div>
                         <div class="status-item">
@@ -559,32 +767,32 @@
                             <span class="${status.pinecone_api_key === '✓' ? 'status-good' : 'status-bad'}">${status.pinecone_api_key}</span>
                         </div>
                         <div class="status-item">
-                            <span><i class="fas fa-search"></i> Search Index</span>
+                            <span><i class="fas fa-search"></i> Knowledge Index</span>
                             <span class="${status.index_exists === '✓' ? 'status-good' : 'status-bad'}">${status.index_exists}</span>
                         </div>
                         <div class="status-item">
-                            <span><i class="fas fa-file-pdf"></i> Documents</span>
-                            <span class="status-good">${status.pdf_files_found} files</span>
+                            <span><i class="fas fa-file-alt"></i> Documents</span>
+                            <span class="status-good">${status.pdf_files_found} indexed</span>
                         </div>
                     </div>
                 `;
 
                 if (status.pdf_files && status.pdf_files.length > 0) {
-                    statusHtml += `<div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary);">
-                        <strong>Documents:</strong> ${status.pdf_files.join(', ')}
+                    statusHtml += `<div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary);">
+                        <strong>Knowledge Base:</strong> ${status.pdf_files.join(', ')}
                     </div>`;
                 }
 
-                const readyStatus = status.ready ? 'System Ready' : 'Configuration Needed';
-                statusHtml += `<div style="margin-top: 20px; padding: 12px; background: ${status.ready ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'}; border-radius: 8px; text-align: center; font-weight: 600; color: ${status.ready ? 'var(--success-color)' : 'var(--accent-color)'};">
+                const readyStatus = status.ready ? 'System Operational' : 'Configuration Required';
+                statusHtml += `<div style="margin-top: 24px; padding: 16px; background: ${status.ready ? 'var(--gradient-accent)' : 'linear-gradient(135deg, var(--danger-color), #c73650)'}; border-radius: 12px; text-align: center; font-weight: 600; color: var(--text-primary);">
                     <i class="fas fa-${status.ready ? 'check-circle' : 'exclamation-triangle'}"></i> ${readyStatus}
                 </div>`;
 
                 document.getElementById('status-content').innerHTML = statusHtml;
             } catch (error) {
                 document.getElementById('status-content').innerHTML = `
-                    <div class="status-item" style="color: var(--accent-color);">
-                        <i class="fas fa-exclamation-triangle"></i> Failed to load status: ${error.message}
+                    <div class="status-item" style="color: var(--danger-color);">
+                        <i class="fas fa-exclamation-triangle"></i> System Status Unavailable
                     </div>
                 `;
             }
@@ -633,7 +841,7 @@
                 loadingMsg.remove();
 
                 // Add error message
-                addMessage(`I encountered an error: ${error.message}`, 'assistant');
+                addMessage(`I encountered an error while processing your request: ${error.message}`, 'assistant');
             } finally {
                 isLoading = false;
                 sendBtn.disabled = false;
@@ -648,14 +856,14 @@
             messageDiv.className = `message ${sender}`;
 
             if (isLoading) {
-                messageDiv.innerHTML = '<div class="loading">Analyzing your documents and data...</div>';
+                messageDiv.innerHTML = '<div class="loading">Processing your request and analyzing available data...</div>';
             } else {
                 let html = content;
 
                 if (sources && sources.length > 0) {
                     html += `
                         <div class="sources">
-                            <h5><i class="fas fa-link"></i> Sources:</h5>
+                            <h5><i class="fas fa-link"></i> Data Sources:</h5>
                             ${sources.map(source => `<span class="source-tag">${source}</span>`).join('')}
                         </div>
                     `;
@@ -681,18 +889,11 @@
                 .then(response => response.json())
                 .then(data => {
                     data.integrations.forEach(integration => {
-                        let statusElement, authBtn;
+                        let statusElement;
 
                         switch(integration.name) {
                             case 'Google Calendar':
                                 statusElement = document.getElementById('google-calendar-status');
-                                authBtn = document.getElementById('google-auth-btn');
-                                break;
-                            case 'Gmail':
-                                statusElement = document.getElementById('gmail-status');
-                                break;
-                            case 'Google Drive':
-                                statusElement = document.getElementById('gdrive-status');
                                 break;
                         }
 
@@ -700,13 +901,9 @@
                             if (integration.connected) {
                                 statusElement.className = 'integration-status integration-connected';
                                 statusElement.title = 'Connected';
-                                if (authBtn) authBtn.style.display = 'none';
                             } else {
                                 statusElement.className = 'integration-status integration-disconnected';
                                 statusElement.title = integration.status_message;
-                                if (authBtn && integration.auth_url) {
-                                    authBtn.style.display = 'inline-block';
-                                }
                             }
                         }
                     });
@@ -717,61 +914,45 @@
                 .catch(error => console.error('Error loading integrations:', error));
         }
 
-        function authenticateGoogle() {
-            window.location.href = '/auth/google';
-        }
-
         function loadTodayCalendar() {
             fetch('/calendar/today')
                 .then(response => response.json())
                 .then(data => {
-                    const overviewDiv = document.querySelector('.card h3').parentElement;
-                    let calendarDiv = document.getElementById('calendar-today');
-
-                    if (!calendarDiv) {
-                        calendarDiv = document.createElement('div');
-                        calendarDiv.id = 'calendar-today';
-                        overviewDiv.appendChild(calendarDiv);
-                    }
+                    const overviewDiv = document.getElementById('daily-overview');
 
                     if (data.error) {
-                        calendarDiv.innerHTML = `
-                            <p style="color: #ff6b6b; font-size: 14px;">
+                        overviewDiv.innerHTML = `
+                            <p style="color: var(--danger-color); font-size: 14px; text-align: center; padding: 20px;">
                                 ${data.error}
-                                ${data.auth_url ? `<br><a href="${data.auth_url}" style="color: #4CAF50;">Authenticate with Google</a>` : ''}
+                                ${data.auth_url ? `<br><br><a href="${data.auth_url}" style="color: var(--success-color); text-decoration: none;">→ Connect Google Calendar</a>` : ''}
                             </p>
                         `;
                     } else if (data.events && data.events.length > 0) {
-                        calendarDiv.innerHTML = `
-                            <h4 style="margin: 15px 0 10px 0; color: #333;">Today's Events (${data.count})</h4>
+                        overviewDiv.innerHTML = `
                             ${data.events.map(event => `
-                                <div style="margin: 8px 0; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 14px;">
-                                    <strong>${event.title}</strong><br>
-                                    <span style="color: #666;">${new Date(event.start_time).toLocaleTimeString()} - ${new Date(event.end_time).toLocaleTimeString()}</span>
-                                    ${event.description ? `<br><span style="color: #888; font-size: 12px;">${event.description.substring(0, 100)}...</span>` : ''}
+                                <div class="agenda-item">
+                                    <div class="agenda-time">${new Date(event.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                                    <div>
+                                        <strong>${event.title}</strong>
+                                        ${event.description ? `<br><span style="color: var(--text-muted); font-size: 0.8rem;">${event.description.substring(0, 80)}...</span>` : ''}
+                                    </div>
                                 </div>
                             `).join('')}
                         `;
                     } else {
-                        calendarDiv.innerHTML = `
-                            <h4 style="margin: 15px 0 10px 0; color: #333;">Today's Events</h4>
-                            <p style="color: #666; font-size: 14px;">No events scheduled for today</p>
+                        overviewDiv.innerHTML = `
+                            <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                                <i class="fas fa-calendar-check" style="font-size: 2rem; margin-bottom: 12px; color: var(--success-color);"></i>
+                                <p>Clear schedule today</p>
+                                <p style="font-size: 0.8rem; margin-top: 8px;">Perfect time for deep work</p>
+                            </div>
                         `;
                     }
                 })
                 .catch(error => {
                     console.error('Error loading calendar:', error);
-                    const overviewDiv = document.querySelector('.card h3').parentElement;
-                    let calendarDiv = document.getElementById('calendar-today');
-
-                    if (!calendarDiv) {
-                        calendarDiv = document.createElement('div');
-                        calendarDiv.id = 'calendar-today';
-                        overviewDiv.appendChild(calendarDiv);
-                    }
-
-                    calendarDiv.innerHTML = `
-                        <p style="color: #ff6b6b; font-size: 14px;">Failed to load calendar</p>
+                    document.getElementById('daily-overview').innerHTML = `
+                        <p style="color: var(--danger-color); font-size: 14px; text-align: center; padding: 20px;">Calendar unavailable</p>
                     `;
                 });
         }
