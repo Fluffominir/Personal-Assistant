@@ -3,11 +3,12 @@ import os, openai, pinecone, json, requests
 from datetime import datetime, timedelta
 from fastapi import FastAPI, Query, HTTPException, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import asyncio
 import aiohttp
+import urllib.parse
 
 try:
     from dotenv import load_dotenv
@@ -28,6 +29,13 @@ GOOGLE_SCOPES = [
     'https://www.googleapis.com/auth/gmail.send',
     'https://www.googleapis.com/auth/drive.readonly'
 ]
+
+# Simple in-memory token storage (in production, use a database)
+google_tokens = {}
+
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
+REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", "https://your-repl-url.replit.dev/auth/google/callback")
 
 print("🔍 Checking environment variables...")
 required_vars = ["OPENAI_API_KEY", "PINECONE_API_KEY"]
@@ -233,6 +241,92 @@ async def get_notion_data(notion_token: str, database_id: str) -> Dict[str, Any]
 def root():
     return FileResponse("static/index.html")
 
+@app.get("/auth/google")
+def google_auth():
+    """Initiate Google OAuth flow"""
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Secrets.")
+    
+    auth_url = "https://accounts.google.com/o/oauth2/auth"
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": REDIRECT_URI,
+        "scope": " ".join(GOOGLE_SCOPES),
+        "response_type": "code",
+        "access_type": "offline",
+        "prompt": "consent"
+    }
+    
+    url = f"{auth_url}?{urllib.parse.urlencode(params)}"
+    return RedirectResponse(url=url)
+
+@app.get("/auth/google/callback")
+async def google_callback(code: str):
+    """Handle Google OAuth callback"""
+    if not code:
+        raise HTTPException(status_code=400, detail="Authorization code not provided")
+    
+    try:
+        # Exchange code for tokens
+        token_url = "https://oauth2.googleapis.com/token"
+        data = {
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": REDIRECT_URI
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.post(token_url, data=data) as response:
+                if response.status == 200:
+                    tokens = await response.json()
+                    # Store tokens (in production, associate with user ID)
+                    google_tokens["access_token"] = tokens.get("access_token")
+                    google_tokens["refresh_token"] = tokens.get("refresh_token")
+                    google_tokens["expires_at"] = datetime.now() + timedelta(seconds=tokens.get("expires_in", 3600))
+                    
+                    return RedirectResponse(url="/?auth=success")
+                else:
+                    error = await response.text()
+                    raise HTTPException(status_code=400, detail=f"Token exchange failed: {error}")
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"OAuth callback error: {str(e)}")
+
+async def get_valid_google_token():
+    """Get a valid Google access token, refreshing if necessary"""
+    if not google_tokens.get("access_token"):
+        return None
+    
+    # Check if token is expired
+    if google_tokens.get("expires_at") and datetime.now() >= google_tokens["expires_at"]:
+        # Try to refresh token
+        if google_tokens.get("refresh_token"):
+            try:
+                refresh_url = "https://oauth2.googleapis.com/token"
+                data = {
+                    "client_id": GOOGLE_CLIENT_ID,
+                    "client_secret": GOOGLE_CLIENT_SECRET,
+                    "refresh_token": google_tokens["refresh_token"],
+                    "grant_type": "refresh_token"
+                }
+                
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(refresh_url, data=data) as response:
+                        if response.status == 200:
+                            tokens = await response.json()
+                            google_tokens["access_token"] = tokens.get("access_token")
+                            google_tokens["expires_at"] = datetime.now() + timedelta(seconds=tokens.get("expires_in", 3600))
+                            return google_tokens["access_token"]
+            except Exception as e:
+                print(f"Token refresh failed: {e}")
+                return None
+        else:
+            return None
+    
+    return google_tokens.get("access_token")
+
 @app.get("/api")
 def api_root():
     integrations = {
@@ -272,21 +366,32 @@ def status():
 @app.get("/integrations")
 def get_integrations():
     """Get status of all integrations"""
+    google_configured = bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)
+    google_authenticated = bool(google_tokens.get("access_token"))
+    
+    google_status = "Authenticated" if google_authenticated else ("Ready to authenticate" if google_configured else "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Secrets")
+    
     integrations = [
         {
             "name": "Google Calendar",
-            "connected": bool(os.environ.get("GOOGLE_CLIENT_ID")),
-            "status_message": "Configured" if os.environ.get("GOOGLE_CLIENT_ID") else "Set GOOGLE_CLIENT_ID in Secrets"
+            "connected": google_authenticated,
+            "configured": google_configured,
+            "status_message": google_status,
+            "auth_url": "/auth/google" if google_configured and not google_authenticated else None
         },
         {
             "name": "Gmail",
-            "connected": bool(os.environ.get("GOOGLE_CLIENT_ID")),
-            "status_message": "Configured" if os.environ.get("GOOGLE_CLIENT_ID") else "Set GOOGLE_CLIENT_ID in Secrets"
+            "connected": google_authenticated,
+            "configured": google_configured,
+            "status_message": google_status,
+            "auth_url": "/auth/google" if google_configured and not google_authenticated else None
         },
         {
             "name": "Google Drive",
-            "connected": bool(os.environ.get("GOOGLE_CLIENT_ID")),
-            "status_message": "Configured" if os.environ.get("GOOGLE_CLIENT_ID") else "Set GOOGLE_CLIENT_ID in Secrets"
+            "connected": google_authenticated,
+            "configured": google_configured,
+            "status_message": google_status,
+            "auth_url": "/auth/google" if google_configured and not google_authenticated else None
         },
         {
             "name": "Notion",
@@ -329,23 +434,96 @@ def get_integrations():
 @app.get("/calendar/today")
 async def get_today_calendar():
     """Get today's calendar events"""
-    # This would use stored OAuth token in production
-    # For now, return placeholder
-    return {
-        "message": "Calendar integration configured but needs OAuth token",
-        "events": [],
-        "setup_required": "Complete OAuth flow to access calendar"
-    }
+    access_token = await get_valid_google_token()
+    if not access_token:
+        return {
+            "error": "Not authenticated with Google",
+            "auth_url": "/auth/google",
+            "events": []
+        }
+    
+    try:
+        events = await get_google_calendar_events(access_token, days_ahead=1)
+        return {
+            "events": [
+                {
+                    "title": event.title,
+                    "start_time": event.start_time.isoformat(),
+                    "end_time": event.end_time.isoformat(),
+                    "description": event.description
+                }
+                for event in events
+            ],
+            "count": len(events)
+        }
+    except Exception as e:
+        return {
+            "error": f"Failed to fetch calendar: {str(e)}",
+            "events": []
+        }
+
+@app.get("/calendar/week")
+async def get_week_calendar():
+    """Get this week's calendar events"""
+    access_token = await get_valid_google_token()
+    if not access_token:
+        return {
+            "error": "Not authenticated with Google",
+            "auth_url": "/auth/google",
+            "events": []
+        }
+    
+    try:
+        events = await get_google_calendar_events(access_token, days_ahead=7)
+        return {
+            "events": [
+                {
+                    "title": event.title,
+                    "start_time": event.start_time.isoformat(),
+                    "end_time": event.end_time.isoformat(),
+                    "description": event.description
+                }
+                for event in events
+            ],
+            "count": len(events)
+        }
+    except Exception as e:
+        return {
+            "error": f"Failed to fetch calendar: {str(e)}",
+            "events": []
+        }
 
 @app.get("/email/priority")
 async def get_priority_emails():
     """Get priority emails"""
-    # This would use stored OAuth token in production
-    return {
-        "message": "Email integration configured but needs OAuth token",
-        "emails": [],
-        "setup_required": "Complete OAuth flow to access Gmail"
-    }
+    access_token = await get_valid_google_token()
+    if not access_token:
+        return {
+            "error": "Not authenticated with Google",
+            "auth_url": "/auth/google",
+            "emails": []
+        }
+    
+    try:
+        emails = await get_gmail_summary(access_token, max_results=10)
+        return {
+            "emails": [
+                {
+                    "sender": email.sender,
+                    "subject": email.subject,
+                    "snippet": email.snippet,
+                    "importance": email.importance,
+                    "timestamp": email.timestamp.isoformat()
+                }
+                for email in emails
+            ],
+            "count": len(emails)
+        }
+    except Exception as e:
+        return {
+            "error": f"Failed to fetch emails: {str(e)}",
+            "emails": []
+        }
 
 @app.get("/notion/projects")
 async def get_notion_projects():

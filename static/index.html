@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -373,11 +372,11 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
-            
+
             .header h1 {
                 font-size: 2.2rem;
             }
-            
+
             .chat-area {
                 height: 500px;
             }
@@ -464,15 +463,16 @@
                     <div id="integrations-list">
                         <div class="integration-item">
                             <span><i class="fab fa-google"></i> Google Calendar</span>
-                            <div class="integration-status integration-disconnected"></div>
+                            <div id="google-calendar-status" class="integration-status integration-disconnected"></div>
+                            <button id="google-auth-btn" onclick="authenticateGoogle()" style="display: none;">Authenticate</button>
                         </div>
                         <div class="integration-item">
                             <span><i class="fas fa-envelope"></i> Gmail</span>
-                            <div class="integration-status integration-disconnected"></div>
+                            <div id="gmail-status" class="integration-status integration-disconnected"></div>
                         </div>
                         <div class="integration-item">
                             <span><i class="fab fa-google-drive"></i> Google Drive</span>
-                            <div class="integration-status integration-disconnected"></div>
+                            <div id="gdrive-status" class="integration-status integration-disconnected"></div>
                         </div>
                         <div class="integration-item">
                             <span><i class="fas fa-database"></i> Notion</span>
@@ -537,7 +537,7 @@
                 'notes': 'Help me organize my recent notes and thoughts',
                 'tasks': 'What are my pending tasks and priorities?'
             };
-            
+
             if (actions[action]) {
                 setQuestion(actions[action]);
             }
@@ -547,7 +547,7 @@
             try {
                 const response = await fetch('/status');
                 const status = await response.json();
-                
+
                 let statusHtml = `
                     <div class="status-grid">
                         <div class="status-item">
@@ -568,18 +568,18 @@
                         </div>
                     </div>
                 `;
-                
+
                 if (status.pdf_files && status.pdf_files.length > 0) {
                     statusHtml += `<div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary);">
                         <strong>Documents:</strong> ${status.pdf_files.join(', ')}
                     </div>`;
                 }
-                
+
                 const readyStatus = status.ready ? 'System Ready' : 'Configuration Needed';
                 statusHtml += `<div style="margin-top: 20px; padding: 12px; background: ${status.ready ? 'rgba(39, 174, 96, 0.1)' : 'rgba(231, 76, 60, 0.1)'}; border-radius: 8px; text-align: center; font-weight: 600; color: ${status.ready ? 'var(--success-color)' : 'var(--accent-color)'};">
                     <i class="fas fa-${status.ready ? 'check-circle' : 'exclamation-triangle'}"></i> ${readyStatus}
                 </div>`;
-                
+
                 document.getElementById('status-content').innerHTML = statusHtml;
             } catch (error) {
                 document.getElementById('status-content').innerHTML = `
@@ -592,46 +592,46 @@
 
         async function askQuestion() {
             if (isLoading) return;
-            
+
             const questionInput = document.getElementById('question');
             const question = questionInput.value.trim();
-            
+
             if (!question) return;
-            
+
             isLoading = true;
             const sendBtn = document.getElementById('send-btn');
             sendBtn.disabled = true;
             sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            
+
             // Add user message
             addMessage(question, 'user');
-            
+
             // Clear input
             questionInput.value = '';
-            
+
             // Add loading message
             const loadingMsg = addMessage('', 'assistant', true);
-            
+
             try {
                 const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
-                
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.detail || `HTTP ${response.status}`);
                 }
-                
+
                 const data = await response.json();
-                
+
                 // Remove loading message
                 loadingMsg.remove();
-                
+
                 // Add assistant response
                 addMessage(data.answer, 'assistant', false, data.sources);
-                
+
             } catch (error) {
                 // Remove loading message
                 loadingMsg.remove();
-                
+
                 // Add error message
                 addMessage(`I encountered an error: ${error.message}`, 'assistant');
             } finally {
@@ -646,12 +646,12 @@
             const messagesContainer = document.getElementById('messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
-            
+
             if (isLoading) {
                 messageDiv.innerHTML = '<div class="loading">Analyzing your documents and data...</div>';
             } else {
                 let html = content;
-                
+
                 if (sources && sources.length > 0) {
                     html += `
                         <div class="sources">
@@ -660,20 +660,120 @@
                         </div>
                     `;
                 }
-                
+
                 messageDiv.innerHTML = html;
             }
-            
+
             // Remove welcome message if it exists
             const welcomeMsg = messagesContainer.querySelector('.welcome-message');
             if (welcomeMsg) {
                 welcomeMsg.remove();
             }
-            
+
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
+
             return messageDiv;
+        }
+
+        function loadIntegrations() {
+            fetch('/integrations')
+                .then(response => response.json())
+                .then(data => {
+                    data.integrations.forEach(integration => {
+                        let statusElement, authBtn;
+
+                        switch(integration.name) {
+                            case 'Google Calendar':
+                                statusElement = document.getElementById('google-calendar-status');
+                                authBtn = document.getElementById('google-auth-btn');
+                                break;
+                            case 'Gmail':
+                                statusElement = document.getElementById('gmail-status');
+                                break;
+                            case 'Google Drive':
+                                statusElement = document.getElementById('gdrive-status');
+                                break;
+                        }
+
+                        if (statusElement) {
+                            if (integration.connected) {
+                                statusElement.className = 'integration-status integration-connected';
+                                statusElement.title = 'Connected';
+                                if (authBtn) authBtn.style.display = 'none';
+                            } else {
+                                statusElement.className = 'integration-status integration-disconnected';
+                                statusElement.title = integration.status_message;
+                                if (authBtn && integration.auth_url) {
+                                    authBtn.style.display = 'inline-block';
+                                }
+                            }
+                        }
+                    });
+
+                    // Load calendar if authenticated
+                    loadTodayCalendar();
+                })
+                .catch(error => console.error('Error loading integrations:', error));
+        }
+
+        function authenticateGoogle() {
+            window.location.href = '/auth/google';
+        }
+
+        function loadTodayCalendar() {
+            fetch('/calendar/today')
+                .then(response => response.json())
+                .then(data => {
+                    const overviewDiv = document.querySelector('.card h3').parentElement;
+                    let calendarDiv = document.getElementById('calendar-today');
+
+                    if (!calendarDiv) {
+                        calendarDiv = document.createElement('div');
+                        calendarDiv.id = 'calendar-today';
+                        overviewDiv.appendChild(calendarDiv);
+                    }
+
+                    if (data.error) {
+                        calendarDiv.innerHTML = `
+                            <p style="color: #ff6b6b; font-size: 14px;">
+                                ${data.error}
+                                ${data.auth_url ? `<br><a href="${data.auth_url}" style="color: #4CAF50;">Authenticate with Google</a>` : ''}
+                            </p>
+                        `;
+                    } else if (data.events && data.events.length > 0) {
+                        calendarDiv.innerHTML = `
+                            <h4 style="margin: 15px 0 10px 0; color: #333;">Today's Events (${data.count})</h4>
+                            ${data.events.map(event => `
+                                <div style="margin: 8px 0; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 14px;">
+                                    <strong>${event.title}</strong><br>
+                                    <span style="color: #666;">${new Date(event.start_time).toLocaleTimeString()} - ${new Date(event.end_time).toLocaleTimeString()}</span>
+                                    ${event.description ? `<br><span style="color: #888; font-size: 12px;">${event.description.substring(0, 100)}...</span>` : ''}
+                                </div>
+                            `).join('')}
+                        `;
+                    } else {
+                        calendarDiv.innerHTML = `
+                            <h4 style="margin: 15px 0 10px 0; color: #333;">Today's Events</h4>
+                            <p style="color: #666; font-size: 14px;">No events scheduled for today</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading calendar:', error);
+                    const overviewDiv = document.querySelector('.card h3').parentElement;
+                    let calendarDiv = document.getElementById('calendar-today');
+
+                    if (!calendarDiv) {
+                        calendarDiv = document.createElement('div');
+                        calendarDiv.id = 'calendar-today';
+                        overviewDiv.appendChild(calendarDiv);
+                    }
+
+                    calendarDiv.innerHTML = `
+                        <p style="color: #ff6b6b; font-size: 14px;">Failed to load calendar</p>
+                    `;
+                });
         }
     </script>
 </body>
