@@ -64,16 +64,28 @@ sync_task = None
 @app.on_event("startup")
 async def start_background_tasks():
     global sync_task
-    # Only start if we have the required configuration
-    if os.environ.get("NOTION_WORKSPACES") and os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY"):
+    # Check if we have Notion configuration (either NOTION_WORKSPACES or NOTION_API_KEY)
+    has_notion = os.environ.get("NOTION_WORKSPACES") or os.environ.get("NOTION_API_KEY")
+    has_required_keys = os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY")
+    
+    if has_notion and has_required_keys:
         try:
             from scripts.notion_sync import scheduler
             sync_task = asyncio.create_task(scheduler())
             print("🔄 Background Notion sync started")
         except ImportError as e:
             print(f"⚠️  Could not start background sync: {e}")
+        except Exception as e:
+            print(f"⚠️  Background sync startup error: {e}")
     else:
-        print("⚠️  Background sync disabled - missing configuration")
+        missing = []
+        if not has_notion:
+            missing.append("NOTION_API_KEY or NOTION_WORKSPACES")
+        if not os.environ.get("OPENAI_API_KEY"):
+            missing.append("OPENAI_API_KEY")
+        if not os.environ.get("PINECONE_API_KEY"):
+            missing.append("PINECONE_API_KEY")
+        print(f"⚠️  Background sync disabled - missing: {', '.join(missing)}")
 
 @app.on_event("shutdown")
 async def shutdown_background_tasks():
@@ -347,6 +359,36 @@ async def get_notion_projects():
         "message": "Notion integration ready",
         "setup_required": "Add NOTION_DATABASE_IDS to Secrets with your database IDs"
     }
+
+@app.post("/notion/sync")
+async def manual_notion_sync():
+    """Manually trigger a Notion sync"""
+    try:
+        from scripts.notion_sync import full_sync
+        await full_sync()
+        return {"message": "Notion sync completed successfully"}
+    except Exception as e:
+        return {"error": f"Sync failed: {str(e)}"}
+
+@app.get("/notion/status")
+async def notion_sync_status():
+    """Get Notion sync status and data"""
+    if not idx:
+        return {"error": "Pinecone not configured"}
+    
+    try:
+        # Check how many Notion items we have
+        stats = idx.describe_index_stats()
+        notion_count = stats.namespaces.get("notion", {}).get("vector_count", 0)
+        
+        return {
+            "notion_vectors_stored": notion_count,
+            "notion_api_key_configured": bool(os.environ.get("NOTION_API_KEY")),
+            "notion_workspaces_configured": bool(os.environ.get("NOTION_WORKSPACES")),
+            "last_sync": "Check logs for sync activity"
+        }
+    except Exception as e:
+        return {"error": f"Failed to get status: {str(e)}"}
 
 @app.get("/ask", response_model=Answer)
 def ask(q: str = Query(..., description="Your question")):
