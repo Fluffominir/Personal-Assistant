@@ -104,13 +104,13 @@ sync_task = None
 async def start_background_tasks():
     global sync_task
     print("🚀 Starting ATLAS - Michael's AI Companion")
-    
+
     # Check if we have Notion configuration (either NOTION_WORKSPACES or NOTION_API_KEY)
     has_notion = os.environ.get("NOTION_WORKSPACES") or os.environ.get("NOTION_API_KEY")
     has_required_keys = os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY")
 
     print(f"🔍 Startup check - Notion: {bool(has_notion)}, Required keys: {bool(has_required_keys)}")
-    
+
     # Test Notion API if configured
     if os.environ.get("NOTION_API_KEY"):
         print("🔍 Testing Notion API connection...")
@@ -131,17 +131,17 @@ async def start_background_tasks():
                         print(f"❌ Notion API test failed: {response.status} - {response_text}")
         except Exception as e:
             print(f"❌ Notion API test error: {e}")
-    
+
     # Start background sync with improved error handling
     if has_notion and has_required_keys:
         try:
             from scripts.notion_sync import scheduler
             sync_task = asyncio.create_task(scheduler())
             print("🔄 Background Notion sync started")
-            
+
             # Run an initial sync after a short delay
             asyncio.create_task(initial_sync())
-            
+
         except ImportError as e:
             print(f"⚠️  Could not start background sync: {e}")
         except Exception as e:
@@ -780,7 +780,7 @@ KEY CONTEXT ABOUT MICHAEL:
 - Brand colors: Spruce Blue and Olive Green
 - Ultimate comfort movie: Stranger Than Fiction
 - Primary love language: Quality Time
-- Mother's birthday: May 12
+- Mother's birthday: May12
 - He's a lifelong twin and red panda enthusiast from Atlanta
 
 YOUR COMMUNICATION STYLE:
@@ -901,7 +901,7 @@ async def get_dashboard():
         # Get calendar events
         calendar_events = []
         emails = []
-        
+
         access_token = await get_valid_google_token()
         if access_token:
             calendar_events = await get_google_calendar_events(access_token, days_ahead=1)
@@ -1007,7 +1007,7 @@ async def get_work_metrics():
         # Get real data from integrations
         calendar_events = []
         emails = []
-        
+
         access_token = await get_valid_google_token()
         if access_token:
             calendar_events = await get_google_calendar_events(access_token, days_ahead=1)
@@ -1016,7 +1016,7 @@ async def get_work_metrics():
         # Analyze calendar for work metrics
         work_events = [e for e in calendar_events if any(keyword in e.title.lower() 
                       for keyword in ['meeting', 'call', 'project', 'client', 'work'])]
-        
+
         client_emails = [e for e in emails if any(keyword in e.sender.lower() 
                         for keyword in ['client', '@company', 'business'])]
 
@@ -1059,7 +1059,7 @@ async def create_task(task_data: dict):
             "created_at": datetime.now().isoformat(),
             "completed": False
         }
-        
+
         # For now, return the task (in production, store in database)
         return {"message": "Task created successfully", "task": task}
     except Exception as e:
@@ -1071,10 +1071,10 @@ async def get_todays_tasks():
     try:
         access_token = await get_valid_google_token()
         tasks = []
-        
+
         if access_token:
             calendar_events = await get_google_calendar_events(access_token, days_ahead=1)
-            
+
             # Convert calendar events to task format
             for event in calendar_events:
                 tasks.append({
@@ -1085,7 +1085,7 @@ async def get_todays_tasks():
                     "end_time": event.end_time.isoformat(),
                     "description": event.description
                 })
-        
+
         return {
             "tasks": tasks,
             "total_count": len(tasks),
@@ -1104,22 +1104,22 @@ async def add_context(context_data: dict):
     try:
         if not openai_client or not idx:
             raise HTTPException(status_code=503, detail="AI services not configured")
-        
+
         content = context_data.get("content", "")
         source = context_data.get("source", "User Input")
         context_type = context_data.get("type", "general")
-        
+
         if not content.strip():
             raise HTTPException(status_code=400, detail="Content cannot be empty")
-        
+
         # Generate embedding
         embedding_response = openai_client.embeddings.create(
             model="text-embedding-3-small",
             input=content
         )
-        
+
         embedding = embedding_response.data[0].embedding
-        
+
         # Store in Pinecone
         metadata = {
             "source": source,
@@ -1127,15 +1127,15 @@ async def add_context(context_data: dict):
             "type": context_type,
             "added_at": datetime.now().isoformat()
         }
-        
+
         vector_id = f"context_{int(datetime.now().timestamp())}"
         idx.upsert(
             vectors=[(vector_id, embedding, metadata)],
             namespace="user_context"
         )
-        
+
         return {"message": "Context added successfully", "vector_id": vector_id}
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add context: {str(e)}")
 
@@ -1172,3 +1172,7 @@ def get_ai_personality():
             "neurodivergent_support": True
         }
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

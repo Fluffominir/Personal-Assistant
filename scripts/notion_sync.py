@@ -96,9 +96,11 @@ async def sync_workspace_pages(session, headers, workspace_name):
                 pages = data.get("results", [])
                 print(f"📄 Found {len(pages)} pages in {workspace_name}")
                 
-                # Process each page
-                for page in pages[:5]:  # Limit to avoid rate limits
+                # Process each page with rate limiting
+                for i, page in enumerate(pages[:10]):  # Increased limit
                     await process_notion_page(session, headers, page, workspace_name)
+                    if i > 0 and i % 3 == 0:  # Rate limit: pause every 3 requests
+                        await asyncio.sleep(1)
             else:
                 print(f"⚠️  Failed to search pages in {workspace_name}")
     except Exception as e:
