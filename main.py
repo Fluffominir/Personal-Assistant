@@ -655,6 +655,109 @@ def ask(q: str = Query(..., description="Your question")):
         print(f"✓ Relevance scores: {[f'{h.score:.3f}' for h in hits]}")
         
         # Debug: Show all scores even if below threshold
+        all_scores = [f'{h.score:.3f}' for h in all_hits[:5]]
+        print(f"✓ Top 5 raw scores: {all_scores}")
+        
+        # Handle questions without specific context - be more conversational
+        if not hits:
+            # For general questions, still answer but note the lack of personal context
+            msgs = [
+                {"role": "system", "content": """You are Michael Slusher's personal AI companion and executive assistant. Michael is the founder of Rocket Launch Studio, a creative professional with ADHD who values efficiency and clear communication.
+
+You can answer general questions, provide explanations, give advice, help with coding, etc. However, you don't have specific personal information about Michael available for this question.
+
+Be conversational, helpful, and supportive. If this seems like a question that would benefit from Michael's personal information, let him know that you could provide more personalized help if he adds relevant documents to his knowledge base."""},
+                {"role": "user", "content": q}
+            ]
+            
+            response = openai_client.chat.completions.create(
+                model=CHAT_MD,
+                messages=msgs,
+                temperature=0.7,
+                max_tokens=1000
+            )
+            
+            ans = response.choices[0].message.content.strip()
+            
+            # Add a note about personal context if the question seems personal
+            personal_keywords = ['my', 'i am', 'i have', 'my family', 'my business', 'my schedule', 'my email', 'my calendar']
+            if any(keyword in q.lower() for keyword in personal_keywords):
+                ans += "\n\n💡 *For more personalized assistance with your specific information, you can add relevant documents to data/raw/ and run ingest.py, or update your Notion pages.*"
+            
+            return {"answer": ans, "sources": []}
+        
+        # Build context
+        ctx_pieces = []
+        for h in hits:
+            source = h.metadata.get('source', 'Unknown')
+            text = h.metadata.get('text', '')
+            ctx_pieces.append(f"Source: {source}\nContent: {text}")
+        
+        ctx = "\n\n---\n\n".join(ctx_pieces)
+        print(f"✓ Built context from {len(hits)} sources")
+        
+        # System prompt based on Michael's training data
+        system_prompt = f"""You are Michael's personal creative and productivity assistant. Speak with direct kindness, give step-by-step structure, and never use emojis.
+
+KEY CONTEXT ABOUT MICHAEL:
+- You are speaking directly to Michael Slusher, founder of Rocket Launch Studio
+- He has ADHD and autism (RAADS-R score 107) and benefits from clear, structured communication
+- He's a creative professional specializing in video production and content creation
+- Brand colors: Spruce Blue and Olive Green
+- Ultimate comfort movie: Stranger Than Fiction
+- Primary love language: Quality Time
+- Mother's birthday: May 12
+- He's a lifelong twin and red panda enthusiast from Atlanta
+
+YOUR COMMUNICATION STYLE:
+- Speak with direct kindness and clarity
+- Provide step-by-step structure for complex tasks
+- Never use emojis in responses
+- Be concise but thorough
+- Offer actionable micro-plans when he's in task paralysis
+- Support his neurodivergent needs with structured guidance
+
+ROCKET LAUNCH STUDIO CONTEXT:
+- Mission: Deliver striking, polished photo and video content that helps clients stand out
+- Core values: Creativity, Professionalism, Collaboration, Growth, Support
+- Services: Creative Development, Filming & Production, Editing & Post-Production
+- Tools: DaVinci Resolve, Adobe Suite, Sony FX6/FX3 cameras
+- Current projects: Focus on quality over quantity
+
+TECHNICAL PREFERENCES:
+- Camera setup: Sony FX6 A-cam, FX3 B-cam
+- Color workflow: ACES 1.3 pipeline, S-Log3 to Rec.709
+- File naming: ProjectName_Client_MMDDYYYY_Format_Final.mp4
+- Review tool: Frame.io for client feedback
+
+When Michael is experiencing overwhelm or task paralysis, break things into micro-steps with clear next actions.
+
+Context from Michael's documents:
+{ctx}"""
+        
+        msgs = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": q}
+        ]
+        
+        response = openai_client.chat.completions.create(
+            model=CHAT_MD,
+            messages=msgs,
+            temperature=0.3,
+            max_tokens=1000
+        )
+        
+        ans = response.choices[0].message.content.strip()
+        print(f"✓ Generated answer: {ans[:100]}...")
+        
+        # Extract unique sources
+        srcs = list({h.metadata["source"].replace("#", " p") for h in hits})
+        
+        return {"answer": ans, "sources": srcs}
+        
+    except Exception as e:
+        print(f"❌ Error processing question: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing question: {str(e)}")
 
 
 # Smart Home Integration Routes
