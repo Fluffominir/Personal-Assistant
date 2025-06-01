@@ -1,11 +1,24 @@
-
 .mobile-footer {
     position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 999;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--black);
+    padding: 12px 0;
     display: none;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.footer-menu {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background: transparent;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
 }
 
 .mobile-hamburger {
@@ -39,10 +52,20 @@
 
 @media (max-width: 768px) {
     .mobile-footer {
-        display: block;
+        display: flex;
     }
     
     .hamburger-menu {
+        display: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .mobile-footer {
+        display: flex;
+    }
+
+    .menu-btn {
         display: none;
     }
 }
