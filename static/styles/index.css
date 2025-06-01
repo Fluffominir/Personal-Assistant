@@ -66,3 +66,9 @@ body {
 .weather-badge{width:56px;height:56px;border-radius:50%;background:var(--teal);
                color:#fff;font-weight:700;display:flex;align-items:center;
                justify-content:center;}
+
+/* Column specific colors */
+.main-columns .agenda-column        { background:var(--card-pink); }
+.main-columns .todo-column          { background:var(--card-blue); }
+.ask-input{ background:var(--gold); color:#fff; font-weight:600; }
+@media (max-width:700px){ .ask-input{font-size:1rem;} }
