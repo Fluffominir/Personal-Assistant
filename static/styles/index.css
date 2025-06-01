@@ -90,3 +90,7 @@ h1,h2,h3,h4{margin:0;font-weight:700;}
 .ask-btn{border:none;padding:0 24px;border-radius:0 12px 12px 0;
   background:#000;color:#fff;font-weight:600;cursor:pointer;}
 .ask-btn:hover{filter:brightness(120%);}
+.quick-actions{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:32px;}
+.pill-btn{all:unset;background:#000;color:#fff;padding:14px 28px;
+  border-radius:28px;font-weight:600;cursor:pointer;}
+.pill-btn:hover{filter:brightness(120%);}

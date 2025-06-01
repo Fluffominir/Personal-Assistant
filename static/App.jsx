@@ -80,8 +80,8 @@ function App() {
       <Header eventCount={events.length} />
       <div className="container">
         {React.createElement(window.AskAtlas)}
+        {React.createElement(window.QuickActions)}
       </div>
-      <QuickActions />
       <section className="main-columns container">
         <AgendaColumn />
         <TodoColumn />
