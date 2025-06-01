@@ -144,6 +144,16 @@
 @media (max-width: 900px) {
     .agenda-wrap {
         grid-template-columns: 1fr;
-        margin: 20px 16px;
+        margin: clamp(10px, 3vw, 20px) clamp(8px, 2vw, 16px);
+        width: calc(100% - 2 * clamp(8px, 2vw, 16px));
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 480px) {
+    .agenda-wrap {
+        margin: clamp(8px, 2vw, 15px) clamp(4px, 1vw, 8px);
+        width: calc(100% - 2 * clamp(4px, 1vw, 8px));
     }
 }
