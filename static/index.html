@@ -18,7 +18,10 @@
   <!-- Babel so JSX in .jsx files works without a bundler -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Bundle order: design tokens first, then main app -->
+  <!-- Bundle order: design tokens first, then components, then main app -->
+  <script type="text/babel" src="/static/SideDrawer.jsx"></script>
+  <script type="text/babel" src="/static/SettingsControls.jsx"></script>
+  <script type="text/babel" src="/static/MobileFooter.jsx"></script>
   <script type="text/babel" src="/static/App.jsx"></script>
 </body>
 </html>

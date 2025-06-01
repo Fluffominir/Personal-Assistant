@@ -1,10 +1,4 @@
 
-import SideDrawer       from "/static/SideDrawer.jsx";
-import SettingsControls from "/static/SettingsControls.jsx";
-import MobileFooter     from "/static/MobileFooter.jsx";
-import "/static/styles/SideDrawer.css";
-import "/static/styles/MobileFooter.css";
-
 const { useState, useEffect } = React;
 
 function Header({ eventCount }) {
@@ -92,7 +86,7 @@ function App() {
 
   return (
     <>
-      <SideDrawer />
+      {React.createElement(window.SideDrawer)}
       <Header eventCount={events.length} />
       <AskAtlas />
       <QuickActions />
@@ -100,8 +94,8 @@ function App() {
         <AgendaColumn />
         <TodoColumn />
       </section>
-      <SettingsControls />
-      <MobileFooter />
+      {React.createElement(window.SettingsControls)}
+      {React.createElement(window.MobileFooter)}
     </>
   );
 }

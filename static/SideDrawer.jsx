@@ -1,5 +1,5 @@
 const { useState } = React;
-export default function SideDrawer() {
+function SideDrawer() {
   const [open, setOpen] = useState(false);
   const items = ["Rocket Launch Studio", "Connections", "Status", "Health"];
 
@@ -22,4 +22,7 @@ export default function SideDrawer() {
       {open && <div className="scrim" onClick={() => setOpen(false)} />}
     </>
   );
+}
+
+window.SideDrawer = SideDrawer;
 }

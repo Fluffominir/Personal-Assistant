@@ -6,4 +6,5 @@ function MobileFooter() {
     </footer>
   );
 }
-export default MobileFooter;
+
+window.MobileFooter = MobileFooter;r;

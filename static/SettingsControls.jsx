@@ -1,9 +1,10 @@
-
-export default function SettingsControls() {
+function SettingsControls() {
   return (
     <div className="settings-wrap">
-      <button title="Settings"   className="settings-btn">⚙️</button>
-      <button title="Sync now"   className="settings-btn">⟳</button>
+      <button className="settings-btn" title="Settings">⚙️</button>
+      <button className="settings-btn" title="Sync">⟳</button>
     </div>
   );
 }
+
+window.SettingsControls = SettingsControls;
