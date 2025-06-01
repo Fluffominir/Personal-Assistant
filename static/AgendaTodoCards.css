@@ -1,0 +1,149 @@
+
+.agenda-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 20px 32px;
+}
+
+/* Shared card styles */
+.agenda-card, .todo-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.agenda-card-header, .todo-card-header {
+    background-color: var(--black);
+    color: white;
+    padding: 16px 20px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+}
+
+/* Agenda Card */
+.agenda-card-body {
+    background-color: var(--brand-coral);
+    padding: 20px;
+}
+
+.agenda-item-row {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.agenda-item-row:last-child {
+    border-bottom: none;
+}
+
+.agenda-time {
+    font-size: 1.4rem;
+    font-weight: 600;
+    min-width: 80px;
+    color: var(--black);
+}
+
+.agenda-details {
+    flex: 1;
+}
+
+.agenda-title {
+    font-size: 1.4rem;
+    color: var(--black);
+    margin-bottom: 4px;
+}
+
+.agenda-location {
+    font-size: 1.2rem;
+    color: rgba(11, 11, 11, 0.7);
+}
+
+.agenda-empty {
+    font-size: 1.4rem;
+    color: rgba(11, 11, 11, 0.7);
+    text-align: center;
+    padding: 20px;
+}
+
+/* Todo Card */
+.todo-card-body {
+    background-color: var(--brand-blue);
+    padding: 20px;
+}
+
+.todo-item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: opacity 0.3s ease;
+}
+
+.todo-item-row:last-child {
+    border-bottom: none;
+}
+
+.todo-item-row.completed {
+    opacity: 0.4;
+    text-decoration: line-through;
+}
+
+.todo-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--black);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: white;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    color: var(--black);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.todo-checkbox:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.todo-checkbox.checked {
+    background-color: var(--black);
+    color: white;
+}
+
+.todo-details {
+    flex: 1;
+}
+
+.todo-title {
+    font-size: 1.4rem;
+    color: var(--black);
+    margin-bottom: 4px;
+}
+
+.todo-location {
+    font-size: 1.2rem;
+    color: rgba(11, 11, 11, 0.7);
+}
+
+.todo-empty {
+    font-size: 1.4rem;
+    color: rgba(11, 11, 11, 0.7);
+    text-align: center;
+    padding: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 900px) {
+    .agenda-wrap {
+        grid-template-columns: 1fr;
+        margin: 20px 16px;
+    }
+}

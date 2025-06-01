@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="src/styles/index.css">
     <link rel="stylesheet" href="static/Header.css">
     <link rel="stylesheet" href="static/QuickActions.css">
+    <link rel="stylesheet" href="static/AgendaTodoCards.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -615,6 +616,11 @@
 
             <div id="quick-actions"></div>
 
+            <div class="agenda-wrap">
+                <div id="agenda-card"></div>
+                <div id="todo-card"></div>
+            </div>
+
             <section class="dashboard-column">
                 <div class="widget" id="weather-widget">
                     <div class="widget-header">
@@ -750,6 +756,8 @@
     <script src="static/AtlasChatBox.jsx"></script>
     <script src="static/TrainingWizard.jsx"></script>
     <script src="static/QuickActions.jsx"></script>
+    <script src="static/AgendaCard.jsx"></script>
+    <script src="static/TodoCard.jsx"></script>
 
     <script>
         // Global state
@@ -1124,6 +1132,32 @@
         const quickActionsContainer = document.getElementById('quick-actions');
         const quickActionsRoot = ReactDOM.createRoot(quickActionsContainer);
         quickActionsRoot.render(React.createElement(window.QuickActions));
+
+        // Sample data for AgendaCard
+        const sampleAgendaItems = [
+            { time: '9:00 AM', title: 'Team Standup', location: 'Conference Room A' },
+            { time: '11:00 AM', title: 'Client Meeting', location: 'Zoom' },
+            { time: '2:00 PM', title: 'Project Review', location: 'Office' },
+            { time: '4:30 PM', title: 'One-on-One', location: 'Manager Office' }
+        ];
+
+        // Sample data for TodoCard
+        const sampleTodoItems = [
+            { title: 'Review quarterly reports', completed: false },
+            { title: 'Update project timeline', completed: false, location: 'Jira' },
+            { title: 'Schedule team retrospective', completed: false },
+            { title: 'Prepare presentation slides', completed: false, location: 'Google Slides' }
+        ];
+
+        // Render AgendaCard
+        const agendaCardContainer = document.getElementById('agenda-card');
+        const agendaCardRoot = ReactDOM.createRoot(agendaCardContainer);
+        agendaCardRoot.render(React.createElement(window.AgendaCard, { items: sampleAgendaItems }));
+
+        // Render TodoCard
+        const todoCardContainer = document.getElementById('todo-card');
+        const todoCardRoot = ReactDOM.createRoot(todoCardContainer);
+        todoCardRoot.render(React.createElement(window.TodoCard, { items: sampleTodoItems }));
     </script>
 </body>
 </html>
