@@ -1,0 +1,67 @@
+
+.today-banner {
+    margin: 20px 32px;
+}
+
+.today-banner-container {
+    background: var(--pink);
+    border-radius: 20px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.today-date-strip {
+    background: var(--black);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.today-agenda-content {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.today-agenda-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: white;
+}
+
+.today-agenda-time {
+    font-weight: 600;
+    min-width: 80px;
+    font-size: 1.3rem;
+}
+
+.today-agenda-event {
+    font-size: 1.3rem;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .today-banner {
+        margin: 16px 0;
+    }
+    
+    .today-date-strip {
+        font-size: 1.2rem;
+    }
+    
+    .today-agenda-time {
+        font-size: 1.1rem;
+        min-width: 70px;
+    }
+    
+    .today-agenda-event {
+        font-size: 1.1rem;
+    }
+}

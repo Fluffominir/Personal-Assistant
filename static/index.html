@@ -610,6 +610,8 @@
                 </div>
             </section>
 
+            <div id="today-banner"></div>
+
             <section class="dashboard-column">
                 <div class="widget" id="weather-widget">
                     <div class="widget-header">
@@ -921,18 +923,18 @@
         function initializeAtlasWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws/atlas`;
-            
+
             atlasWs = new WebSocket(wsUrl);
-            
+
             atlasWs.onopen = () => {
                 isAtlasConnected = true;
                 console.log('ATLAS WebSocket connected');
             };
-            
+
             atlasWs.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 const responseDiv = document.getElementById('atlas-response');
-                
+
                 if (data.type === 'chunk') {
                     responseDiv.style.display = 'block';
                     if (!responseDiv.textContent) {
@@ -947,7 +949,7 @@
                     responseDiv.textContent = 'Sorry, I encountered an error. Please try again.';
                 }
             };
-            
+
             atlasWs.onclose = () => {
                 isAtlasConnected = false;
                 console.log('ATLAS WebSocket disconnected');
@@ -962,20 +964,20 @@
         function submitAtlasQuestion() {
             const input = document.getElementById('atlas-input');
             const question = input.value.trim();
-            
+
             if (!question || !isAtlasConnected) return;
-            
+
             // Clear previous response
             const responseDiv = document.getElementById('atlas-response');
             responseDiv.textContent = '';
             responseDiv.style.display = 'none';
-            
+
             // Send question
             atlasWs.send(JSON.stringify({
                 type: 'message',
                 content: question
             }));
-            
+
             // Clear input
             input.value = '';
         }
@@ -1054,6 +1056,65 @@
                 return result;
             };
         }
+    </script>
+    <script>
+        //Create TodayBanner
+        function TodayBanner() {
+            return React.createElement(
+                'div',
+                {
+                    style: {
+                        backgroundColor: 'var(--pink)',
+                        borderRadius: '20px',
+                        width: '90%',
+                        maxWidth: '1400px',
+                        margin: '0 auto',
+                        marginBottom: '20px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden', // Prevent content from overflowing rounded corners
+                    },
+                },
+                React.createElement(
+                    'div',
+                    {
+                        style: {
+                            backgroundColor: 'black',
+                            color: 'white',
+                            padding: '10px',
+                            textAlign: 'center',
+                            fontSize: '1.2rem',
+                        },
+                    },
+                    'Sunday, July 1, 2025'
+                ),
+                React.createElement(
+                    'div',
+                    {
+                        style: {
+                            padding: '10px',
+                            fontSize: '1rem',
+                        },
+                    },
+                    'Sample Agenda Row 1'
+                ),
+                React.createElement(
+                    'div',
+                    {
+                        style: {
+                            padding: '10px',
+                            fontSize: '1rem',
+                        },
+                    },
+                    'Sample Agenda Row 2'
+                )
+            );
+        }
+
+        // Render TodayBanner
+        const todayBannerContainer = document.getElementById('today-banner');
+        const root = ReactDOM.createRoot(todayBannerContainer);
+        root.render(React.createElement(TodayBanner));
     </script>
 </body>
 </html>
