@@ -1108,7 +1108,7 @@
                             <div class="action-description">Quick mood and energy assessment to track your wellbeing</div>
                         </div>
 
-                        <div class="action-card info" onclick="askQuestion('Give me a comprehensive debrief of my week')">
+                        <div class="action-card info" onclick="askPredefined('Give me a comprehensive debrief of my week')">
                             <div class="action-icon">
                                 <i class="fas fa-chart-line"></i>
                             </div>
@@ -1524,7 +1524,12 @@
             }
         }
 
-        document.getElementById('questionInput').addEventListener('keypress', handleKeyPress);
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionInput = document.getElementById('questionInput');
+            if (questionInput) {
+                questionInput.addEventListener('keydown', handleKeyPress);
+            }
+        });
 
         async function askQuestion(predefinedQuestion = null) {
             const input = document.getElementById('questionInput');
@@ -1560,6 +1565,10 @@
             }
         }
 
+        function askPredefined(question) {
+            askQuestion(question);
+        }
+
         // Quick Check-in
         function openQuickCheckIn() {
             document.getElementById('checkinModal').classList.add('active');
@@ -1574,16 +1583,18 @@
         }
 
         // Mood descriptor selection
-        document.querySelectorAll('.mood-descriptor').forEach(desc => {
-            desc.addEventListener('click', () => {
-                const mood = desc.getAttribute('data-mood');
-                if (selectedMoods.includes(mood)) {
-                    selectedMoods = selectedMoods.filter(m => m !== mood);
-                    desc.classList.remove('selected');
-                } else {
-                    selectedMoods.push(mood);
-                    desc.classList.add('selected');
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.mood-descriptor').forEach(desc => {
+                desc.addEventListener('click', () => {
+                    const mood = desc.getAttribute('data-mood');
+                    if (selectedMoods.includes(mood)) {
+                        selectedMoods = selectedMoods.filter(m => m !== mood);
+                        desc.classList.remove('selected');
+                    } else {
+                        selectedMoods.push(mood);
+                        desc.classList.add('selected');
+                    }
+                });
             });
         });
 
@@ -1840,11 +1851,13 @@
         });
 
         // Close modals when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
             });
         });
     </script>
