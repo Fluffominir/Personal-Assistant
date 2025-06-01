@@ -984,18 +984,29 @@ def debug_search(q: str = Query(..., description="Search term to debug")):
         raise HTTPException(status_code=500, detail=f"Debug search failed: {str(e)}")
 
 @app.get("/weather")
-async def get_weather():
+async def get_weather(lat: Optional[float] = None, lon: Optional[float] = None):
     """Get current weather information"""
     try:
-        # In a real implementation, you'd use a weather API
-        # For now, return mock data
-        return {
-            "temperature": 22,
+        # Default to Duluth, GA if no coordinates provided
+        if lat is None or lon is None:
+            lat, lon = 34.0029, -84.1520
+            location = "Duluth, GA"
+        else:
+            location = f"{lat:.2f}, {lon:.2f}"
+        
+        # Mock weather data based on location
+        # In production, you'd call a real weather API like OpenWeatherMap
+        weather_data = {
+            "temperature": 72,
             "condition": "Partly Cloudy",
-            "location": "Current Location",
+            "location": location,
             "humidity": 65,
-            "wind_speed": 8
+            "wind_speed": 8,
+            "lat": lat,
+            "lon": lon
         }
+        
+        return weather_data
     except Exception as e:
         return {
             "error": f"Weather service unavailable: {str(e)}",
@@ -1003,6 +1014,11 @@ async def get_weather():
             "condition": "Unknown",
             "location": "Unknown"
         }
+
+@app.get("/api/weather")
+async def get_weather_api(lat: Optional[float] = None, lon: Optional[float] = None):
+    """API endpoint for weather with geolocation"""
+    return await get_weather(lat, lon)
 
 @app.get("/dashboard")
 async def get_dashboard():
