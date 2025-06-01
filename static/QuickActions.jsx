@@ -42,30 +42,4 @@ window.QuickActions = function QuickActions() {
             }, item.title)
         ])
     ));
-};me] || "⚡";
-    };
-
-    return React.createElement('section', {
-        className: 'quick-actions-section'
-    }, [
-        React.createElement('div', {
-            key: 'actions-grid',
-            className: 'quick-actions-grid'
-        }, actionItems.map((item, index) => 
-            React.createElement('button', {
-                key: index,
-                className: 'quick-action-pill',
-                onClick: () => handleActionClick(item.title)
-            }, [
-                React.createElement('span', {
-                    key: 'icon',
-                    className: 'quick-action-pill-icon'
-                }, getIconElement(item.icon)),
-                React.createElement('span', {
-                    key: 'title',
-                    className: 'quick-action-pill-title'
-                }, item.title)
-            ])
-        ))
-    ]);
 };

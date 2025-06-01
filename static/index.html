@@ -674,36 +674,28 @@
                     React.createElement('button', { key: 'ask-btn', className: 'ask-button' }, 'Ask')
                 ])
             ]),
-                <div class="ask-atlas-card">
-                    <textarea 
-                        id="atlas-input"
-                        placeholder="Ask about your projects, schedule, personal or business insights…"
-                        rows="3"></textarea>
-                    <div class="suggestion-row">
-                        <button class="suggestion-chip" onclick="fillSuggestion('Give me a daily breakdown')">Daily Breakdown</button>
-                        <button class="suggestion-chip" onclick="fillSuggestion('What\'s next on my agenda?')">What's Next?</button>
-                        <button class="suggestion-chip" onclick="fillSuggestion('Help me schedule my week')">Schedule my week</button>
-                    </div>
-                    <div class="ask-button-row">
-                        <button class="ask-button" onclick="submitAtlasQuestion()">
-                            Ask
-                            <svg class="chevron-down" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6,9 12,15 18,9"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="atlas-response" class="atlas-response" style="display: none;"></div>
-                </div>
-            </section>
+                React.createElement(window.TodayBanner, { key: 'today-banner' }),
+            React.createElement(window.QuickActions, { key: 'quick-actions' }),
+            React.createElement('div', { key: 'agenda-todo-wrap', className: 'agenda-wrap' }, [
+                React.createElement(window.AgendaCard, { 
+                    key: 'agenda-card', 
+                    items: [
+                        { time: '9:00 AM', title: 'Team Standup', location: 'Conference Room A' },
+                        { time: '11:00 AM', title: 'Client Meeting', location: 'Zoom' },
+                        { time: '2:00 PM', title: 'Project Review', location: 'Office' }
+                    ]
+                }),
+                React.createElement(window.TodoCard, { 
+                    key: 'todo-card', 
+                    items: [
+                        { title: 'Review quarterly reports', completed: false },
+                        { title: 'Update project timeline', completed: false },
+                        { title: 'Schedule team retrospective', completed: false }
+                    ]
+                })
+            ])
 
-            <div id="today-banner"></div>
-
-            <div id="quick-actions"></div>
-
-            <div class="agenda-wrap">
-                <div id="agenda-card"></div>
-                <div id="todo-card"></div>
-            </div>
+            
 
             <section class="dashboard-column">
                 <div class="widget" id="weather-widget">
@@ -1165,95 +1157,6 @@ console.log('Interface initialized');
             };
         }
     </script>
-    <script>
-        //Create TodayBanner
-        function TodayBanner() {
-            return React.createElement(
-                'div',
-                {
-                    style: {
-                        backgroundColor: 'var(--pink)',
-                        borderRadius: '20px',
-                        width: '90%',
-                        maxWidth: '1400px',
-                        margin: '0 auto',
-                        marginBottom: '20px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        overflow: 'hidden', // Prevent content from overflowing rounded corners
-                    },
-                },
-                React.createElement(
-                    'div',
-                    {
-                        style: {
-                            backgroundColor: 'black',
-                            color: 'white',
-                            padding: '10px',
-                            textAlign: 'center',
-                            fontSize: '1.2rem',
-                        },
-                    },
-                    'Sunday, July 1, 2025'
-                ),
-                React.createElement(
-                    'div',
-                    {
-                        style: {
-                            padding: '10px',
-                            fontSize: '1rem',
-                        },
-                    },
-                    'Sample Agenda Row 1'
-                ),
-                React.createElement(
-                    'div',
-                    {
-                        style: {
-                            padding: '10px',
-                            fontSize: '1rem',
-                        },
-                    },
-                    'Sample Agenda Row 2'
-                )
-            );
-        }
-
-        // Render TodayBanner
-        const todayBannerContainer = document.getElementById('today-banner');
-        const root = ReactDOM.createRoot(todayBannerContainer);
-        root.render(React.createElement(TodayBanner));
-
-        // Render QuickActions
-        const quickActionsContainer = document.getElementById('quick-actions');
-        const quickActionsRoot = ReactDOM.createRoot(quickActionsContainer);
-        quickActionsRoot.render(React.createElement(window.QuickActions));
-
-        // Sample data for AgendaCard
-        const sampleAgendaItems = [
-            { time: '9:00 AM', title: 'Team Standup', location: 'Conference Room A' },
-            { time: '11:00 AM', title: 'Client Meeting', location: 'Zoom' },
-            { time: '2:00 PM', title: 'Project Review', location: 'Office' },
-            { time: '4:30 PM', title: 'One-on-One', location: 'Manager Office' }
-        ];
-
-        // Sample data for TodoCard
-        const sampleTodoItems = [
-            { title: 'Review quarterly reports', completed: false },
-            { title: 'Update project timeline', completed: false, location: 'Jira' },
-            { title: 'Schedule team retrospective', completed: false },
-            { title: 'Prepare presentation slides', completed: false, location: 'Google Slides' }
-        ];
-
-        // Render AgendaCard
-        const agendaCardContainer = document.getElementById('agenda-card');
-        const agendaCardRoot = ReactDOM.createRoot(agendaCardContainer);
-        agendaCardRoot.render(React.createElement(window.AgendaCard, { items: sampleAgendaItems }));
-
-        // Render TodoCard
-        const todoCardContainer = document.getElementById('todo-card');
-        const todoCardRoot = ReactDOM.createRoot(todoCardContainer);
-        todoCardRoot.render(React.createElement(window.TodoCard, { items: sampleTodoItems }));
-    </script>
+    
 </body>
 </html>

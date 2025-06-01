@@ -1,4 +1,3 @@
-
 const { useState, useEffect } = React;
 
 window.TodayBanner = function TodayBanner() {
