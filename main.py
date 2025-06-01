@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from sqlmodel import SQLModel, Field, create_engine, Session, select
 from typing import Optional, List, Dict, Any
 import asyncio
 import aiohttp
@@ -268,12 +269,35 @@ class EventModel(BaseModel):
     end_time: Optional[str] = None
     description: Optional[str] = None
 
+class Todo(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    description: Optional[str] = None
+    completed: bool = False
+    completed_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=datetime.now)
+    archived: bool = False
+
+class TodoCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+
 # Database setup
 DB_PATH = Path("data/events.db")
+TODOS_DB_PATH = Path("data/todos.db")
+
+# SQLModel setup for todos
+engine = create_engine(f"sqlite:///{TODOS_DB_PATH}")
 
 def init_database():
-    """Initialize SQLite database for events"""
+    """Initialize SQLite database for events and todos"""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    TODOS_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Create todos tables
+    SQLModel.metadata.create_all(engine)
+    
+    # Create events database
     
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -297,6 +321,11 @@ def init_database():
 def get_db_connection():
     """Get database connection"""
     return sqlite3.connect(DB_PATH)
+
+def get_session():
+    """Get SQLModel session"""
+    with Session(engine) as session:
+        yield session
 
 # Initialize scheduler
 scheduler = AsyncIOScheduler()
@@ -1762,6 +1791,77 @@ async def get_training_profile():
     except Exception as e:
         print(f"❌ Error loading training profile: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to load training profile: {str(e)}")
+
+@app.get("/api/todos", response_model=List[Todo])
+async def get_todos(session: Session = Depends(get_session), show_archived: bool = False):
+    """Get all todos, optionally including archived ones"""
+    try:
+        if show_archived:
+            statement = select(Todo).order_by(Todo.created_at.desc())
+        else:
+            statement = select(Todo).where(Todo.archived == False).order_by(Todo.created_at.desc())
+        
+        todos = session.exec(statement).all()
+        return todos
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch todos: {str(e)}")
+
+@app.post("/api/todos", response_model=Todo)
+async def create_todo(todo_data: TodoCreate, session: Session = Depends(get_session)):
+    """Create a new todo"""
+    try:
+        todo = Todo(
+            title=todo_data.title,
+            description=todo_data.description
+        )
+        session.add(todo)
+        session.commit()
+        session.refresh(todo)
+        return todo
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create todo: {str(e)}")
+
+@app.patch("/api/todos/{todo_id}")
+async def update_todo(todo_id: int, updates: dict, session: Session = Depends(get_session)):
+    """Update a todo (mark as completed, etc.)"""
+    try:
+        todo = session.get(Todo, todo_id)
+        if not todo:
+            raise HTTPException(status_code=404, detail="Todo not found")
+        
+        for key, value in updates.items():
+            if hasattr(todo, key):
+                if key == "completed" and value and not todo.completed:
+                    # Mark as completed with timestamp
+                    todo.completed = True
+                    todo.completed_at = datetime.now()
+                elif key == "completed" and not value:
+                    # Unmark completion
+                    todo.completed = False
+                    todo.completed_at = None
+                else:
+                    setattr(todo, key, value)
+        
+        session.add(todo)
+        session.commit()
+        session.refresh(todo)
+        return todo
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update todo: {str(e)}")
+
+@app.delete("/api/todos/{todo_id}")
+async def delete_todo(todo_id: int, session: Session = Depends(get_session)):
+    """Delete a todo permanently"""
+    try:
+        todo = session.get(Todo, todo_id)
+        if not todo:
+            raise HTTPException(status_code=404, detail="Todo not found")
+        
+        session.delete(todo)
+        session.commit()
+        return {"message": "Todo deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete todo: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
