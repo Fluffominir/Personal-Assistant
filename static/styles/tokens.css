@@ -21,4 +21,9 @@
   --space-m: 16px;
   --space-l: 24px;
   --space-xl: 40px;
+
+  /* card colors */
+  --card-blue: var(--blue);
+  --card-pink: var(--pink);
+  --card-gold: var(--gold);
 }

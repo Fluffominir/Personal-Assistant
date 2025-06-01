@@ -35,15 +35,14 @@ body {
 /* Quick actions */
 .quick-actions      { display:flex; gap:var(--space-m); flex-wrap:wrap;
                       margin-top:var(--space-l); }
-.quick-action-item  { background:var(--primary); color:#fff; 
-                      padding:var(--space-s) var(--space-m);
-                      border-radius:var(--radius); cursor:pointer; }
+.quick-action-item  { background:var(--black); color:#fff;
+                      border-radius:9999px; padding:8px 20px; cursor:pointer; }
 
 /* Main columns */
 .main-columns   { display:grid; gap:var(--space-l);
                   grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
                   margin-top:var(--space-xl); }
-.column-card    { background:var(--card); padding:var(--space-m);
+.column-card    { background:var(--card-pink); color:#fff; padding:var(--space-m);
                   border-radius:var(--radius); }
 .column-title   { margin:0 0 var(--space-s) 0; font-weight:600; font-size:1.25rem; }
 
