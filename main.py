@@ -655,6 +655,89 @@ def ask(q: str = Query(..., description="Your question")):
         print(f"✓ Relevance scores: {[f'{h.score:.3f}' for h in hits]}")
         
         # Debug: Show all scores even if below threshold
+
+
+# Smart Home Integration Routes
+@app.get("/smarthome/hue")
+async def get_hue_devices():
+    """Get Philips Hue devices"""
+    # Mock data - integrate with actual Hue Bridge API
+    devices = [
+        {"id": 1, "name": "Office Desk Lamp", "state": False, "brightness": 80},
+        {"id": 2, "name": "Living Room Overhead", "state": True, "brightness": 60},
+        {"id": 3, "name": "Bedroom Strip Lights", "state": False, "brightness": 40},
+        {"id": 4, "name": "Kitchen Under Cabinet", "state": True, "brightness": 90}
+    ]
+    return {"devices": devices}
+
+@app.post("/smarthome/hue/{device_id}/toggle")
+async def toggle_hue_device(device_id: int):
+    """Toggle Philips Hue device"""
+    # In production, make API call to Hue Bridge
+    return {"success": True, "message": f"Hue device {device_id} toggled"}
+
+@app.get("/smarthome/homekit")
+async def get_homekit_devices():
+    """Get HomeKit devices"""
+    # Mock data - integrate with HomeKit via HomeAssistant or similar
+    devices = [
+        {"id": 1, "name": "Thermostat", "state": True, "value": "72°F"},
+        {"id": 2, "name": "Front Door Lock", "state": True, "value": "Locked"},
+        {"id": 3, "name": "Garage Door", "state": False, "value": "Closed"},
+        {"id": 4, "name": "Security System", "state": True, "value": "Armed"}
+    ]
+    return {"devices": devices}
+
+@app.post("/smarthome/homekit/{device_id}/toggle")
+async def toggle_homekit_device(device_id: int):
+    """Toggle HomeKit device"""
+    # In production, make API call to HomeKit bridge
+    return {"success": True, "message": f"HomeKit device {device_id} toggled"}
+
+# Memory and Learning Routes
+@app.post("/memory/store")
+async def store_memory(data: Dict[str, Any]):
+    """Store interaction data for learning"""
+    # In production, store in database with vector embeddings
+    return {"success": True, "message": "Memory stored"}
+
+@app.get("/memory/facts")
+async def get_personal_facts():
+    """Get extracted personal facts"""
+    # Mock personal facts - in production, extract from interactions
+    facts = [
+        {"type": "preference", "content": "Prefers morning work sessions", "confidence": 0.9},
+        {"type": "goal", "content": "Wants to scale Rocket Launch Studio", "confidence": 0.8},
+        {"type": "habit", "content": "Takes wellness check-ins regularly", "confidence": 0.7}
+    ]
+    return {"facts": facts}
+
+@app.post("/memory/retrain")
+async def trigger_memory_retrain():
+    """Trigger memory retraining and fact extraction"""
+    # In production, run background task to retrain model
+    return {"success": True, "message": "Memory retraining initiated"}
+
+# Message Backup Routes
+@app.post("/messages/upload")
+async def upload_message_data():
+    """Upload message/call data for analysis"""
+    # In production, process iPhone/Android message exports
+    return {"success": True, "message": "Message data processing initiated"}
+
+@app.get("/messages/insights")
+async def get_message_insights():
+    """Get insights from message data"""
+    # Mock insights - in production, analyze communication patterns
+    insights = {
+        "total_messages": 1247,
+        "top_contacts": ["Client A", "Team Member B", "Family C"],
+        "communication_patterns": "Most active in afternoons",
+        "sentiment_analysis": "Generally positive communication tone"
+    }
+    return insights
+
+
         all_scores = [f'{h.score:.3f}' for h in all_hits[:5]]
         print(f"✓ Top 5 raw scores: {all_scores}")
         
