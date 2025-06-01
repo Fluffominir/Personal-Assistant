@@ -202,6 +202,25 @@ class IntegrationStatus(BaseModel):
     last_sync: Optional[str] = None
     status_message: str = "Not configured"
 
+class TaskModel(BaseModel):
+    title: str
+    description: Optional[str] = None
+    priority: Optional[str] = "medium"
+    due_date: Optional[str] = None
+    completed: Optional[bool] = False
+
+class TodoModel(BaseModel):
+    id: Optional[str] = None
+    title: str
+    completed: Optional[bool] = False
+    created_at: Optional[str] = None
+
+class EventModel(BaseModel):
+    title: str
+    start_time: str
+    end_time: Optional[str] = None
+    description: Optional[str] = None
+
 # Helper functions for integrations
 async def get_google_calendar_events(access_token: str, days_ahead: int = 7) -> List[CalendarEvent]:
     """Get calendar events from Google Calendar"""
@@ -694,93 +713,70 @@ async def notion_sync_status():
     except Exception as e:
         return {"error": f"Failed to get status: {str(e)}"}
 
-@app.get("/ask", response_model=Answer)
-def ask(q: str = Query(..., description="Your question")):
-    if not openai_client:
-        raise HTTPException(status_code=503, detail="OpenAI API not configured. Please set OPENAI_API_KEY in Secrets.")
-
-    if not idx:
-        raise HTTPException(status_code=503, detail="Pinecone index not available. Please set PINECONE_API_KEY and run ingest.py.")
-
+@app.get("/ask")
+async def ask_question(q: str = Query(..., description="The question to ask")):
+    """Main Q&A endpoint using RAG with Pinecone and OpenAI"""
     try:
-        if not q.strip():
-            raise HTTPException(status_code=400, detail="Question cannot be empty")
+        if not openai_client or not idx:
+            raise HTTPException(status_code=503, detail="AI services not configured")
 
         print(f"🔍 Processing question: {q}")
 
-        # Get embeddings
-        qvec = openai_client.embeddings.create(model=EMBED_MD, input=q).data[0].embedding
-        print(f"✓ Generated embedding vector")
+        # Generate embedding for the query
+        embed_response = openai_client.embeddings.create(
+            input=q,
+            model=EMBED_MD
+        )
+        query_vector = embed_response.data[0].embedding
+        print("✓ Generated embedding vector")
 
-        # Query Pinecone - search both main documents and Notion data with more results
-        main_hits = idx.query(vector=qvec, top_k=10, namespace=NS, include_metadata=True).matches
-        notion_hits = idx.query(vector=qvec, top_k=10, namespace="notion", include_metadata=True).matches
+        # Query Pinecone for relevant context
+        results = idx.query(vector=query_vector, top_k=20, include_metadata=True, namespace=NS)
 
-        # Combine and filter by relevance score with more permissive threshold
-        all_hits = main_hits + notion_hits
-        # Much lower threshold to actually find relevant content
-        hits = [h for h in all_hits if h.score > 0.25][:8]
-        print(f"✓ Found {len(hits)} relevant matches ({len(main_hits)} from docs, {len(notion_hits)} from Notion)")
-        print(f"✓ Relevance scores: {[f'{h.score:.3f}' for h in hits]}")
+        # Also search uploaded documents
+        doc_results = []
+        if idx:
+            doc_query = idx.query(vector=query_vector, top_k=10, include_metadata=True, namespace="documents")
+            doc_results = doc_query.matches
 
-        # Debug: Show all scores even if below threshold
-        all_scores = [f'{h.score:.3f}' for h in all_hits[:5]]
-        print(f"✓ Top 5 raw scores: {all_scores}")
+        # Combine and deduplicate results
+        all_matches = results.matches + doc_results
+        all_matches.sort(key=lambda x: x.score, reverse=True)
 
-        # Handle questions without specific context - be more conversational
-        if not hits:
-            print("⚠️  No relevant context found, providing general response")
-            # For general questions, still answer but note the lack of personal context
-            msgs = [
-                {"role": "system", "content": """You are Michael Slusher's personal AI companion and executive assistant. Michael is the founder of Rocket Launch Studio, a creative professional with ADHD who values efficiency and clear communication.
+        if all_matches:
+            print(f"✓ Found {len(all_matches)} relevant matches ({len(results.matches)} from docs, {len(doc_results)} from Notion)")
+            scores = [f"{match.score:.3f}" for match in all_matches[:8]]
+            print(f"✓ Relevance scores: {scores}")
 
-You can answer general questions, provide explanations, give advice, help with coding, etc. However, you don't have specific personal information about Michael available for this question.
+            raw_scores = [f"{match.score:.3f}" for match in results.matches[:5]]
+            print(f"✓ Top 5 raw scores: {raw_scores}")
 
-Be conversational, helpful, and supportive. If this seems like a question that would benefit from Michael's personal information, let him know that you could provide more personalized help if he adds relevant documents to his knowledge base."""},
-                {"role": "user", "content": q}
-            ]
+        # Build context from top matches and collect sources
+        context_parts = []
+        sources = []
+        for match in all_matches[:8]:  # Use top 8 matches
+            if match.metadata and 'text' in match.metadata:
+                source = match.metadata.get('source', 'Unknown')
+                text = match.metadata['text'][:500]  # Limit length
+                context_parts.append(f"From {source}: {text}")
 
-            try:
-                response = openai_client.chat.completions.create(
-                    model=CHAT_MD,
-                    messages=msgs,
-                    temperature=0.7,
-                    max_tokens=1000
-                )
+                # Add to sources list if not already included
+                if source not in sources and source != 'Unknown':
+                    sources.append(source)
 
-                ans = response.choices[0].message.content.strip()
+        context = "\n\n".join(context_parts)
+        print(f"✓ Built context from {len(context_parts)} sources")
 
-                # Add a note about personal context if the question seems personal
-                personal_keywords = ['my', 'i am', 'i have', 'my family', 'my business', 'my schedule', 'my email', 'my calendar']
-                if any(keyword in q.lower() for keyword in personal_keywords):
-                    ans += "\n\n💡 *For more personalized assistance with your specific information, you can add relevant documents to data/raw/ and run ingest.py, or update your Notion pages.*"
-
-                return {"answer": ans, "sources": []}
-            except Exception as openai_error:
-                print(f"❌ OpenAI API error: {str(openai_error)}")
-                raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(openai_error)}")
-
-        # Build context
-        ctx_pieces = []
-        for h in hits:
-            source = h.metadata.get('source', 'Unknown')
-            text = h.metadata.get('text', '')
-            ctx_pieces.append(f"Source: {source}\nContent: {text}")
-
-        ctx = "\n\n---\n\n".join(ctx_pieces)
-        print(f"✓ Built context from {len(hits)} sources")
-
-        # System prompt based on Michael's training data
-        system_prompt = f"""You are Michael's personal creative and productivity assistant. Speak with direct kindness, give step-by-step structure, and never use emojis.
+        # System prompt with Michael's persona
+        system_prompt = """You are ATLAS, Michael Slusher's personal AI companion and executive assistant. You are speaking directly to Michael Slusher, founder of Rocket Launch Studio.
 
 KEY CONTEXT ABOUT MICHAEL:
-- You are speaking directly to Michael Slusher, founder of Rocket Launch Studio
 - He has ADHD and autism (RAADS-R score 107) and benefits from clear, structured communication
 - He's a creative professional specializing in video production and content creation
 - Brand colors: Spruce Blue and Olive Green
 - Ultimate comfort movie: Stranger Than Fiction
 - Primary love language: Quality Time
-- Mother's birthday: May12
+- Mother's birthday: May 12
 - He's a lifelong twin and red panda enthusiast from Atlanta
 
 YOUR COMMUNICATION STYLE:
@@ -798,42 +794,35 @@ ROCKET LAUNCH STUDIO CONTEXT:
 - Tools: DaVinci Resolve, Adobe Suite, Sony FX6/FX3 cameras
 - Current projects: Focus on quality over quantity
 
-TECHNICAL PREFERENCES:
-- Camera setup: Sony FX6 A-cam, FX3 B-cam
-- Color workflow: ACES 1.3 pipeline, S-Log3 to Rec.709
-- File naming: ProjectName_Client_MMDDYYYY_Format_Final.mp4
-- Review tool: Frame.io for client feedback
+Use the provided context to answer Michael's questions accurately and helpfully. Be personable and remember details about his work and preferences."""
 
-When Michael is experiencing overwhelm or task paralysis, break things into micro-steps with clear next actions.
-
-Context from Michael's documents:
-{ctx}"""
-
-        msgs = [
+        # Generate response using OpenAI
+        messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": q}
+            {"role": "user", "content": f"Context: {context}\n\nQuestion: {q}"}
         ]
 
         response = openai_client.chat.completions.create(
             model=CHAT_MD,
-            messages=msgs,
-            temperature=0.3,
-            max_tokens=1000
+            messages=messages,
+            temperature=0.7,
+            max_tokens=```python
+1000
         )
 
-        ans = response.choices[0].message.content.strip()
-        print(f"✓ Generated answer: {ans[:100]}...")
+        answer = response.choices[0].message.content
+        print(f"✓ Generated answer: {answer[:100]}...")
 
-        # Extract unique sources
-        srcs = list({h.metadata["source"].replace("#", " p") for h in hits})
-
-        return {"answer": ans, "sources": srcs}
+        return {
+            "answer": answer,
+            "sources": sources[:5],  # Limit to top 5 sources for UI
+            "sources_used": len(context_parts),
+            "total_matches": len(all_matches)
+        }
 
     except Exception as e:
-        print(f"❌ Error processing question: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error processing question: {str(e)}")
-
-
+        print(f"❌ Error in ask endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to process question: {str(e)}")
 
 @app.get("/debug/search")
 def debug_search(q: str = Query(..., description="Search term to debug")):
@@ -1084,14 +1073,14 @@ async def handle_quick_command(command_data: dict):
     """Handle quick AI commands from voice or chat"""
     try:
         command = command_data.get("command", "").lower()
-        
+
         # Task creation commands
         if any(phrase in command for phrase in ["add task", "remind me", "to-do"]):
             # Extract task text
             task_text = command
             for phrase in ["add task", "remind me to", "to-do"]:
                 task_text = task_text.replace(phrase, "").strip()
-            
+
             if task_text:
                 task = {
                     "id": f"task_{int(datetime.now().timestamp())}",
@@ -1100,20 +1089,20 @@ async def handle_quick_command(command_data: dict):
                     "completed": False
                 }
                 return {"action": "task_created", "task": task, "response": f"I've added '{task_text}' to your tasks."}
-        
+
         # Default to regular AI response
         if not openai_client:
             raise HTTPException(status_code=503, detail="AI not configured")
-            
+
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": command}],
             temperature=0.7,
             max_tokens=200
         )
-        
+
         return {"action": "ai_response", "response": response.choices[0].message.content.strip()}
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process command: {str(e)}")
 

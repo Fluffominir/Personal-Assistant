@@ -288,36 +288,152 @@
 
         .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 15px;
+            margin-top: 15px;
         }
 
-        .action-btn {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+        .action-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
             padding: 20px;
-            color: white;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .action-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .action-card span {
+            display: block;
+            color: white;
+            font-weight: 500;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
+            z-index: 1000;
         }
 
-        .action-btn:hover {
-            background: rgba(0, 0, 0, 0.6);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        .modal-overlay.show {
+            display: flex;
         }
 
-        .action-btn i {
+        .modal {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header h3 {
+            color: white;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
             font-size: 1.5rem;
-            margin-bottom: 5px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            padding: 20px;
+            color: white;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .modal-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+        }
+
+        .modal-button:hover {
+            background: #5a6fd8;
+        }
+
+        .mood-slider {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .mood-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .mood-tag {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mood-tag.active {
+            background: #667eea;
+            border-color: #667eea;
         }
 
         /* Agenda Section */
@@ -363,6 +479,70 @@
             background: linear-gradient(135deg, rgba(255, 107, 107, 0.9), rgba(255, 142, 142, 0.9));
         }
 
+        /* To-Do List Styles */
+        .todo-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .todo-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .add-todo-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: #667eea;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .add-todo-btn:hover {
+            background: #5a6fd8;
+            transform: scale(1.05);
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .todo-item.completed {
+            opacity: 0.5;
+            text-decoration: line-through;
+            transform: scale(0.98);
+        }
+
+        .todo-item.removing {
+            opacity: 0;
+            transform: translateX(-100%) scale(0.8);
+            margin-top: -44px;
+            padding: 0;
+            border: none;
+        }
+
         .todo-card {
             background: linear-gradient(135deg, rgba(66, 153, 225, 0.9), rgba(129, 230, 217, 0.9));
         }
@@ -383,12 +563,6 @@
 
         .event-title {
             font-weight: 600;
-        }
-
-        .todo-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .todo-checkbox {
@@ -443,14 +617,14 @@
             color: white;
         }
 
-        .message.user .message-bubble {
-            background: rgba(102, 126, 234, 0.8);
-            border-bottom-right-radius: 5px;
-        }
-
         .message.assistant .message-bubble {
             background: rgba(0, 0, 0, 0.4);
             border-bottom-left-radius: 5px;
+        }
+
+        .message.user .message-bubble {
+            background: rgba(102, 126, 234, 0.8);
+            border-bottom-right-radius: 5px;
         }
 
         .chat-input-container {
@@ -533,6 +707,41 @@
         .settings-btn:hover {
             background: rgba(0, 0, 0, 0.8);
             transform: translateY(-2px);
+        }
+
+         /* Style for source toggle */
+         .sources-toggle {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .sources-toggle:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* Style for sources content */
+        .sources-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 10px;
+            padding: 0 15px;
+            color: #eee;
+        }
+
+        .sources-content.show {
+            max-height: 500px; /* You may need to adjust this value */
         }
 
         /* Responsive Design */
@@ -693,29 +902,29 @@
         <div class="quick-actions">
             <h2>Quick Actions.</h2>
             <div class="actions-grid">
-                <div class="action-btn" onclick="askPredefined('Start an AI training session')">
+                <div class="action-card" onclick="openQuickAction('training')">
                     <i class="fas fa-brain"></i>
-                    AI Training Session
+                    <span>AI Training Session</span>
                 </div>
-                <div class="action-btn" onclick="askPredefined('Start a brainstorm session')">
+                <div class="action-card" onclick="openQuickAction('brainstorm')">
                     <i class="fas fa-lightbulb"></i>
-                    Brainstorm Session
+                    <span>Brainstorm Session</span>
                 </div>
-                <div class="action-btn" onclick="askPredefined('Give me a brain dump template')">
+                <div class="action-card">
                     <i class="fas fa-cloud-download-alt"></i>
-                    Brain Dump
+                    <span>Brain Dump</span>
                 </div>
-                <div class="action-btn" onclick="askPredefined('Check me in for the day')">
+                <div class="action-card">
                     <i class="fas fa-check-circle"></i>
-                    Check-In
+                    <span>Check-In</span>
                 </div>
-                <div class="action-btn" onclick="askPredefined('Help me take a quick note')">
+                <div class="action-card" onclick="openQuickAction('note')">
                     <i class="fas fa-sticky-note"></i>
-                    Quick Note
+                    <span>Quick Note</span>
                 </div>
-                <div class="action-btn" onclick="askPredefined('Run a system audit')">
-                    <i class="fas fa-search"></i>
-                    Audit
+                <div class="action-card" onclick="openQuickAction('mood')">
+                    <i class="fas fa-smile"></i>
+                    <span>Mood Check-In</span>
                 </div>
             </div>
         </div>
@@ -749,21 +958,12 @@
                         <span>To-Do</span>
                     </div>
                     <div class="agenda-content" id="todo-content">
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <span>Review video edits</span>
+                        <div class="todo-input-area">
+                            <input type="text" id="new-todo" placeholder="Add a new task..." class="todo-input">
+                            <button onclick="addTodo()" class="add-todo-btn">+</button>
                         </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <span>Update project timeline</span>
-                        </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <span>Prepare presentation</span>
-                        </div>
-                        <div class="todo-item">
-                            <input type="checkbox" class="todo-checkbox">
-                            <span>Send client updates</span>
+                        <div class="todo-list" id="todo-list">
+                            <!-- Tasks will be loaded dynamically -->
                         </div>
                     </div>
                 </div>
@@ -817,25 +1017,26 @@
         </button>
     </div>
 
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button class="modal-close" onclick="closeQuickAction()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content" id="modal-content">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global state
         let currentView = 'main';
         let isListening = false;
         let recognition = null;
         let isSidebarOpen = false;
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDateTime();
-            setupSpeechRecognition();
-            setupChatInput();
-            loadDashboardData();
-            loadWeatherData();
-
-            // Update time every minute
-            setInterval(updateDateTime, 60000);
-            setInterval(loadDashboardData, 300000); // Update dashboard every 5 minutes
-        });
+        let todos = [];
 
         // DateTime functions
         function updateDateTime() {
@@ -1042,18 +1243,39 @@
             document.getElementById('send-btn').disabled = false;
         }
 
-        function addMessageToChat(sender, message) {
+        function addMessageToChat(sender, text, sources = null) {
             const messagesContainer = document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
 
-            messageDiv.innerHTML = `
-                <div class="message-bubble">
-                    ${message.replace(/\n/g, '<br>')}
-                </div>
-            `;
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.textContent = text;
+
+            messageDiv.appendChild(bubbleDiv);
+
+            // Add sources if available and it's an assistant message
+            if (sender === 'assistant' && sources && sources.length > 0) {
+                const sourcesToggle = document.createElement('div');
+                sourcesToggle.className = 'sources-toggle';
+                sourcesToggle.innerHTML = '<i class="fas fa-info-circle"></i> Sources';
+
+                const sourcesContent = document.createElement('div');
+                sourcesContent.className = 'sources-content';
+                sourcesContent.innerHTML = sources.map(source => `• ${source}`).join('<br>');
+
+                sourcesToggle.addEventListener('click', () => {
+                    sourcesContent.classList.toggle('show');
+                });
+
+                messageDiv.appendChild(sourcesToggle);
+                messageDiv.appendChild(sourcesContent);
+            }
 
             messagesContainer.appendChild(messageDiv);
+
+            document.getElementById('typing-indicator').classList.remove('active');
+            document.getElementById('send-btn').disabled = false;
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
@@ -1081,6 +1303,348 @@
         function showSettings() {
             askPredefined('Help me configure my settings and preferences');
         }
+
+        // Quick Actions functionality
+        function openQuickAction(type) {
+            const modal = document.getElementById('modal-overlay');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+
+            modal.classList.add('show');
+
+            switch(type) {
+                case 'training':
+                    title.textContent = 'AI Training Session';
+                    content.innerHTML = `
+                        <p>Help ATLAS learn more about your preferences and work style.</p>
+                        <textarea class="modal-input" placeholder="What are your current goals and priorities?" rows="4"></textarea>
+                        <textarea class="modal-input" placeholder="How do you prefer to receive reminders and updates?" rows="3"></textarea>
+                        <textarea class="modal-input" placeholder="What's your ideal work schedule and rhythm?" rows="3"></textarea>
+                        <button class="modal-button" onclick="saveTraining()">Save Training Data</button>
+                    `;
+                    break;
+                case 'brainstorm':
+                    title.textContent = 'Brainstorm Session';
+                    content.innerHTML = `
+                        <input type="text" class="modal-input" id="brainstorm-topic" placeholder="What topic would you like to brainstorm?">
+                        <button class="modal-button" onclick="startBrainstorm()">Generate Ideas</button>
+                        <div id="brainstorm-results" style="margin-top: 20px;"></div>
+                    `;
+                    break;
+                case 'note':
+                    title.textContent = 'Quick Note';
+                    content.innerHTML = `
+                        <textarea class="modal-input" id="quick-note-text" placeholder="What's on your mind?" rows="6"></textarea>
+                        <button class="modal-button" onclick="saveQuickNote()">Save Note</button>
+                    `;
+                    break;
+                case 'mood':
+                    title.textContent = 'Mood Check-In';
+                    content.innerHTML = `
+                        <label>How are you feeling today? (1-10)</label>
+                        <input type="range" class="mood-slider" id="mood-score" min="1" max="10" value="5">
+                        <div id="mood-value">5</div>
+                        <div class="mood-tags">
+                            <span class="mood-tag" onclick="toggleMoodTag(this)">Energized</span>
+                            <span class="mood-tag" onclick="toggleMoodTag(this)">Focused</span>
+                            <span class="mood-tag" onclick="toggleMoodTag(this)">Creative</span>
+                            <span class="mood-tag" onclick="toggleMoodTag(this)">Stressed</span>
+                            <span class="mood-tag" onclick="toggleMoodTag(this)">Tired</span>
+                            <span class="mood-tag" onclick="toggleMoodTag(this)">Overwhelmed</span>
+                        </div>
+                        <textarea class="modal-input" id="mood-notes" placeholder="Any additional thoughts or notes?" rows="3"></textarea>
+                        <button class="modal-button" onclick="saveMoodCheckIn()">Save Check-In</button>
+                    `;
+
+                    // Add mood slider listener
+                    setTimeout(() => {
+                        const slider = document.getElementById('mood-score');
+                        const valueDisplay = document.getElementById('mood-value');
+                        slider.addEventListener('input', (e) => {
+                            valueDisplay.textContent = e.target.value;
+                        });
+                    }, 100);
+                    break;
+            }
+        }
+
+        function closeQuickAction() {
+            document.getElementById('modal-overlay').classList.remove('show');
+        }
+
+        function toggleMoodTag(tag) {
+            tag.classList.toggle('active');
+        }
+
+        async function saveTraining() {
+            const inputs = document.querySelectorAll('#modal-content textarea');
+            const trainingData = {
+                goals: inputs[0].value,
+                reminder_style: inputs[1].value,
+                work_schedule: inputs[2].value,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/training', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(trainingData)
+                });
+
+                if (response.ok) {
+                    alert('Training data saved successfully!');
+                    closeQuickAction();
+                } else {
+                    alert('Failed to save training data');
+                }
+            } catch (error) {
+                console.error('Error saving training data:', error);
+                alert('Failed to save training data');
+            }
+        }
+
+        async function startBrainstorm() {
+            const topic = document.getElementById('brainstorm-topic').value;
+            if (!topic) return;
+
+            const resultsDiv = document.getElementById('brainstorm-results');
+            resultsDiv.innerHTML = '<p>Generating ideas...</p>';
+
+            try {
+                const response = await fetch('/brainstorm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic })
+                });
+
+                const data = await response.json();
+                if (data.ideas) {
+                    resultsDiv.innerHTML = '<h4>Ideas:</h4><ul>' + 
+                        data.ideas.map(idea => `<li>${idea}</li>`).join('') + '</ul>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p>Failed to generate ideas. Please try again.</p>';
+            }
+        }
+
+        async function saveQuickNote() {
+            const noteText = document.getElementById('quick-note-text').value;
+            if (!noteText) return;
+
+            try {
+                const response = await fetch('/notes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: noteText, timestamp: new Date().toISOString() })
+                });
+
+                if (response.ok) {
+                    alert('Note saved successfully!');
+                    closeQuickAction();
+                } else {
+                    alert('Failed to save note');
+                }
+            } catch (error) {
+                console.error('Error saving note:', error);
+                alert('Failed to save note');
+            }
+        }
+
+        async function saveMoodCheckIn() {
+            const moodScore = document.getElementById('mood-score').value;
+            const moodNotes = document.getElementById('mood-notes').value;
+            const activeTags = Array.from(document.querySelectorAll('.mood-tag.active')).map(tag => tag.textContent);
+
+            const moodData = {
+                mood_score: parseInt(moodScore),
+                tags: activeTags,
+                notes: moodNotes,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/mood', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(moodData)
+                });
+
+                if (response.ok) {
+                    alert('Mood check-in saved successfully!');
+                    closeQuickAction();
+                } else {
+                    alert('Failed to save mood check-in');
+                }
+            } catch (error) {
+                console.error('Error saving mood check-in:', error);
+                alert('Failed to save mood check-in');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'modal-overlay') {
+                closeQuickAction();
+            }
+        });
+
+        async function loadTodos() {
+            try {
+                const response = await fetch('/todos');
+                const data = await response.json();
+                todos = data.tasks || [];
+                renderTodos();
+            } catch (error) {
+                console.error('Error loading todos:', error);
+                // Load some default todos if API fails
+                todos = [
+                    { id: '1', title: 'Review project proposals', completed: false },
+                    { id: '2', title: 'Update project timeline', completed: false },
+                    { id: '3', title: 'Prepare presentation', completed: false }
+                ];
+                renderTodos();
+            }
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+
+            todos.forEach(todo => {
+                if (!todo.completed) {  // Only show incomplete todos
+                    const todoItem = document.createElement('div');
+                    todoItem.className = 'todo-item';
+                    todoItem.innerHTML = `
+                        <input type="checkbox" class="todo-checkbox" onchange="toggleTodo('${todo.id}')" ${todo.completed ? 'checked' : ''}>
+                        <span>${todo.title}</span>
+                    `;
+                    todoList.appendChild(todoItem);
+                }
+            });
+        }
+
+        async function addTodo() {
+            const input = document.getElementById('new-todo');
+            const title = input.value.trim();
+
+            if (!title) return;
+
+            const newTodo = {
+                id: 'todo_' + Date.now(),
+                title: title,
+                completed: false,
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch('/todos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newTodo)
+                });
+
+                if (response.ok) {
+                    todos.push(newTodo);
+                    renderTodos();
+                    input.value = '';
+                }
+            } catch (error) {
+                console.error('Error adding todo:', error);
+                // Add locally if API fails
+                todos.push(newTodo);
+                renderTodos();
+                input.value = '';
+            }
+        }
+
+        async function toggleTodo(todoId) {
+            const todo = todos.find(t => t.id === todoId);
+            if (!todo) return;
+
+            todo.completed = !todo.completed;
+
+            // Find the todo item element
+            const todoItems = document.querySelectorAll('.todo-item');
+            const todoItem = Array.from(todoItems).find(item => 
+                item.querySelector(`input[onchange*="${todoId}"]`)
+            );
+
+            if (todo.completed && todoItem) {
+                // Add completed animation
+                todoItem.classList.add('completed');
+
+                // Remove after animation
+                setTimeout(() => {
+                    todoItem.classList.add('removing');
+                    setTimeout(() => {
+                        renderTodos();
+                    }, 300);
+                }, 1000);
+            }
+
+            try {
+                await fetch(`/todos/${todoId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ completed: todo.completed })
+                });
+            } catch (error) {
+                console.error('Error updating todo:', error);
+            }
+        }
+
+        // Allow Enter key to add todos
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const todoInput = document.getElementById('new-todo');
+                if (todoInput) {
+                    todoInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            addTodo();
+                        }
+                    });
+                }
+            }, 100);
+        });
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/dashboard');
+                const data = await response.json();
+
+                // Update system health
+                if (data.system_health !== undefined) {
+                    document.getElementById('system-health').textContent = `${data.system_health}%`;
+                }
+
+                // Update agenda
+                updateAgenda(data.calendar_events || []);
+
+                // Update weather
+                updateWeather(data.weather || {});
+
+                // Load todos
+                await loadTodos();
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setupSpeechRecognition();
+            setupChatInput();
+            loadDashboardData();
+            loadWeatherData();
+            loadTodos();
+
+            // Update time every minute
+            setInterval(updateDateTime, 60000);
+            setInterval(loadDashboardData, 300000); // Update dashboard every 5 minutes
+        });
 
         console.log('ATLAS interface loaded');
     </script>
