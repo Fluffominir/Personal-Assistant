@@ -1,0 +1,10 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Karla:wght@400;700&display=swap');
+:root{
+  --blue:#569aff;--teal:#479387;--yellow:#f7b138;
+  --pink:#ed6b81;--white:#fffdfa;--black:#0b0c0c;
+  --radius:18px;
+  --font-head:'Archivo Black',sans-serif;
+  --font-body:'Karla',sans-serif;
+}
+body{margin:0;font-family:var(--font-body);background:var(--white);color:var(--black);}
