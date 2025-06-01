@@ -1,10 +1,9 @@
-
 const { useState, useEffect } = React;
 
 window.Header = function Header() {
-    const [currentTime, setCurrentTime] = useState('');
+    const [currentTime, setCurrentTime] = React.useState('');
 
-    useEffect(() => {
+    React.useEffect(() => {
         const updateTime = () => {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { 
@@ -29,13 +28,15 @@ window.Header = function Header() {
     return React.createElement('header', {
         'data-testid': 'header'
     }, [
-        React.createElement('h1', { key: 'greeting' }, 'Hello, Michael,'),
-        React.createElement('span', { 
+        React.createElement('h1', {
+            key: 'greeting'
+        }, 'Hello, Michael,'),
+        React.createElement('span', {
             key: 'time',
-            className: 'time' 
+            className: 'time'
         }, currentTime),
         React.createElement('div', {
-            key: 'weather',
+            key: 'weather-pill',
             className: 'pill weather'
         }, [
             '70°F',
@@ -43,7 +44,7 @@ window.Header = function Header() {
             'Duluth, GA'
         ]),
         React.createElement('div', {
-            key: 'notif', 
+            key: 'notif-pill',
             className: 'pill notif'
         }, '3')
     ]);
