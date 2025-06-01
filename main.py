@@ -806,8 +806,7 @@ Use the provided context to answer Michael's questions accurately and helpfully.
             model=CHAT_MD,
             messages=messages,
             temperature=0.7,
-            max_tokens=```python
-1000
+            max_tokens=1000
         )
 
         answer = response.choices[0].message.content
