@@ -1,6 +1,6 @@
 import os, openai, pinecone, json, requests
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Query, HTTPException, Depends
+from fastapi import FastAPI, Query, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -712,6 +712,128 @@ async def notion_sync_status():
         }
     except Exception as e:
         return {"error": f"Failed to get status: {str(e)}"}
+
+@app.websocket("/ws/atlas")
+async def atlas_websocket(websocket: WebSocket):
+    """WebSocket endpoint for streaming ATLAS chat"""
+    await websocket.accept()
+    
+    try:
+        while True:
+            # Receive message from client
+            data = await websocket.receive_json()
+            
+            if data.get("type") == "message":
+                message = data.get("content", "").strip()
+                
+                if not message:
+                    continue
+                
+                if not openai_client or not idx:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": "AI services not configured"
+                    })
+                    continue
+                
+                try:
+                    # Generate embedding for the query
+                    embed_response = openai_client.embeddings.create(
+                        input=message,
+                        model=EMBED_MD
+                    )
+                    query_vector = embed_response.data[0].embedding
+                    
+                    # Query Pinecone for relevant context
+                    results = idx.query(vector=query_vector, top_k=20, include_metadata=True, namespace=NS)
+                    
+                    # Also search uploaded documents
+                    doc_results = []
+                    if idx:
+                        doc_query = idx.query(vector=query_vector, top_k=10, include_metadata=True, namespace="documents")
+                        doc_results = doc_query.matches
+                    
+                    # Combine and deduplicate results
+                    all_matches = results.matches + doc_results
+                    all_matches.sort(key=lambda x: x.score, reverse=True)
+                    
+                    # Build context from top matches
+                    context_parts = []
+                    for match in all_matches[:8]:  # Use top 8 matches
+                        if match.metadata and 'text' in match.metadata:
+                            source = match.metadata.get('source', 'Unknown')
+                            text = match.metadata['text'][:500]  # Limit length
+                            context_parts.append(f"From {source}: {text}")
+                    
+                    context = "\n\n".join(context_parts)
+                    
+                    # System prompt with Michael's persona
+                    system_prompt = """You are ATLAS, Michael Slusher's personal AI companion and executive assistant. You are speaking directly to Michael Slusher, founder of Rocket Launch Studio.
+
+KEY CONTEXT ABOUT MICHAEL:
+- He has ADHD and autism (RAADS-R score 107) and benefits from clear, structured communication
+- He's a creative professional specializing in video production and content creation
+- Brand colors: Spruce Blue and Olive Green
+- Ultimate comfort movie: Stranger Than Fiction
+- Primary love language: Quality Time
+- Mother's birthday: May 12
+- He's a lifelong twin and red panda enthusiast from Atlanta
+
+YOUR COMMUNICATION STYLE:
+- Speak with direct kindness and clarity
+- Provide step-by-step structure for complex tasks
+- Never use emojis in responses
+- Be concise but thorough
+- Offer actionable micro-plans when he's in task paralysis
+- Support his neurodivergent needs with structured guidance
+
+ROCKET LAUNCH STUDIO CONTEXT:
+- Mission: Deliver striking, polished photo and video content that helps clients stand out
+- Core values: Creativity, Professionalism, Collaboration, Growth, Support
+- Services: Creative Development, Filming & Production, Editing & Post-Production
+- Tools: DaVinci Resolve, Adobe Suite, Sony FX6/FX3 cameras
+- Current projects: Focus on quality over quantity
+
+Use the provided context to answer Michael's questions accurately and helpfully. Be personable and remember details about his work and preferences."""
+                    
+                    # Generate streaming response using OpenAI
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"Context: {context}\n\nQuestion: {message}"}
+                    ]
+                    
+                    response_stream = openai_client.chat.completions.create(
+                        model=CHAT_MD,
+                        messages=messages,
+                        temperature=0.7,
+                        max_tokens=1000,
+                        stream=True
+                    )
+                    
+                    # Stream the response back to client
+                    for chunk in response_stream:
+                        if chunk.choices[0].delta.content:
+                            await websocket.send_json({
+                                "type": "chunk",
+                                "content": chunk.choices[0].delta.content
+                            })
+                    
+                    # Send completion signal
+                    await websocket.send_json({
+                        "type": "complete"
+                    })
+                    
+                except Exception as e:
+                    print(f"❌ Error in WebSocket chat: {str(e)}")
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": f"Failed to process message: {str(e)}"
+                    })
+                    
+    except WebSocketDisconnect:
+        print("WebSocket disconnected")
+    except Exception as e:
+        print(f"WebSocket error: {str(e)}")
 
 @app.get("/ask")
 async def ask_question(q: str = Query(..., description="The question to ask")):

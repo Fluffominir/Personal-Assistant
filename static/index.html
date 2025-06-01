@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -647,117 +649,7 @@
             background: transparent;
         }
 
-        /* Chat Interface */
-        .chat-page {
-            display: none;
-            padding-top: 100px;
-        }
-
-        .chat-page.active {
-            display: block;
-        }
-
-        .chat-container {
-            max-width: 800px;
-            margin: 0 auto;
-            height: calc(100vh - 120px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 25px 25px 0 0;
-            margin: 0 25px;
-        }
-
-        .message {
-            margin-bottom: 20px;
-            display: flex;
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .message-bubble {
-            max-width: 70%;
-            padding: 15px 20px;
-            border-radius: 20px;
-            color: white;
-        }
-
-        .message.assistant .message-bubble {
-            background: rgba(0, 0, 0, 0.4);
-            border-bottom-left-radius: 5px;
-        }
-
-        .message.user .message-bubble {
-            background: var(--atlas-accent);
-            border-bottom-right-radius: 5px;
-        }
-
-        .chat-input-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 0 0 25px 25px;
-            padding: 20px;
-            margin: 0 25px;
-        }
-
-        .chat-input-wrapper {
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 25px;
-            padding: 15px 20px;
-            color: white;
-            font-size: 1rem;
-            resize: none;
-            outline: none;
-        }
-
-        .chat-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .voice-btn, .send-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .voice-btn {
-            background: rgba(40, 167, 69, 0.8);
-            color: white;
-        }
-
-        .send-btn {
-            background: var(--atlas-accent);
-            color: white;
-        }
-
-        .voice-btn:hover, .send-btn:hover {
-            transform: scale(1.1);
-        }
+        
 
         /* Sync FAB */
         .sync-btn:hover {
@@ -949,18 +841,8 @@
         <!-- Ask ATLAS Section -->
         <div class="ask-atlas">
             <h2 class="font-bold">Ask ATLAS</h2>
-            <div class="atlas-card">
-                <div class="atlas-input-area" onclick="switchToChat()">
-                    Ask about your projects, schedule, personal or business insights...
-                </div>
-                <div class="atlas-buttons">
-                    <button class="atlas-btn" onclick="askPredefined('Give me my daily breakdown')">Daily Breakdown</button>
-                    <button class="atlas-btn" onclick="askPredefined('What\'s next on my schedule?')">What's Next?</button>
-                    <button class="atlas-btn" onclick="askPredefined('Schedule my week')">Schedule my week</button>
-                </div>
-                <button class="ask-button font-semibold" onclick="switchToChat()">
-                    Ask <i class="fas fa-chevron-down"></i>
-                </button>
+            <div class="atlas-card" style="padding: 0; overflow: hidden; min-height: 400px; display: flex; flex-direction: column;">
+                <div id="atlas-chat-container" style="flex: 1;"></div>
             </div>
         </div>
 
@@ -1037,43 +919,7 @@
         </div>
     </div>
 
-    <!-- Chat Page (Hidden by default) -->
-    <div class="chat-page" id="chat-page">
-        <div class="chat-container">
-            <div class="chat-messages" id="chat-messages">
-                <div class="message assistant">
-                    <div class="message-bubble">
-                        Hello! I'm ATLAS, your personal AI companion. How can I help you today?
-                    </div>
-                </div>
-            </div>
-
-            <div class="typing-indicator" id="typing-indicator">
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-
-            <div class="chat-input-container">
-                <div class="chat-input-wrapper">
-                    <button class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                    <textarea 
-                        class="chat-input font-sans" 
-                        id="chat-input" 
-                        placeholder="Ask me anything..." 
-                        rows="1"
-                    ></textarea>
-                    <button class="send-btn" id="send-btn" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Settings Page (Hidden by default) -->
     <div class="settings-page" id="settings-page" style="display: none; padding-top: 100px;">
@@ -1186,6 +1032,7 @@
         </div>
     </div>
 
+    <script src="/static/AtlasChatBox.jsx"></script>
     <script>
         // Global state
         let currentView = 'main';
@@ -1230,13 +1077,6 @@
         }
 
         // Navigation functions
-        function switchToChat() {
-            document.getElementById('main-content').style.display = 'none';
-            document.getElementById('chat-page').classList.add('active');
-            document.getElementById('settings-page').style.display = 'none';
-            document.getElementById('chat-input').focus();
-            currentView = 'chat';
-        }
 
         function switchToMain() {
             document.getElementById('main-content').style.display = 'block';
@@ -1265,13 +1105,6 @@
         });
 
         // Quick action functions
-        function askPredefined(question) {
-            switchToChat();
-            setTimeout(() => {
-                document.getElementById('chat-input').value = question;
-                sendMessage();
-            }, 100);
-        }
 
         // Data loading functions
         async function loadDashboardData() {
@@ -1361,89 +1194,7 @@
             }
         }
 
-        // Chat functionality
-        function setupChatInput() {
-            const chatInput = document.getElementById('chat-input');
-
-            chatInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            chatInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-            });
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-
-            if (!message) return;
-
-            addMessageToChat('user', message);
-            input.value = '';
-            input.style.height = 'auto';
-
-            document.getElementById('typing-indicator').classList.add('active');
-            document.getElementById('send-btn').disabled = true;
-
-            try {
-                const response = await fetch('/ask?' + new URLSearchParams({ q: message }));
-                const data = await response.json();
-
-                if (data.answer) {
-                    addMessageToChat('assistant', data.answer);
-                } else {
-                    addMessageToChat('assistant', 'Sorry, I encountered an error. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error sending message:', error);
-                addMessageToChat('assistant', 'Sorry, I\'m having trouble connecting. Please try again.');
-            }
-
-            document.getElementById('typing-indicator').classList.remove('active');
-            document.getElementById('send-btn').disabled = false;
-        }
-
-        function addMessageToChat(sender, text, sources = null) {
-            const messagesContainer = document.getElementById('chat-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = 'message-bubble';
-            bubbleDiv.textContent = text;
-
-            messageDiv.appendChild(bubbleDiv);
-
-            // Add sources if available and it's an assistant message
-            if (sender === 'assistant' && sources && sources.length > 0) {
-                const sourcesToggle = document.createElement('div');
-                sourcesToggle.className = 'sources-toggle';
-                sourcesToggle.innerHTML = '<i class="fas fa-info-circle"></i> Sources';
-
-                const sourcesContent = document.createElement('div');
-                sourcesContent.className = 'sources-content';
-                sourcesContent.innerHTML = sources.map(source => `• ${source}`).join('<br>');
-
-                sourcesToggle.addEventListener('click', () => {
-                    sourcesContent.classList.toggle('show');
-                });
-
-                messageDiv.appendChild(sourcesToggle);
-                messageDiv.appendChild(sourcesContent);
-            }
-
-            messagesContainer.appendChild(messageDiv);
-
-            document.getElementById('typing-indicator').classList.remove('active');
-            document.getElementById('send-btn').disabled = false;
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+        
 
         // Sidebar functions
         function showIntegrations() {
@@ -1927,10 +1678,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateDateTime();
             setupSpeechRecognition();
-            setupChatInput();
             loadDashboardData();
             loadWeatherData();
             loadTodos();
+
+            // Initialize React component
+            const container = document.getElementById('atlas-chat-container');
+            const root = ReactDOM.createRoot(container);
+            root.render(React.createElement(AtlasChatBox));
 
             // Update time every minute
             setInterval(updateDateTime, 60000);
