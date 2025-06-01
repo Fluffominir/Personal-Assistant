@@ -1,20 +1,24 @@
 
-/* Design Tokens */
 :root {
-  /* Colors */
-  --bg: #f8fafc;
-  --text: #1e293b;
-  --primary: #3b82f6;
-  --pink: #ec4899;
-  --card: #ffffff;
-  --light: #f1f5f9;
-  
-  /* Spacing */
-  --space-s: 0.5rem;
-  --space-m: 1rem;
-  --space-l: 1.5rem;
-  --space-xl: 2rem;
-  
-  /* Border radius */
-  --radius: 8px;
+  /* palette (from your screenshot) */
+  --blue:   #569aff;
+  --teal:   #479387;
+  --gold:   #f7b138;
+  --pink:   #ed6b81;
+  --white:  #fffdfa;
+  --black:  #0b0c0c;
+
+  /* semantic */
+  --primary: var(--black);
+  --card:    var(--white);
+  --bg:      var(--white);
+  --text:    var(--black);
+  --light:   #f4f6f8;
+
+  /* radii & spacing */
+  --radius: 12px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 40px;
 }
