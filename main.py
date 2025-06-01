@@ -91,6 +91,8 @@ async def start_background_tasks():
     has_notion = os.environ.get("NOTION_WORKSPACES") or os.environ.get("NOTION_API_KEY")
     has_required_keys = os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY")
 
+    print(f"🔍 Startup check - Notion: {bool(has_notion)}, Required keys: {bool(has_required_keys)}")
+    
     if has_notion and has_required_keys:
         try:
             from scripts.notion_sync import scheduler
@@ -109,6 +111,25 @@ async def start_background_tasks():
         if not os.environ.get("PINECONE_API_KEY"):
             missing.append("PINECONE_API_KEY")
         print(f"⚠️  Background sync disabled - missing: {', '.join(missing)}")
+        
+    # Test Notion API if configured
+    if os.environ.get("NOTION_API_KEY"):
+        print("🔍 Testing Notion API connection...")
+        try:
+            import aiohttp
+            headers = {
+                "Authorization": f"Bearer {os.environ.get('NOTION_API_KEY')}",
+                "Content-Type": "application/json",
+                "Notion-Version": "2022-06-28"
+            }
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://api.notion.com/v1/users/me", headers=headers) as response:
+                    if response.status == 200:
+                        print("✅ Notion API connection successful")
+                    else:
+                        print(f"❌ Notion API test failed: {response.status}")
+        except Exception as e:
+            print(f"❌ Notion API test error: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_background_tasks():
@@ -407,16 +428,29 @@ def status():
     raw_dir = pathlib.Path("data/raw")
     pdf_files = list(raw_dir.glob("*.pdf")) if raw_dir.exists() else []
 
+    # Check Pinecone index stats
+    index_stats = None
+    if idx:
+        try:
+            index_stats = idx.describe_index_stats()
+        except Exception as e:
+            index_stats = f"Error: {str(e)}"
+
     return {
+        "timestamp": datetime.now().isoformat(),
         "openai_api_key": "✓" if os.environ.get("OPENAI_API_KEY") else "✗ Missing",
         "pinecone_api_key": "✓" if os.environ.get("PINECONE_API_KEY") else "✗ Missing",
         "index_exists": "✓" if idx is not None else "✗ Missing or not accessible",
+        "index_stats": index_stats,
         "pdf_files_found": len(pdf_files),
         "pdf_files": [f.name for f in pdf_files],
         "data_directory_exists": raw_dir.exists(),
         "google_configured": "✓" if os.environ.get("GOOGLE_CLIENT_ID") else "✗ Not configured",
+        "google_authenticated": "✓" if google_tokens.get("access_token") else "✗ Not authenticated",
         "notion_configured": "✓" if os.environ.get("NOTION_API_KEY") else "✗ Not configured",
-        "ready": idx is not None and openai_client is not None
+        "notion_workspaces": os.environ.get("NOTION_WORKSPACES", "Not set"),
+        "system_ready": idx is not None and openai_client is not None,
+        "background_sync_running": sync_task is not None and not sync_task.done() if sync_task else False
     }
 
 @app.get("/integrations")
@@ -659,6 +693,7 @@ def ask(q: str = Query(..., description="Your question")):
 
         # Handle questions without specific context - be more conversational
         if not hits:
+            print("⚠️  No relevant context found, providing general response")
             # For general questions, still answer but note the lack of personal context
             msgs = [
                 {"role": "system", "content": """You are Michael Slusher's personal AI companion and executive assistant. Michael is the founder of Rocket Launch Studio, a creative professional with ADHD who values efficiency and clear communication.
@@ -669,21 +704,25 @@ Be conversational, helpful, and supportive. If this seems like a question that w
                 {"role": "user", "content": q}
             ]
 
-            response = openai_client.chat.completions.create(
-                model=CHAT_MD,
-                messages=msgs,
-                temperature=0.7,
-                max_tokens=1000
-            )
+            try:
+                response = openai_client.chat.completions.create(
+                    model=CHAT_MD,
+                    messages=msgs,
+                    temperature=0.7,
+                    max_tokens=1000
+                )
 
-            ans = response.choices[0].message.content.strip()
+                ans = response.choices[0].message.content.strip()
 
-            # Add a note about personal context if the question seems personal
-            personal_keywords = ['my', 'i am', 'i have', 'my family', 'my business', 'my schedule', 'my email', 'my calendar']
-            if any(keyword in q.lower() for keyword in personal_keywords):
-                ans += "\n\n💡 *For more personalized assistance with your specific information, you can add relevant documents to data/raw/ and run ingest.py, or update your Notion pages.*"
+                # Add a note about personal context if the question seems personal
+                personal_keywords = ['my', 'i am', 'i have', 'my family', 'my business', 'my schedule', 'my email', 'my calendar']
+                if any(keyword in q.lower() for keyword in personal_keywords):
+                    ans += "\n\n💡 *For more personalized assistance with your specific information, you can add relevant documents to data/raw/ and run ingest.py, or update your Notion pages.*"
 
-            return {"answer": ans, "sources": []}
+                return {"answer": ans, "sources": []}
+            except Exception as openai_error:
+                print(f"❌ OpenAI API error: {str(openai_error)}")
+                raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(openai_error)}")
 
         # Build context
         ctx_pieces = []
