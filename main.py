@@ -1365,6 +1365,114 @@ def get_ai_personality():
         }
     }
 
+@app.post("/api/profile/training")
+async def save_training_profile(training_data: dict):
+    """Save user training preferences and profile data"""
+    try:
+        # In a production app, you'd save this to a database
+        # For now, we'll store it in a simple JSON file
+        import json
+        from pathlib import Path
+        
+        # Create profile directory if it doesn't exist
+        profile_dir = Path("data/profile")
+        profile_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Add timestamp to training data
+        training_data["saved_at"] = datetime.now().isoformat()
+        training_data["version"] = "1.0"
+        
+        # Save to file
+        profile_file = profile_dir / "training_profile.json"
+        with open(profile_file, 'w') as f:
+            json.dump(training_data, f, indent=2)
+        
+        # If we have vector storage available, also store key preferences as vectors
+        if idx and openai_client:
+            try:
+                # Create a summary of preferences for vector storage
+                preferences_text = f"""
+                User Preferences:
+                Communication Style: {training_data.get('personal_preferences', {}).get('communication_style', '')}
+                Reminder Frequency: {training_data.get('personal_preferences', {}).get('reminder_frequency', '')}
+                Preferred Tone: {training_data.get('personal_preferences', {}).get('preferred_tone', '')}
+                
+                Morning Routine: {training_data.get('workflow_preferences', {}).get('morning_routine', '')}
+                Task Organization: {training_data.get('workflow_preferences', {}).get('task_organization', '')}
+                
+                Primary Goals: {training_data.get('goals', {}).get('primary_goals', '')}
+                Success Metrics: {training_data.get('goals', {}).get('success_metrics', '')}
+                """
+                
+                # Generate embedding
+                embedding_response = openai_client.embeddings.create(
+                    model="text-embedding-3-small",
+                    input=preferences_text
+                )
+                
+                embedding = embedding_response.data[0].embedding
+                
+                # Store in Pinecone
+                metadata = {
+                    "source": "User Training Profile",
+                    "text": preferences_text,
+                    "type": "user_preferences",
+                    "updated_at": datetime.now().isoformat()
+                }
+                
+                vector_id = "user_training_profile"
+                idx.upsert(
+                    vectors=[(vector_id, embedding, metadata)],
+                    namespace="user_profile"
+                )
+                
+                print("✅ Training profile saved to vector storage")
+                
+            except Exception as e:
+                print(f"⚠️  Failed to save to vector storage: {e}")
+        
+        return {
+            "message": "Training profile saved successfully",
+            "timestamp": training_data["saved_at"],
+            "preferences_count": len(training_data.get('personal_preferences', {})),
+            "workflows_count": len(training_data.get('workflow_preferences', {})),
+            "goals_count": len(training_data.get('goals', {}))
+        }
+        
+    except Exception as e:
+        print(f"❌ Error saving training profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to save training profile: {str(e)}")
+
+@app.get("/api/profile/training")
+async def get_training_profile():
+    """Get user training preferences and profile data"""
+    try:
+        from pathlib import Path
+        import json
+        
+        profile_file = Path("data/profile/training_profile.json")
+        
+        if not profile_file.exists():
+            return {
+                "message": "No training profile found",
+                "has_profile": False
+            }
+        
+        with open(profile_file, 'r') as f:
+            training_data = json.load(f)
+        
+        return {
+            "message": "Training profile found",
+            "has_profile": True,
+            "profile": training_data,
+            "last_updated": training_data.get("saved_at"),
+            "version": training_data.get("version", "1.0")
+        }
+        
+    except Exception as e:
+        print(f"❌ Error loading training profile: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to load training profile: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
