@@ -10,16 +10,23 @@ try:
     if workspaces_str and workspaces_str != "{}":
         workspaces = json.loads(workspaces_str)
         print(f"📝 Loaded workspaces: {list(workspaces.keys())}")
+        
+        # Validate that all workspace tokens are the same as NOTION_API_KEY
+        if NOTION_API_KEY:
+            for workspace_name, config in workspaces.items():
+                if config.get("token") != NOTION_API_KEY:
+                    print(f"⚠️  Workspace '{workspace_name}' has different token, updating...")
+                    config["token"] = NOTION_API_KEY
     else:
         workspaces = {}
 except json.JSONDecodeError:
     print("⚠️  Invalid NOTION_WORKSPACES JSON, falling back to API key")
     workspaces = {}
 
-# Always add default workspace if we have an API key
-if NOTION_API_KEY and "default" not in workspaces:
-    workspaces["default"] = {"token": NOTION_API_KEY}
-    print("📝 Added default workspace using NOTION_API_KEY")
+# Always use only the main API key for all workspaces
+if NOTION_API_KEY:
+    workspaces = {"default": {"token": NOTION_API_KEY}}
+    print("📝 Using single workspace with main API key")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
