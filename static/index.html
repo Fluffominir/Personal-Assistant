@@ -1,50 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATLAS - Your AI Companion</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
-
-        :root {
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-
-            /* Glassmorphism */
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            --glass-backdrop: blur(8px);
-
-            /* Modern colors inspired by references */
-            --accent-primary: #6366f1;
-            --accent-secondary: #8b5cf6;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-error: #ef4444;
-            --accent-pink: #ec4899;
-            --accent-blue: #3b82f6;
-            --accent-purple: #8b5cf6;
-
-            --text-primary: #ffffff;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 0.75rem;
-            --spacing-md: 1rem;
-            --spacing-lg: 1.5rem;
-            --spacing-xl: 2rem;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -52,841 +14,1358 @@
         }
 
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: #333;
         }
 
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            height: 100vh;
-            gap: var(--spacing-lg);
-            padding: var(--spacing-lg);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--glass-shadow);
-            display: flex;
-            flex-direction: column;
-            padding: var(--spacing-xl);
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #fff;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
             position: relative;
-            overflow: hidden;
         }
 
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        }
-
-        .ai-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto var(--spacing-lg);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .ai-avatar:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
-        }
-
-        .ai-avatar i {
-            font-size: 1.75rem;
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #4a90e2 0%, #6ab7ff 100%);
             color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .ai-name {
-            font-size: 1.75rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: var(--spacing-xs);
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
-        .ai-status {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-xs);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-success);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .nav-menu {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            padding: var(--spacing-md) var(--spacing-lg);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
+        .header .subtitle {
             font-size: 0.9rem;
-            position: relative;
-            overflow: hidden;
+            opacity: 0.9;
         }
 
-        .nav-item:hover {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            transform: translateX(4px);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .nav-item i {
-            width: 18px;
-            text-align: center;
-            font-size: 1rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--glass-shadow);
-            overflow: hidden;
+        /* Navigation */
+        .nav-tabs {
             display: flex;
-            flex-direction: column;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
         }
 
-        .content-header {
-            padding: var(--spacing-xl);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .greeting {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: var(--spacing-sm);
-            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .greeting-subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .content-body {
-            padding: var(--spacing-xl);
+        .nav-tab {
             flex: 1;
-            overflow-y: auto;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
         }
 
+        .nav-tab.active {
+            color: #4a90e2;
+            border-bottom-color: #4a90e2;
+            background: white;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab i {
+            margin-right: 8px;
+        }
+
+        /* Page Content */
         .page {
             display: none;
+            padding: 30px;
+            min-height: calc(100vh - 160px);
         }
 
         .page.active {
             display: block;
         }
 
-        /* Atlas Chat */
-        .atlas-chat {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            margin-bottom: var(--spacing-xl);
-            overflow: hidden;
-            box-shadow: var(--glass-shadow);
+        /* Home Dashboard */
+        .greeting {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .chat-header {
-            padding: var(--spacing-xl);
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        .greeting h2 {
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .greeting .date {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
             color: white;
         }
 
-        .chat-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: var(--spacing-sm);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
+        .card-icon.tasks { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
+        .card-icon.calendar { background: linear-gradient(135deg, #4ecdc4, #7bddd8); }
+        .card-icon.emails { background: linear-gradient(135deg, #45b7d1, #6cc4e0); }
+        .card-icon.system { background: linear-gradient(135deg, #96ceb4, #b3d9c7); }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
         }
 
-        .chat-header p {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-
-        .chat-input-area {
-            padding: var(--spacing-xl);
-        }
-
-        .chat-input-wrapper {
-            position: relative;
-            background: var(--glass-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .chat-input-wrapper:focus-within {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        #questionInput {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: var(--spacing-lg);
-            color: var(--text-primary);
-            font-size: 1rem;
-            resize: none;
-            min-height: 100px;
-            font-family: inherit;
+        .card-content {
+            color: #7f8c8d;
             line-height: 1.6;
         }
 
-        #questionInput:focus {
+        .card-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .quick-action-btn i {
+            margin-right: 10px;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 160px);
+            max-height: 600px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px 15px 0 0;
+            margin-bottom: 0;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #4a90e2, #6ab7ff);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.assistant .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .typing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4a90e2;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        .chat-input-container {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            border: 1px solid #e9ecef;
+            border-top: none;
+            padding: 20px;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            min-height: 50px;
+            max-height: 120px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            resize: none;
             outline: none;
+            transition: border-color 0.3s ease;
         }
 
-        #questionInput::placeholder {
-            color: var(--text-muted);
+        .chat-input:focus {
+            border-color: #4a90e2;
         }
 
-        .input-actions {
+        .voice-btn, .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .voice-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .voice-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        .voice-btn.listening {
+            background: #dc3545;
+            animation: pulse 1s infinite;
+        }
+
+        .send-btn {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Tasks Page */
+        .tasks-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--spacing-lg);
-            border-top: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 30px;
         }
 
-        .input-hint {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        #askButton {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        .add-task-btn {
+            background: #28a745;
             color: white;
             border: none;
-            padding: var(--spacing-md) var(--spacing-xl);
-            border-radius: var(--radius-md);
+            border-radius: 10px;
+            padding: 12px 20px;
             cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
+            font-size: 0.9rem;
             transition: all 0.3s ease;
-            font-size: 0.875rem;
         }
 
-        #askButton:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        .add-task-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
         }
 
-        #askButton:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Answer Container */
-        .answer-container {
-            margin-top: var(--spacing-xl);
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border-radius: var(--radius-lg);
-            display: none;
+        .task-list {
+            background: white;
+            border-radius: 15px;
             overflow: hidden;
-            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .answer-text {
-            padding: var(--spacing-xl);
-            white-space: pre-wrap;
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-
-        .btn {
-            padding: var(--spacing-md) var(--spacing-lg);
-            border-radius: var(--radius-md);
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .task-item {
             display: flex;
             align-items: center;
-            gap: var(--spacing-sm);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s ease;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        .task-item:hover {
+            background: #f8f9fa;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .task-time {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .task-delete {
+            background: #dc3545;
             color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .task-delete:hover {
+            background: #c82333;
+        }
+
+        /* Add Task Form */
+        .add-task-form {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .add-task-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #4a90e2;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-btn.primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .form-btn.secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .form-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
         }
 
-        /* Mobile Responsive */
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .container {
+            .app-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .page {
+                padding: 20px 15px;
+            }
+            
+            .dashboard-grid {
                 grid-template-columns: 1fr;
-                padding: var(--spacing-md);
+                gap: 20px;
             }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-container {
+                height: calc(100vh - 140px);
+            }
+        }
 
-            .sidebar {
-                display: none;
-            }
+        /* Status Indicators */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
 
-            .greeting {
-                font-size: 2rem;
-            }
+        .status-dot.online { background: #28a745; }
+        .status-dot.offline { background: #dc3545; }
+        .status-dot.warning { background: #ffc107; }
+
+        /* Voice Status */
+        .voice-status {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            z-index: 1000;
+            display: none;
+            text-align: center;
+        }
+
+        .voice-status.active {
+            display: block;
+        }
+
+        .voice-status i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <aside class="sidebar">
-            <div class="ai-avatar">
-                <i class="fas fa-robot"></i>
-            </div>
-            <h1 class="ai-name">ATLAS</h1>
-            <div class="ai-status">
-                <div class="status-dot"></div>
-                Online
-            </div>
-            <nav class="nav-menu">
-                <div class="nav-item active" onclick="showPage('chat')">
-                    <i class="fas fa-comments"></i>
-                    <span>Chat</span>
-                </div>
-                <div class="nav-item" onclick="showPage('integrations')">
-                    <i class="fas fa-plug"></i>
-                    <span>Integrations</span>
-                </div>
-                <div class="nav-item" onclick="showPage('status')">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Status</span>
-                </div>
-            </nav>
-        </aside>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> ATLAS</h1>
+            <div class="subtitle">Your Personal AI Companion</div>
+        </div>
 
-        <main class="main-content">
-            <header class="content-header">
-                <h1 class="greeting">Good day, Michael</h1>
-                <p class="greeting-subtitle">How can I assist you today?</p>
-            </header>
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-page="home">
+                <i class="fas fa-home"></i> Dashboard
+            </button>
+            <button class="nav-tab" data-page="chat">
+                <i class="fas fa-comments"></i> Chat
+            </button>
+            <button class="nav-tab" data-page="tasks">
+                <i class="fas fa-tasks"></i> Tasks
+            </button>
+            <button class="nav-tab" data-page="calendar">
+                <i class="fas fa-calendar"></i> Calendar
+            </button>
+            <button class="nav-tab" data-page="integrations">
+                <i class="fas fa-plug"></i> Integrations
+            </button>
+        </div>
 
-            <div class="content-body">
-                <!-- Chat Page -->
-                <div id="chat" class="page active">
-                    <div class="atlas-chat">
-                        <div class="chat-header">
-                            <h2><i class="fas fa-brain"></i> Ask ATLAS</h2>
-                            <p>Your personal AI companion with access to your knowledge base</p>
+        <!-- Home Dashboard Page -->
+        <div class="page active" id="home">
+            <div class="greeting">
+                <h2 id="greeting-text">Good Morning, Michael!</h2>
+                <div class="date" id="current-date"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon tasks">
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                        <div class="chat-input-area">
-                            <div class="chat-input-wrapper">
-                                <textarea id="questionInput" placeholder="Ask me about your projects, schedule, business insights, or anything else..."></textarea>
-                                <div class="input-actions">
-                                    <div class="input-hint">
-                                        <i class="fas fa-lightbulb"></i>
-                                        Press Enter to send
-                                    </div>
-                                    <button id="askButton">
-                                        <i class="fas fa-paper-plane"></i>
-                                        Ask
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="answer-container" id="answerContainer">
-                                <div class="answer-text" id="answerText"></div>
-                            </div>
+                        <div>
+                            <div class="card-title">Tasks Today</div>
                         </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-number" id="task-count">0</div>
+                        <div>Pending tasks</div>
                     </div>
                 </div>
 
-                <!-- Integrations Page -->
-                <div id="integrations" class="page">
-                    <h2>Integrations</h2>
-                    <div id="integrationsList">Loading integrations...</div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon calendar">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Today's Schedule</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-number" id="event-count">0</div>
+                        <div id="next-event">No events scheduled</div>
+                    </div>
                 </div>
 
-                <!-- Status Page -->
-                <div id="status" class="page">
-                    <div style="display: grid; gap: 1.5rem;">
-                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
-                            <h2 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-tachometer-alt"></i>
-                                System Dashboard
-                            </h2>
-                            <div id="dashboardMetrics">Loading dashboard...</div>
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon emails">
+                            <i class="fas fa-envelope"></i>
                         </div>
-                        
-                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
-                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-cogs"></i>
-                                System Status
-                            </h3>
-                            <div id="statusInfo">Loading status...</div>
+                        <div>
+                            <div class="card-title">Priority Emails</div>
                         </div>
-                        
-                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
-                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-briefcase"></i>
-                                Work Metrics
-                            </h3>
-                            <div id="workMetrics">Loading work metrics...</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-number" id="email-count">-</div>
+                        <div>Unread messages</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon system">
+                            <i class="fas fa-cog"></i>
                         </div>
-                        
-                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
-                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-tasks"></i>
-                                Today's Schedule
-                            </h3>
-                            <div id="todayTasks">Loading tasks...</div>
+                        <div>
+                            <div class="card-title">System Health</div>
                         </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-number" id="system-health">100%</div>
+                        <div><span class="status-dot online"></span>All systems operational</div>
                     </div>
                 </div>
             </div>
-        </main>
+
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="switchToChat()">
+                    <i class="fas fa-comments"></i> Ask ATLAS
+                </button>
+                <button class="quick-action-btn" onclick="startVoiceCommand()">
+                    <i class="fas fa-microphone"></i> Voice Command
+                </button>
+                <button class="quick-action-btn" onclick="switchToPage('tasks')">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+                <button class="quick-action-btn" onclick="switchToPage('calendar')">
+                    <i class="fas fa-calendar-plus"></i> Schedule Event
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Page -->
+        <div class="page" id="chat">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message assistant">
+                        <div class="message-bubble">
+                            Hello! I'm ATLAS, your personal AI companion. How can I help you today?
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <button class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <textarea 
+                            class="chat-input" 
+                            id="chat-input" 
+                            placeholder="Ask me anything..." 
+                            rows="1"
+                        ></textarea>
+                        <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Page -->
+        <div class="page" id="tasks">
+            <div class="tasks-header">
+                <h2>Your Tasks</h2>
+                <button class="add-task-btn" onclick="toggleAddTaskForm()">
+                    <i class="fas fa-plus"></i> Add Task
+                </button>
+            </div>
+
+            <div class="add-task-form" id="add-task-form">
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input type="text" class="form-input" id="task-title" placeholder="Enter task description...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Due Date (Optional)</label>
+                    <input type="datetime-local" class="form-input" id="task-due-date">
+                </div>
+                <div class="form-actions">
+                    <button class="form-btn primary" onclick="addTask()">Add Task</button>
+                    <button class="form-btn secondary" onclick="toggleAddTaskForm()">Cancel</button>
+                </div>
+            </div>
+
+            <div class="task-list" id="task-list">
+                <!-- Tasks will be populated here -->
+            </div>
+        </div>
+
+        <!-- Calendar Page -->
+        <div class="page" id="calendar">
+            <div class="tasks-header">
+                <h2>Your Calendar</h2>
+                <button class="add-task-btn" onclick="toggleAddEventForm()">
+                    <i class="fas fa-plus"></i> Add Event
+                </button>
+            </div>
+
+            <div class="add-task-form" id="add-event-form">
+                <div class="form-group">
+                    <label class="form-label">Event Title</label>
+                    <input type="text" class="form-input" id="event-title" placeholder="Enter event title...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Start Time</label>
+                    <input type="datetime-local" class="form-input" id="event-start">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Time</label>
+                    <input type="datetime-local" class="form-input" id="event-end">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea class="form-input" id="event-description" placeholder="Enter event description..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="form-btn primary" onclick="addEvent()">Add Event</button>
+                    <button class="form-btn secondary" onclick="toggleAddEventForm()">Cancel</button>
+                </div>
+            </div>
+
+            <div class="task-list" id="event-list">
+                <!-- Events will be populated here -->
+            </div>
+        </div>
+
+        <!-- Integrations Page -->
+        <div class="page" id="integrations">
+            <h2 style="margin-bottom: 30px;">Integrations & Connections</h2>
+            <div class="dashboard-grid" id="integrations-list">
+                <!-- Integrations will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Status Overlay -->
+    <div class="voice-status" id="voice-status">
+        <i class="fas fa-microphone"></i>
+        <div>Listening...</div>
     </div>
 
     <script>
         // Global state
-        let currentPage = 'chat';
+        let currentPage = 'home';
+        let isListening = false;
+        let recognition = null;
+        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        let events = JSON.parse(localStorage.getItem('events') || '[]');
 
-        // Page navigation
-        function showPage(pageId) {
-            // Hide all pages
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setupSpeechRecognition();
+            setupChatInput();
+            loadDashboardData();
+            loadTasks();
+            loadEvents();
+            loadIntegrations();
+            
+            // Update time every minute
+            setInterval(updateDateTime, 60000);
+            
+            // Auto-save data
+            setInterval(saveData, 30000);
+        });
+
+        // Date/Time functions
+        function updateDateTime() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = 'Good Morning';
+            if (hour >= 12 && hour < 17) greeting = 'Good Afternoon';
+            if (hour >= 17) greeting = 'Good Evening';
+            
+            document.getElementById('greeting-text').textContent = `${greeting}, Michael!`;
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Navigation
+        function switchToPage(pageId) {
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.page === pageId) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Update pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
-
-            // Remove active from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Show selected page
             document.getElementById(pageId).classList.add('active');
-
-            // Add active to selected nav item
-            event.target.closest('.nav-item').classList.add('active');
-
+            
             currentPage = pageId;
+        }
 
-            // Load page-specific data
-            if (pageId === 'integrations') {
-                loadIntegrations();
-            } else if (pageId === 'status') {
-                loadDashboard();
-                loadStatus();
-                loadWorkMetrics();
-                loadTodayTasks();
+        function switchToChat() {
+            switchToPage('chat');
+            document.getElementById('chat-input').focus();
+        }
+
+        // Nav tab click handlers
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchToPage(tab.dataset.page);
+            });
+        });
+
+        // Speech Recognition Setup
+        function setupSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    isListening = true;
+                    document.getElementById('voice-btn').classList.add('listening');
+                    document.getElementById('voice-status').classList.add('active');
+                };
+
+                recognition.onend = function() {
+                    isListening = false;
+                    document.getElementById('voice-btn').classList.remove('listening');
+                    document.getElementById('voice-status').classList.remove('active');
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    if (currentPage !== 'chat') {
+                        switchToChat();
+                    }
+                    document.getElementById('chat-input').value = transcript;
+                    sendMessage();
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    isListening = false;
+                    document.getElementById('voice-btn').classList.remove('listening');
+                    document.getElementById('voice-status').classList.remove('active');
+                };
             }
+        }
+
+        function toggleVoiceInput() {
+            if (!recognition) {
+                alert('Speech recognition not supported in this browser.');
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function startVoiceCommand() {
+            if (currentPage !== 'chat') {
+                switchToChat();
+            }
+            setTimeout(() => toggleVoiceInput(), 200);
         }
 
         // Chat functionality
-        document.getElementById('askButton').addEventListener('click', askQuestion);
-        document.getElementById('questionInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                askQuestion();
-            }
-        });
-
-        async function askQuestion() {
-            const question = document.getElementById('questionInput').value.trim();
-            if (!question) return;
-
-            const button = document.getElementById('askButton');
-            const answerContainer = document.getElementById('answerContainer');
-            const answerText = document.getElementById('answerText');
-
-            // Show loading state
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
-            answerContainer.style.display = 'block';
-            answerText.textContent = 'Processing your question...';
-
-            try {
-                const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
-                const data = await response.json();
-
-                if (response.ok) {
-                    answerText.textContent = data.answer;
-                    if (data.sources && data.sources.length > 0) {
-                        answerText.textContent += '\n\nSources: ' + data.sources.join(', ');
-                    }
-                } else {
-                    answerText.textContent = 'Error: ' + (data.detail || 'Unknown error occurred');
+        function setupChatInput() {
+            const chatInput = document.getElementById('chat-input');
+            
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
                 }
-            } catch (error) {
-                answerText.textContent = 'Error: Failed to connect to the server. Please check your connection.';
-            }
+            });
 
-            // Reset button
-            button.disabled = false;
-            button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask';
+            // Auto-resize textarea
+            chatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
         }
 
-        // Load integrations
-        async function loadIntegrations() {
-            const container = document.getElementById('integrationsList');
-            container.innerHTML = 'Loading integrations...';
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
 
+            // Add user message to chat
+            addMessageToChat('user', message);
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Show typing indicator
+            document.getElementById('typing-indicator').classList.add('active');
+            document.getElementById('send-btn').disabled = true;
+
+            try {
+                // Check for task/event commands first
+                if (await handleCommandMessage(message)) {
+                    document.getElementById('typing-indicator').classList.remove('active');
+                    document.getElementById('send-btn').disabled = false;
+                    return;
+                }
+
+                // Send to AI
+                const response = await fetch('/ask?' + new URLSearchParams({ q: message }));
+                const data = await response.json();
+                
+                if (data.answer) {
+                    addMessageToChat('assistant', data.answer);
+                    
+                    // Optional: Speak the response
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(data.answer);
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1;
+                        speechSynthesis.speak(utterance);
+                    }
+                } else {
+                    addMessageToChat('assistant', 'Sorry, I encountered an error. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addMessageToChat('assistant', 'Sorry, I\'m having trouble connecting. Please try again.');
+            }
+
+            document.getElementById('typing-indicator').classList.remove('active');
+            document.getElementById('send-btn').disabled = false;
+        }
+
+        async function handleCommandMessage(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Task commands
+            if (lowerMessage.includes('add task') || lowerMessage.includes('remind me') || lowerMessage.includes('to-do')) {
+                const taskText = extractTaskFromMessage(message);
+                if (taskText) {
+                    addTaskFromText(taskText);
+                    addMessageToChat('assistant', `I've added "${taskText}" to your tasks.`);
+                    return true;
+                }
+            }
+            
+            // Event commands
+            if (lowerMessage.includes('schedule') || lowerMessage.includes('meeting') || lowerMessage.includes('appointment')) {
+                addMessageToChat('assistant', 'I can help you schedule events. Please use the Calendar tab to add detailed events, or tell me the specifics and I\'ll guide you through it.');
+                return true;
+            }
+            
+            // Task list query
+            if (lowerMessage.includes('my tasks') || lowerMessage.includes('to-do list') || lowerMessage.includes('what do i need to do')) {
+                const taskList = tasks.filter(t => !t.completed).map(t => `• ${t.title}`).join('\n') || 'No pending tasks';
+                addMessageToChat('assistant', `Here are your current tasks:\n${taskList}`);
+                return true;
+            }
+            
+            return false;
+        }
+
+        function extractTaskFromMessage(message) {
+            // Simple extraction - look for patterns
+            const patterns = [
+                /(?:add task|remind me to|to-do):?\s*(.+)/i,
+                /(?:i need to|have to|must)\s+(.+)/i
+            ];
+            
+            for (const pattern of patterns) {
+                const match = message.match(pattern);
+                if (match) {
+                    return match[1].trim();
+                }
+            }
+            
+            return message; // Fallback to full message
+        }
+
+        function addMessageToChat(sender, message) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${message.replace(/\n/g, '<br>')}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Task Management
+        function toggleAddTaskForm() {
+            const form = document.getElementById('add-task-form');
+            form.classList.toggle('active');
+            if (form.classList.contains('active')) {
+                document.getElementById('task-title').focus();
+            }
+        }
+
+        function addTask() {
+            const title = document.getElementById('task-title').value.trim();
+            const dueDate = document.getElementById('task-due-date').value;
+            
+            if (!title) {
+                alert('Please enter a task title');
+                return;
+            }
+            
+            const task = {
+                id: Date.now(),
+                title: title,
+                dueDate: dueDate || null,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.unshift(task);
+            saveData();
+            loadTasks();
+            updateDashboardCounts();
+            
+            // Clear form
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-due-date').value = '';
+            toggleAddTaskForm();
+        }
+
+        function addTaskFromText(taskText) {
+            const task = {
+                id: Date.now(),
+                title: taskText,
+                dueDate: null,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.unshift(task);
+            saveData();
+            loadTasks();
+            updateDashboardCounts();
+        }
+
+        function toggleTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                saveData();
+                loadTasks();
+                updateDashboardCounts();
+            }
+        }
+
+        function deleteTask(taskId) {
+            tasks = tasks.filter(t => t.id !== taskId);
+            saveData();
+            loadTasks();
+            updateDashboardCounts();
+        }
+
+        function loadTasks() {
+            const taskList = document.getElementById('task-list');
+            if (tasks.length === 0) {
+                taskList.innerHTML = `
+                    <div class="task-item">
+                        <div class="task-content">
+                            <div class="task-title" style="color: #7f8c8d; font-style: italic;">
+                                No tasks yet. Add one above or ask ATLAS to help!
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            taskList.innerHTML = tasks.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <input type="checkbox" class="task-checkbox" 
+                           ${task.completed ? 'checked' : ''} 
+                           onchange="toggleTask(${task.id})">
+                    <div class="task-content">
+                        <div class="task-title" style="${task.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${task.title}</div>
+                        ${task.dueDate ? `<div class="task-time">Due: ${new Date(task.dueDate).toLocaleString()}</div>` : ''}
+                    </div>
+                    <button class="task-delete" onclick="deleteTask(${task.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Event Management
+        function toggleAddEventForm() {
+            const form = document.getElementById('add-event-form');
+            form.classList.toggle('active');
+            if (form.classList.contains('active')) {
+                document.getElementById('event-title').focus();
+            }
+        }
+
+        function addEvent() {
+            const title = document.getElementById('event-title').value.trim();
+            const start = document.getElementById('event-start').value;
+            const end = document.getElementById('event-end').value;
+            const description = document.getElementById('event-description').value.trim();
+            
+            if (!title || !start || !end) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const event = {
+                id: Date.now(),
+                title: title,
+                start: start,
+                end: end,
+                description: description,
+                createdAt: new Date().toISOString()
+            };
+            
+            events.unshift(event);
+            saveData();
+            loadEvents();
+            updateDashboardCounts();
+            
+            // Clear form
+            document.getElementById('event-title').value = '';
+            document.getElementById('event-start').value = '';
+            document.getElementById('event-end').value = '';
+            document.getElementById('event-description').value = '';
+            toggleAddEventForm();
+        }
+
+        function deleteEvent(eventId) {
+            events = events.filter(e => e.id !== eventId);
+            saveData();
+            loadEvents();
+            updateDashboardCounts();
+        }
+
+        function loadEvents() {
+            const eventList = document.getElementById('event-list');
+            if (events.length === 0) {
+                eventList.innerHTML = `
+                    <div class="task-item">
+                        <div class="task-content">
+                            <div class="task-title" style="color: #7f8c8d; font-style: italic;">
+                                No events scheduled. Add one above!
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            eventList.innerHTML = events.map(event => `
+                <div class="task-item">
+                    <div class="task-content">
+                        <div class="task-title">${event.title}</div>
+                        <div class="task-time">
+                            ${new Date(event.start).toLocaleString()} - ${new Date(event.end).toLocaleString()}
+                        </div>
+                        ${event.description ? `<div class="task-time">${event.description}</div>` : ''}
+                    </div>
+                    <button class="task-delete" onclick="deleteEvent(${event.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Dashboard Data
+        async function loadDashboardData() {
+            try {
+                // Load dashboard metrics
+                const response = await fetch('/dashboard');
+                const data = await response.json();
+                
+                document.getElementById('system-health').textContent = `${data.system_health || 100}%`;
+                document.getElementById('email-count').textContent = data.unread_emails || '-';
+                
+                updateDashboardCounts();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function updateDashboardCounts() {
+            const pendingTasks = tasks.filter(t => !t.completed).length;
+            document.getElementById('task-count').textContent = pendingTasks;
+            
+            // Find next event
+            const now = new Date();
+            const upcomingEvents = events.filter(e => new Date(e.start) > now).sort((a, b) => new Date(a.start) - new Date(b.start));
+            
+            document.getElementById('event-count').textContent = upcomingEvents.length;
+            
+            if (upcomingEvents.length > 0) {
+                const nextEvent = upcomingEvents[0];
+                const eventTime = new Date(nextEvent.start).toLocaleString();
+                document.getElementById('next-event').textContent = `${nextEvent.title} at ${eventTime}`;
+            } else {
+                document.getElementById('next-event').textContent = 'No events scheduled';
+            }
+        }
+
+        // Integrations
+        async function loadIntegrations() {
             try {
                 const response = await fetch('/integrations');
                 const data = await response.json();
-
-                if (response.ok && data.integrations) {
-                    let html = '<div style="display: grid; gap: 1rem;">';
-
-                    data.integrations.forEach(integration => {
-                        const statusClass = integration.connected ? 'success' : 'warning';
-                        const statusIcon = integration.connected ? 'check-circle' : 'exclamation-triangle';
-
-                        html += `
-                            <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <h3 style="margin-bottom: 0.5rem;">${integration.name}</h3>
-                                    <p style="color: var(--text-muted); font-size: 0.9rem;">${integration.status_message}</p>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <i class="fas fa-${statusIcon}" style="color: var(--accent-${statusClass});"></i>
-                                    ${integration.auth_url ? `<a href="${integration.auth_url}" class="btn btn-primary">Connect</a>` : ''}
-                                </div>
+                
+                const integrationsList = document.getElementById('integrations-list');
+                integrationsList.innerHTML = data.integrations.map(integration => `
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-icon ${integration.connected ? 'system' : 'emails'}">
+                                <i class="fas ${getIntegrationIcon(integration.name)}"></i>
                             </div>
-                        `;
-                    });
-
-                    html += '</div>';
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = 'Failed to load integrations.';
-                }
-            } catch (error) {
-                container.innerHTML = 'Error loading integrations: ' + error.message;
-            }
-        }
-
-        // Load dashboard metrics
-        async function loadDashboard() {
-            const container = document.getElementById('dashboardMetrics');
-            if (!container) return;
-            
-            container.innerHTML = 'Loading dashboard...';
-
-            try {
-                const response = await fetch('/dashboard');
-                const data = await response.json();
-
-                if (response.ok) {
-                    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
-
-                    // System health
-                    const healthColor = data.system_health > 80 ? 'var(--accent-success)' : 
-                                       data.system_health > 50 ? 'var(--accent-warning)' : 'var(--accent-error)';
-                    
-                    html += `
-                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
-                            <div style="font-size: 2rem; font-weight: bold; color: ${healthColor};">${data.system_health}%</div>
-                            <div style="color: var(--text-muted);">System Health</div>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-blue);">${data.active_integrations}</div>
-                            <div style="color: var(--text-muted);">Active Integrations</div>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-primary);">${data.calendar_events_today || 0}</div>
-                            <div style="color: var(--text-muted);">Events Today</div>
-                        </div>
-                        
-                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
-                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-warning);">${data.unread_emails || 0}</div>
-                            <div style="color: var(--text-muted);">Unread Emails</div>
-                        </div>
-                    `;
-
-                    html += '</div>';
-
-                    // Recent events and emails
-                    if (data.recent_events && data.recent_events.length > 0) {
-                        html += '<div style="margin-top: 1.5rem;"><h4>Upcoming Events</h4><div style="display: grid; gap: 0.5rem;">';
-                        data.recent_events.forEach(event => {
-                            html += `
-                                <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); display: flex; justify-content: space-between;">
-                                    <span>${event.title}</span>
-                                    <span style="color: var(--text-muted);">${event.start_time} - ${event.end_time}</span>
-                                </div>
-                            `;
-                        });
-                        html += '</div></div>';
-                    }
-
-                    if (data.priority_emails && data.priority_emails.length > 0) {
-                        html += '<div style="margin-top: 1.5rem;"><h4>Priority Emails</h4><div style="display: grid; gap: 0.5rem;">';
-                        data.priority_emails.forEach(email => {
-                            html += `
-                                <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm);">
-                                    <div style="font-weight: 600;">${email.sender}</div>
-                                    <div style="color: var(--text-muted); font-size: 0.9rem;">${email.subject}</div>
-                                </div>
-                            `;
-                        });
-                        html += '</div></div>';
-                    }
-
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = 'Failed to load dashboard.';
-                }
-            } catch (error) {
-                container.innerHTML = 'Error loading dashboard: ' + error.message;
-            }
-        }
-
-        // Load work metrics
-        async function loadWorkMetrics() {
-            const container = document.getElementById('workMetrics');
-            if (!container) return;
-            
-            container.innerHTML = 'Loading work metrics...';
-
-            try {
-                const response = await fetch('/metrics/work');
-                const data = await response.json();
-
-                if (response.ok) {
-                    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">';
-
-                    const metrics = [
-                        { label: 'Active Projects', value: data.active_projects, color: 'var(--accent-primary)' },
-                        { label: 'On Track', value: data.projects_on_track, color: 'var(--accent-success)' },
-                        { label: 'At Risk', value: data.projects_at_risk, color: 'var(--accent-warning)' },
-                        { label: 'Events Today', value: data.calendar_events_today, color: 'var(--accent-blue)' },
-                        { label: 'Unread Emails', value: data.unread_emails, color: 'var(--accent-purple)' }
-                    ];
-
-                    metrics.forEach(metric => {
-                        html += `
-                            <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
-                                <div style="font-size: 1.5rem; font-weight: bold; color: ${metric.color};">${metric.value}</div>
-                                <div style="color: var(--text-muted); font-size: 0.85rem;">${metric.label}</div>
+                            <div>
+                                <div class="card-title">${integration.name}</div>
                             </div>
-                        `;
-                    });
-
-                    html += '</div>';
-
-                    if (data.next_meeting) {
-                        html += `
-                            <div style="margin-top: 1rem; padding: 1rem; background: var(--glass-bg); border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                                <div style="font-weight: 600; margin-bottom: 0.5rem;">Next Meeting</div>
-                                <div>${data.next_meeting}</div>
-                                <div style="color: var(--text-muted); font-size: 0.9rem;">at ${data.next_meeting_time}</div>
+                        </div>
+                        <div class="card-content">
+                            <div style="margin-bottom: 10px;">
+                                <span class="status-dot ${integration.connected ? 'online' : 'offline'}"></span>
+                                ${integration.status_message}
                             </div>
-                        `;
-                    }
-
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = 'Failed to load work metrics.';
-                }
+                            ${integration.auth_url ? `<a href="${integration.auth_url}" style="color: #4a90e2; text-decoration: none;">Connect</a>` : ''}
+                        </div>
+                    </div>
+                `).join('');
             } catch (error) {
-                container.innerHTML = 'Error loading work metrics: ' + error.message;
+                console.error('Error loading integrations:', error);
             }
         }
 
-        // Load today's tasks
-        async function loadTodayTasks() {
-            const container = document.getElementById('todayTasks');
-            if (!container) return;
-            
-            container.innerHTML = 'Loading tasks...';
-
-            try {
-                const response = await fetch('/tasks/today');
-                const data = await response.json();
-
-                if (response.ok && data.tasks) {
-                    let html = '<div style="display: grid; gap: 0.75rem;">';
-
-                    if (data.tasks.length === 0) {
-                        html += '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No tasks scheduled for today</div>';
-                    } else {
-                        data.tasks.forEach(task => {
-                            const startTime = new Date(task.start_time);
-                            const endTime = new Date(task.end_time);
-                            
-                            html += `
-                                <div style="padding: 1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md);">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                        <span style="font-weight: 600;">${task.title}</span>
-                                        <span style="color: var(--text-muted); font-size: 0.9rem;">
-                                            ${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - 
-                                            ${endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                                        </span>
-                                    </div>
-                                    ${task.description ? `<div style="color: var(--text-muted); font-size: 0.9rem;">${task.description}</div>` : ''}
-                                </div>
-                            `;
-                        });
-                    }
-
-                    html += '</div>';
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = data.error || 'Failed to load tasks.';
-                }
-            } catch (error) {
-                container.innerHTML = 'Error loading tasks: ' + error.message;
-            }
+        function getIntegrationIcon(name) {
+            const icons = {
+                'Google Calendar': 'fa-calendar',
+                'Gmail': 'fa-envelope',
+                'Google Drive': 'fa-cloud',
+                'Notion': 'fa-file-alt',
+                'Dubsado': 'fa-briefcase',
+                'QuickBooks': 'fa-calculator',
+                'Synology NAS': 'fa-server',
+                'Slack': 'fa-slack',
+                'Zoom': 'fa-video',
+                'Zapier': 'fa-bolt'
+            };
+            return icons[name] || 'fa-plug';
         }
 
-        // Load status
-        async function loadStatus() {
-            const container = document.getElementById('statusInfo');
-            container.innerHTML = 'Loading status...';
-
-            try {
-                const response = await fetch('/status');
-                const data = await response.json();
-
-                if (response.ok) {
-                    let html = '<div style="display: grid; gap: 1rem;">';
-
-                    Object.entries(data).forEach(([key, value]) => {
-                        if (typeof value === 'object') return; // Skip complex objects
-
-                        const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        
-                        // Color code status values
-                        let valueColor = 'var(--text-primary)';
-                        if (typeof value === 'string') {
-                            if (value.includes('✓')) valueColor = 'var(--accent-success)';
-                            else if (value.includes('✗')) valueColor = 'var(--accent-error)';
-                        }
-
-                        html += `
-                            <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); display: flex; justify-content: space-between;">
-                                <span>${displayKey}:</span>
-                                <span style="font-weight: 600; color: ${valueColor};">${value}</span>
-                            </div>
-                        `;
-                    });
-
-                    html += '</div>';
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = 'Failed to load status.';
-                }
-            } catch (error) {
-                container.innerHTML = 'Error loading status: ' + error.message;
-            }
+        // Data persistence
+        function saveData() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('events', JSON.stringify(events));
         }
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('ATLAS interface loaded');
-
-            // Check if authenticated
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('auth') === 'success') {
-                alert('Successfully authenticated with Google!');
-                // Remove the parameter from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else if (urlParams.get('error')) {
-                alert('Authentication error: ' + urlParams.get('error'));
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        });
+        console.log('ATLAS interface loaded');
     </script>
 </body>
 </html>

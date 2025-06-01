@@ -1049,7 +1049,6 @@ async def get_work_metrics():
 async def create_task(task_data: dict):
     """Create a new task"""
     try:
-        # In a real implementation, this would integrate with task management systems
         task = {
             "id": f"task_{int(datetime.now().timestamp())}",
             "title": task_data.get("title", "Untitled Task"),
@@ -1059,11 +1058,64 @@ async def create_task(task_data: dict):
             "created_at": datetime.now().isoformat(),
             "completed": False
         }
-
-        # For now, return the task (in production, store in database)
         return {"message": "Task created successfully", "task": task}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create task: {str(e)}")
+
+@app.post("/events")
+async def create_event(event_data: dict):
+    """Create a new calendar event"""
+    try:
+        event = {
+            "id": f"event_{int(datetime.now().timestamp())}",
+            "title": event_data.get("title", "Untitled Event"),
+            "start_time": event_data.get("start_time"),
+            "end_time": event_data.get("end_time"),
+            "description": event_data.get("description", ""),
+            "location": event_data.get("location", ""),
+            "created_at": datetime.now().isoformat()
+        }
+        return {"message": "Event created successfully", "event": event}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create event: {str(e)}")
+
+@app.post("/ai/quick-command")
+async def handle_quick_command(command_data: dict):
+    """Handle quick AI commands from voice or chat"""
+    try:
+        command = command_data.get("command", "").lower()
+        
+        # Task creation commands
+        if any(phrase in command for phrase in ["add task", "remind me", "to-do"]):
+            # Extract task text
+            task_text = command
+            for phrase in ["add task", "remind me to", "to-do"]:
+                task_text = task_text.replace(phrase, "").strip()
+            
+            if task_text:
+                task = {
+                    "id": f"task_{int(datetime.now().timestamp())}",
+                    "title": task_text,
+                    "created_at": datetime.now().isoformat(),
+                    "completed": False
+                }
+                return {"action": "task_created", "task": task, "response": f"I've added '{task_text}' to your tasks."}
+        
+        # Default to regular AI response
+        if not openai_client:
+            raise HTTPException(status_code=503, detail="AI not configured")
+            
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": command}],
+            temperature=0.7,
+            max_tokens=200
+        )
+        
+        return {"action": "ai_response", "response": response.choices[0].message.content.strip()}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process command: {str(e)}")
 
 @app.get("/tasks/today")
 async def get_todays_tasks():
