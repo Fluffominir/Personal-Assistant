@@ -1,18 +1,8 @@
-
 window.TodoCard = function TodoCard({ items = [] }) {
     const [todos, setTodos] = React.useState(items);
+    const [archived, setArchived] = React.useState([]);
 
-    const handleToggleTodo = (index) => {
-        const newTodos = [...todos];
-        newTodos[index] = { ...newTodos[index], completed: !newTodos[index].completed };
-        setTodos(newTodos);
-    };
-
-const TodoCard = function TodoCard({ items = [] }) {
-    const [todos, setTodos] = useState(items);
-    const [archived, setArchived] = useState([]);
-
-    useEffect(() => {
+    React.useEffect(() => {
         setTodos(items);
     }, [items]);
 
@@ -75,5 +65,3 @@ const TodoCard = function TodoCard({ items = [] }) {
         }, 'No tasks remaining'))
     ]);
 };
-
-};d;

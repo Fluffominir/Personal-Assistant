@@ -659,7 +659,21 @@
                     ]),
 
         React.createElement('main', { key: 'main', className: 'main-content' }, [
-            <section class="ask-atlas">
+            React.createElement('section', { key: 'ask-atlas', className: 'ask-atlas' }, [
+                React.createElement('div', { key: 'atlas-card', className: 'atlas-card' }, [
+                    React.createElement('textarea', {
+                        key: 'input',
+                        placeholder: 'Ask about your projects, schedule, personal or business insights...',
+                        className: 'atlas-textarea'
+                    }),
+                    React.createElement('div', { key: 'suggestions', className: 'suggestion-chips' }, [
+                        React.createElement('button', { key: 'daily' }, 'Daily Breakdown'),
+                        React.createElement('button', { key: 'next' }, 'What\'s Next?'),
+                        React.createElement('button', { key: 'schedule' }, 'Schedule my week')
+                    ]),
+                    React.createElement('button', { key: 'ask-btn', className: 'ask-button' }, 'Ask')
+                ])
+            ]),
                 <div class="ask-atlas-card">
                     <textarea 
                         id="atlas-input"
