@@ -5,7 +5,7 @@ const { useState, useEffect } = React;
 function useForm(initialValues, validations = {}) {
     const [values, setValues] = React.useState(initialValues);
     const [errors, setErrors] = React.useState({});
-    const [touched, setFieldTouched] = React.useState({});
+    const [touched, setTouched] = React.useState({});
 
     const validate = (name, value) => {
         const rules = validations[name];
@@ -32,8 +32,8 @@ function useForm(initialValues, validations = {}) {
         }
     };
 
-    const setTouchedField = (name) => {
-        setFieldTouched(prev => ({ ...prev, [name]: true }));
+    const setFieldTouched = (name) => {
+        setTouched(prev => ({ ...prev, [name]: true }));
 
         // Validate when field is touched
         const error = validate(name, values[name]);
@@ -53,7 +53,7 @@ function useForm(initialValues, validations = {}) {
         });
 
         setErrors(newErrors);
-        setFieldTouched(Object.keys(validations).reduce((acc, key) => {
+        setTouched(Object.keys(validations).reduce((acc, key) => {
             acc[key] = true;
             return acc;
         }, {}));
@@ -64,11 +64,7 @@ function useForm(initialValues, validations = {}) {
     const reset = () => {
         setValues(initialValues);
         setErrors({});
-        setFieldTouched({});
-    };
-
-    const setTouched = (name, value = true) => {
-        setFieldTouched(prev => ({ ...prev, [name]: value }));
+        setTouched({});
     };
 
     return {
@@ -76,7 +72,7 @@ function useForm(initialValues, validations = {}) {
         errors,
         touched,
         setValue,
-        setTouched,
+        setTouched: setFieldTouched,
         validateAll,
         reset
     };
