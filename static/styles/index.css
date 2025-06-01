@@ -1,0 +1,57 @@
+
+@import url("/static/styles/tokens.css");   /* ⇒ colours + radii + spacing */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+/* Simple helpers */
+.container      { width: min(1100px, 94%); margin-inline: auto; }
+.section-gap    { margin-top: var(--space-xl); }
+
+/* Header */
+.header-bar     { display:flex; align-items:center;
+                  justify-content:space-between;
+                  padding: var(--space-m) 0; }
+
+.event-badge    { display:flex; align-items:center; justify-content:center;
+                  width:36px; height:36px; border-radius:50%;
+                  background:var(--pink); color:#fff; font-weight:700;
+                  cursor:pointer; }
+
+/* Ask ATLAS */
+.ask-section    { margin-top: var(--space-l); }
+.ask-input      { width:100%; padding:var(--space-m);
+                  border:none; border-radius:var(--radius); }
+
+/* Quick actions */
+.quick-actions      { display:flex; gap:var(--space-m); flex-wrap:wrap;
+                      margin-top:var(--space-l); }
+.quick-action-item  { background:var(--primary); color:#fff; 
+                      padding:var(--space-s) var(--space-m);
+                      border-radius:var(--radius); cursor:pointer; }
+
+/* Main columns */
+.main-columns   { display:grid; gap:var(--space-l);
+                  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+                  margin-top:var(--space-xl); }
+.column-card    { background:var(--card); padding:var(--space-m);
+                  border-radius:var(--radius); }
+.column-title   { margin:0 0 var(--space-s) 0; font-weight:600; font-size:1.25rem; }
+
+.event-item , .todo-item {
+  background:var(--light); margin-bottom:var(--space-s);
+  padding:var(--space-s); border-radius:var(--radius);
+}
+
+@media (max-width:600px){
+  .header-bar{flex-direction:column; gap:var(--space-s);}
+}
