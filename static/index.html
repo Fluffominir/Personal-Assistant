@@ -1,27 +1,24 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <title>ATLAS – Michael's AI Companion</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- design tokens first -->
+  <link rel="stylesheet" href="/static/styles/tokens.css" />
+  <!-- global styles -->
   <link rel="stylesheet" href="/static/styles/index.css" />
-  <!-- Google font for mock-up parity -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- React & Babel (CDN) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
   <div id="root" class="container"></div>
 
-  <!-- React and ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  
-  <!-- Babel so JSX in .jsx files works without a bundler -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Bundle order: design tokens first, then components, then main app -->
-  <script type="text/babel" src="/static/SideDrawer.jsx"></script>
-  <script type="text/babel" src="/static/SettingsControls.jsx"></script>
-  <script type="text/babel" src="/static/MobileFooter.jsx"></script>
-  <script type="text/babel" src="/static/App.jsx"></script>
+  <!-- one text/babel bundle with *every* component -->
+  <script type="text/babel" src="/static/app-bundle.jsx"></script>
 </body>
 </html>
