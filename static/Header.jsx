@@ -1,8 +1,10 @@
 
-window.Header = function Header() {
-    const [currentTime, setCurrentTime] = React.useState('');
+const { useState, useEffect } = React;
 
-    React.useEffect(() => {
+window.Header = function Header() {
+    const [currentTime, setCurrentTime] = useState('');
+
+    useEffect(() => {
         const updateTime = () => {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { 
@@ -24,15 +26,10 @@ window.Header = function Header() {
         return () => clearInterval(interval);
     }, []);
 
-    return React.createElement('header', {
-        'data-testid': 'header'
-    }, [
-        React.createElement('h1', {
-            key: 'greeting'
-        }, 'Hello, Michael,'),
-        React.createElement('span', {
-            key: 'time',
-            className: 'time'
-        }, currentTime)
-    ]);
+    return (
+        <header data-testid="header">
+            <h1>Hello, Michael,</h1>
+            <span className="time">{currentTime}</span>
+        </header>
+    );
 };

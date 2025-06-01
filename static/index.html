@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black:wght@400&family=Karla:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
-    <link rel="stylesheet" href="/src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/index.css">
     <link rel="stylesheet" href="static/Header.css">
     <link rel="stylesheet" href="static/QuickActions.css">
     <link rel="stylesheet" href="static/AgendaTodoCards.css">
@@ -617,23 +617,22 @@
 <body>
     <div id="app-root"></div>
 
-    <script>
+    <script type="text/babel">
         // Wait for all components to load
         window.addEventListener('load', function() {
             // Main App Component
             function App() {
-                return React.createElement('div', {}, [
-                    React.createElement(window.Header, { key: 'header' }),
-                    React.createElement('h1', {
-                        key: 'baseline',
-                        style: { fontFamily: 'var(--font-head)' }
-                    }, '⚡ Atlas baseline up')
-                ]);
+                return (
+                    <div>
+                        <window.Header />
+                        <h1 style={{fontFamily: 'var(--font-head)'}}>⚡ Atlas baseline up</h1>
+                    </div>
+                );
             }
 
             // Render the app
             const appRoot = ReactDOM.createRoot(document.getElementById('app-root'));
-            appRoot.render(React.createElement(App));
+            appRoot.render(<App />);
         });
     </script>
 
@@ -644,19 +643,20 @@
     <div id="training-modal"></div>
 
     <!-- React CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <!-- Components -->
-    <script src="static/MenuContext.jsx"></script>
-    <script src="static/Header.jsx"></script>
-    <script src="static/AtlasChatBox.jsx"></script>
-    <script src="static/TrainingWizard.jsx"></script>
-    <script src="static/QuickActions.jsx"></script>
-    <script src="static/AgendaCard.jsx"></script>
-    <script src="static/TodoCard.jsx"></script>
-    <script src="static/SideDrawer.jsx"></script>
-    <script src="static/MobileFooter.jsx"></script>
+    <script type="text/babel" src="static/MenuContext.jsx"></script>
+    <script type="text/babel" src="static/Header.jsx"></script>
+    <script type="text/babel" src="static/AtlasChatBox.jsx"></script>
+    <script type="text/babel" src="static/TrainingWizard.jsx"></script>
+    <script type="text/babel" src="static/QuickActions.jsx"></script>
+    <script type="text/babel" src="static/AgendaCard.jsx"></script>
+    <script type="text/babel" src="static/TodoCard.jsx"></script>
+    <script type="text/babel" src="static/SideDrawer.jsx"></script>
+    <script type="text/babel" src="static/MobileFooter.jsx"></script></script>
 
     <script>
         // Global state
