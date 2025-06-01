@@ -105,7 +105,7 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        .menu-toggle {
+        .menu-toggle, .settings-nav-btn {
             background: none;
             border: none;
             color: white;
@@ -116,7 +116,7 @@
             transition: all 0.3s ease;
         }
 
-        .menu-toggle:hover {
+        .menu-toggle:hover, .settings-nav-btn:hover {
             background: rgba(255, 255, 255, 0.1);
         }
 
@@ -759,28 +759,10 @@
             transform: scale(1.1);
         }
 
-        /* Settings at bottom */
-        .settings-section {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-        }
-
-        .settings-btn {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 15px 30px;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .settings-btn:hover {
+        /* Sync FAB */
+        .sync-btn:hover {
             background: rgba(0, 0, 0, 0.8);
-            transform: translateY(-2px);
+            transform: scale(1.1);
         }
 
          /* Style for source toggle */
@@ -862,6 +844,11 @@
             }
         }
 
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .agenda-card, .atlas-card, .weather-card {
             animation: fadeInUp 0.6s ease forwards;
         }
@@ -913,9 +900,14 @@
             <h1 class="font-bold">Hello, Michael,</h1>
             <div class="subtitle" id="current-datetime">1:52 PM | Sun, Jun 1</div>
         </div>
-        <button class="menu-toggle" onclick="toggleSidebar()">
-            <i class="fas fa-bars"></i>
-        </button>
+        <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+            <button class="settings-nav-btn" onclick="showSettings()" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 10px; border-radius: 10px; transition: all 0.3s ease;">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
 
     <!-- Sidebar Menu -->
@@ -1083,11 +1075,101 @@
         </div>
     </div>
 
-    <!-- Settings Button -->
-    <div class="settings-section">
-        <button class="settings-btn" onclick="showSettings()">
-            <i class="fas fa-cog"></i> Settings
-            <i class="fas fa-sync" style="margin-left: 10px; font-size: 0.8rem;"></i>
+    <!-- Settings Page (Hidden by default) -->
+    <div class="settings-page" id="settings-page" style="display: none; padding-top: 100px;">
+        <div class="main-content">
+            <button class="back-btn" onclick="switchToMain()" style="background: rgba(255, 255, 255, 0.2); border: none; border-radius: 15px; padding: 10px 20px; color: white; font-size: 1rem; cursor: pointer; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(10px);">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+
+            <h1 class="font-bold text-4xl mb-8">Settings</h1>
+
+            <!-- Integration Status -->
+            <div class="glass mb-8 p-6">
+                <h2 class="font-bold text-2xl mb-4">Integration Status</h2>
+                <div class="grid gap-4">
+                    <div class="integration-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                        <div>
+                            <span class="font-semibold">Google Workspace</span>
+                            <div class="text-sm opacity-75">Calendar, Gmail, Drive</div>
+                        </div>
+                        <div id="google-status" class="status-indicator">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                        </div>
+                    </div>
+                    <div class="integration-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                        <div>
+                            <span class="font-semibold">Notion</span>
+                            <div class="text-sm opacity-75">Workspace sync</div>
+                        </div>
+                        <div id="notion-status" class="status-indicator">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                        </div>
+                    </div>
+                    <div class="integration-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                        <div>
+                            <span class="font-semibold">Weather API</span>
+                            <div class="text-sm opacity-75">Location-based weather</div>
+                        </div>
+                        <div id="weather-status" class="status-indicator">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="glass mb-8 p-6">
+                <h2 class="font-bold text-2xl mb-4">System Health</h2>
+                <div class="health-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div class="health-card" style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; text-align: center;">
+                        <div class="health-value text-3xl font-bold mb-2" id="system-health">95%</div>
+                        <div class="health-label opacity-75">System Health</div>
+                    </div>
+                    <div class="health-card" style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; text-align: center;">
+                        <div class="health-value text-3xl font-bold mb-2" id="kb-vectors">1,247</div>
+                        <div class="health-label opacity-75">Knowledge Base</div>
+                    </div>
+                    <div class="health-card" style="background: rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 20px; text-align: center;">
+                        <div class="health-value text-3xl font-bold mb-2" id="sync-status">Active</div>
+                        <div class="health-label opacity-75">Background Sync</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="glass p-6">
+                <h2 class="font-bold text-2xl mb-4">Preferences</h2>
+                <div class="preferences-grid" style="display: grid; gap: 20px;">
+                    <div class="preference-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                        <div>
+                            <span class="font-semibold">Voice Input</span>
+                            <div class="text-sm opacity-75">Enable speech recognition</div>
+                        </div>
+                        <label class="switch" style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                            <input type="checkbox" id="voice-toggle" checked style="opacity: 0; width: 0; height: 0;">
+                            <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--atlas-accent); transition: .4s; border-radius: 34px;"></span>
+                        </label>
+                    </div>
+                    <div class="preference-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                        <div>
+                            <span class="font-semibold">Auto Sync</span>
+                            <div class="text-sm opacity-75">Automatically sync integrations</div>
+                        </div>
+                        <label class="switch" style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                            <input type="checkbox" id="auto-sync-toggle" checked style="opacity: 0; width: 0; height: 0;">
+                            <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--atlas-accent); transition: .4s; border-radius: 34px;"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync FAB -->
+    <div class="sync-fab" style="position: fixed; bottom: 16px; right: 16px; z-index: 100;">
+        <button class="sync-btn" onclick="triggerSync()" style="width: 50px; height: 50px; border-radius: 25px; border: none; background: rgba(0, 0, 0, 0.6); color: white; font-size: 1.2rem; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.2);">
+            <i class="fas fa-sync"></i>
         </button>
     </div>
 
@@ -1151,6 +1233,7 @@
         function switchToChat() {
             document.getElementById('main-content').style.display = 'none';
             document.getElementById('chat-page').classList.add('active');
+            document.getElementById('settings-page').style.display = 'none';
             document.getElementById('chat-input').focus();
             currentView = 'chat';
         }
@@ -1158,13 +1241,22 @@
         function switchToMain() {
             document.getElementById('main-content').style.display = 'block';
             document.getElementById('chat-page').classList.remove('active');
+            document.getElementById('settings-page').style.display = 'none';
             currentView = 'main';
+        }
+
+        function switchToSettings() {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('chat-page').classList.remove('active');
+            document.getElementById('settings-page').style.display = 'block';
+            currentView = 'settings';
+            loadSettingsData();
         }
 
         // Handle back button or escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                if (currentView === 'chat') {
+                if (currentView === 'chat' || currentView === 'settings') {
                     switchToMain();
                 } else if (isSidebarOpen) {
                     toggleSidebar();
@@ -1375,7 +1467,57 @@
         }
 
         function showSettings() {
-            askPredefined('Help me configure my settings and preferences');
+            switchToSettings();
+        }
+
+        async function triggerSync() {
+            const syncBtn = document.querySelector('.sync-btn');
+            const icon = syncBtn.querySelector('i');
+            
+            // Add spinning animation
+            icon.style.animation = 'spin 1s linear infinite';
+            syncBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/sync/trigger', { method: 'POST' });
+                if (response.ok) {
+                    console.log('Sync triggered successfully');
+                } else {
+                    console.error('Failed to trigger sync');
+                }
+            } catch (error) {
+                console.error('Error triggering sync:', error);
+            } finally {
+                // Remove spinning animation
+                setTimeout(() => {
+                    icon.style.animation = '';
+                    syncBtn.disabled = false;
+                }, 2000);
+            }
+        }
+
+        async function loadSettingsData() {
+            try {
+                const response = await fetch('/dashboard');
+                const data = await response.json();
+                
+                // Update system health
+                if (data.system_health !== undefined) {
+                    document.getElementById('system-health').textContent = `${data.system_health}%`;
+                }
+                
+                // Update knowledge base size
+                if (data.knowledge_base_vectors !== undefined) {
+                    document.getElementById('kb-vectors').textContent = data.knowledge_base_vectors.toLocaleString();
+                }
+                
+                // Update sync status
+                if (data.background_sync_active !== undefined) {
+                    document.getElementById('sync-status').textContent = data.background_sync_active ? 'Active' : 'Idle';
+                }
+            } catch (error) {
+                console.error('Error loading settings data:', error);
+            }
         }
 
         // Quick Actions functionality

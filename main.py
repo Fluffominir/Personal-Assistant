@@ -988,6 +988,20 @@ def get_dashboard_metrics():
             "error": str(e)
         }
 
+@app.post("/sync/trigger")
+async def trigger_sync():
+    """Trigger manual sync"""
+    global sync_task
+    try:
+        if sync_task and not sync_task.done():
+            return {"status": "already_running", "message": "Sync already in progress"}
+        
+        # Start new sync task
+        sync_task = asyncio.create_task(sync_notion_data())
+        return {"status": "triggered", "message": "Sync started successfully"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/metrics/work")
 async def get_work_metrics():
     """Get business/work-related metrics"""
