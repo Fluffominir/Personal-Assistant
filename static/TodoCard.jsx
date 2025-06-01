@@ -1,5 +1,12 @@
 
-const { useState, useEffect } = React;
+window.TodoCard = function TodoCard({ items = [] }) {
+    const [todos, setTodos] = React.useState(items);
+
+    const handleToggleTodo = (index) => {
+        const newTodos = [...todos];
+        newTodos[index] = { ...newTodos[index], completed: !newTodos[index].completed };
+        setTodos(newTodos);
+    };
 
 const TodoCard = function TodoCard({ items = [] }) {
     const [todos, setTodos] = useState(items);
@@ -69,4 +76,4 @@ const TodoCard = function TodoCard({ items = [] }) {
     ]);
 };
 
-window.TodoCard = TodoCard;
+};d;

@@ -1,5 +1,5 @@
 
-const AgendaCard = function AgendaCard({ items = [] }) {
+window.AgendaCard = function AgendaCard({ items = [] }) {
     return React.createElement('div', {
         className: 'agenda-card'
     }, [

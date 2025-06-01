@@ -1,6 +1,4 @@
 
-const { useState } = React;
-
 window.QuickActions = function QuickActions() {
     const actionItems = [
         { title: "AI Training Session", icon: "cube" },
@@ -15,16 +13,36 @@ window.QuickActions = function QuickActions() {
         console.log(title);
     };
 
-    const getIconElement = (iconName) => {
+    const getIconClass = (iconName) => {
         const iconMap = {
-            cube: "🎲",
-            brain: "🧠", 
-            calendar: "📅",
-            folder: "📁",
-            users: "👥",
-            lightbulb: "💡"
+            cube: "fas fa-cube",
+            brain: "fas fa-brain", 
+            calendar: "fas fa-calendar",
+            folder: "fas fa-folder",
+            users: "fas fa-users",
+            lightbulb: "fas fa-lightbulb"
         };
-        return iconMap[iconName] || "⚡";
+        return iconMap[iconName] || "fas fa-circle";
+    };
+
+    return React.createElement('div', {
+        className: 'quick-actions-grid'
+    }, actionItems.map((item, index) => 
+        React.createElement('button', {
+            key: index,
+            className: 'quick-action-pill',
+            onClick: () => handleActionClick(item.title)
+        }, [
+            React.createElement('i', {
+                key: 'icon',
+                className: getIconClass(item.icon)
+            }),
+            React.createElement('span', {
+                key: 'text'
+            }, item.title)
+        ])
+    ));
+};me] || "⚡";
     };
 
     return React.createElement('section', {
