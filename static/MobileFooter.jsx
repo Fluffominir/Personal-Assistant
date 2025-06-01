@@ -1,4 +1,3 @@
-
 function MobileFooter() {
   return (
     <footer className="mobile-footer">
