@@ -188,21 +188,6 @@
             overflow: hidden;
         }
 
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .nav-item:hover::before {
-            left: 100%;
-        }
-
         .nav-item:hover {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -254,102 +239,6 @@
             margin-bottom: var(--spacing-xl);
         }
 
-        .header-actions {
-            display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: var(--spacing-md) var(--spacing-lg);
-            border-radius: var(--radius-md);
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--glass-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--glass-border);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .header-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: var(--spacing-md);
-        }
-
-        .stat-chip {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-chip:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-chip i {
-            color: var(--accent-primary);
-            font-size: 1.1rem;
-        }
-
-        .stat-value {
-            color: var(--text-primary);
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* Content Body */
         .content-body {
             padding: var(--spacing-xl);
             flex: 1;
@@ -494,368 +383,31 @@
             font-size: 1rem;
         }
 
-        .answer-actions {
-            padding: var(--spacing-lg) var(--spacing-xl);
-            border-top: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.02);
-            display: flex;
-            gap: var(--spacing-sm);
-        }
-
-        .feedback-btn {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-secondary);
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--radius-sm);
+        .btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            border: none;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .feedback-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-        }
-
-        /* Section Titles */
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: var(--spacing-xl);
-            color: var(--text-primary);
-        }
-
-        /* Quick Actions Grid */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .action-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: var(--spacing-sm);
             text-decoration: none;
-            color: inherit;
-            display: block;
             position: relative;
             overflow: hidden;
-            box-shadow: var(--glass-shadow);
         }
 
-        .action-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .action-card:hover::before {
-            opacity: 1;
-        }
-
-        .action-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-lg);
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .action-card.green .action-icon { 
-            background: linear-gradient(135deg, var(--accent-success), #059669); 
-        }
-        .action-card.warm .action-icon { 
-            background: linear-gradient(135deg, var(--accent-warning), #d97706); 
-        }
-        .action-card.info .action-icon { 
-            background: linear-gradient(135deg, #06b6d4, #0891b2); 
-        }
-        .action-card.pink .action-icon { 
-            background: linear-gradient(135deg, var(--accent-pink), #db2777); 
-        }
-
-        .action-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: var(--spacing-sm);
-            color: var(--text-primary);
-        }
-
-        .action-description {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            padding: var(--spacing-xl);
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            max-width: 500px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: var(--glass-shadow);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .modal-header h2 {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .modal-close {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.25rem;
-            padding: var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            transition: all 0.2s ease;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-        }
-
-        /* Wellness Check-in */
-        .mood-slider {
-            margin: var(--spacing-xl) 0;
-        }
-
-        .mood-slider label {
-            display: block;
-            margin-bottom: var(--spacing-md);
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        .slider-container {
-            position: relative;
-            margin: var(--spacing-lg) 0;
-        }
-
-        .mood-range {
-            width: 100%;
-            height: 6px;
-            border-radius: var(--radius-sm);
-            background: var(--glass-bg);
-            outline: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-        }
-
-        .mood-range::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
-        }
-
-        .mood-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--spacing-md);
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        .mood-descriptors {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: var(--spacing-sm);
-            margin: var(--spacing-xl) 0;
-        }
-
-        .mood-descriptor {
-            padding: var(--spacing-md);
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s ease;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .mood-descriptor:hover {
-            border-color: var(--accent-primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .mood-descriptor.selected {
-            border-color: var(--accent-primary);
+        .btn-primary {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
 
-        .quick-notes-input, .training-input {
-            width: 100%;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-lg);
-            color: var(--text-primary);
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .quick-notes-input:focus, .training-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* Training Session */
-        .training-session {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-backdrop);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            margin-bottom: var(--spacing-xl);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .training-question {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: var(--spacing-lg);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        .training-actions {
-            display: flex;
-            gap: var(--spacing-md);
-            justify-content: flex-end;
-            margin-top: var(--spacing-lg);
-        }
-
-        /* Success Animation */
-        .success-animation {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--spacing-lg);
-            padding: var(--spacing-xl);
-            text-align: center;
-        }
-
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-success), #059669);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            animation: successPulse 1s ease-out;
-        }
-
-        @keyframes successPulse {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* Loading */
-        .loading {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            color: var(--accent-primary);
-            font-weight: 500;
-        }
-
-        .loading i {
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* No Data */
-        .no-data {
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.9rem;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
         }
 
         /* Mobile Responsive */
@@ -866,69 +418,258 @@
             }
 
             .sidebar {
-                position: fixed;
-                left: var(--spacing-md);
-                top: var(--spacing-md);
-                height: calc(100vh - 2 * var(--spacing-md));
-                width: 280px;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 200;
-            }
-
-            .sidebar.mobile-visible {
-                transform: translateX(0);
-            }
-
-            .mobile-toggle {
-                display: flex;
-                position: fixed;
-                top: var(--spacing-lg);
-                left: var(--spacing-lg);
-                z-index: 300;
-                background: var(--glass-bg);
-                backdrop-filter: var(--glass-backdrop);
-                border: 1px solid var(--glass-border);
-                border-radius: var(--radius-md);
-                padding: var(--spacing-md);
-                cursor: pointer;
-                color: var(--text-primary);
-                width: 44px;
-                height: 44px;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .content-header {
-                padding: var(--spacing-lg);
-                padding-left: 4rem;
-            }
-
-            .content-body {
-                padding: var(--spacing-lg);
+                display: none;
             }
 
             .greeting {
                 font-size: 2rem;
             }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="ai-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h1 class="ai-name">ATLAS</h1>
+            <div class="ai-status">
+                <div class="status-dot"></div>
+                Online
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="showPage('chat')">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                </div>
+                <div class="nav-item" onclick="showPage('integrations')">
+                    <i class="fas fa-plug"></i>
+                    <span>Integrations</span>
+                </div>
+                <div class="nav-item" onclick="showPage('status')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Status</span>
+                </div>
+            </nav>
+        </aside>
 
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
+        <main class="main-content">
+            <header class="content-header">
+                <h1 class="greeting">Good day, Michael</h1>
+                <p class="greeting-subtitle">How can I assist you today?</p>
+            </header>
 
-            .header-stats {
-                grid-template-columns: repeat(2, 1fr);
+            <div class="content-body">
+                <!-- Chat Page -->
+                <div id="chat" class="page active">
+                    <div class="atlas-chat">
+                        <div class="chat-header">
+                            <h2><i class="fas fa-brain"></i> Ask ATLAS</h2>
+                            <p>Your personal AI companion with access to your knowledge base</p>
+                        </div>
+                        <div class="chat-input-area">
+                            <div class="chat-input-wrapper">
+                                <textarea id="questionInput" placeholder="Ask me about your projects, schedule, business insights, or anything else..."></textarea>
+                                <div class="input-actions">
+                                    <div class="input-hint">
+                                        <i class="fas fa-lightbulb"></i>
+                                        Press Enter to send
+                                    </div>
+                                    <button id="askButton">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Ask
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="answer-container" id="answerContainer">
+                                <div class="answer-text" id="answerText"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations Page -->
+                <div id="integrations" class="page">
+                    <h2>Integrations</h2>
+                    <div id="integrationsList">Loading integrations...</div>
+                </div>
+
+                <!-- Status Page -->
+                <div id="status" class="page">
+                    <h2>System Status</h2>
+                    <div id="statusInfo">Loading status...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Global state
+        let currentPage = 'chat';
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Add active to selected nav item
+            event.target.closest('.nav-item').classList.add('active');
+
+            currentPage = pageId;
+
+            // Load page-specific data
+            if (pageId === 'integrations') {
+                loadIntegrations();
+            } else if (pageId === 'status') {
+                loadStatus();
             }
         }
 
-        .mobile-toggle {
-            display: none;
+        // Chat functionality
+        document.getElementById('askButton').addEventListener('click', askQuestion);
+        document.getElementById('questionInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askQuestion();
+            }
+        });
+
+        async function askQuestion() {
+            const question = document.getElementById('questionInput').value.trim();
+            if (!question) return;
+
+            const button = document.getElementById('askButton');
+            const answerContainer = document.getElementById('answerContainer');
+            const answerText = document.getElementById('answerText');
+
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+            answerContainer.style.display = 'block';
+            answerText.textContent = 'Processing your question...';
+
+            try {
+                const response = await fetch(`/ask?q=${encodeURIComponent(question)}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    answerText.textContent = data.answer;
+                    if (data.sources && data.sources.length > 0) {
+                        answerText.textContent += '\n\nSources: ' + data.sources.join(', ');
+                    }
+                } else {
+                    answerText.textContent = 'Error: ' + (data.detail || 'Unknown error occurred');
+                }
+            } catch (error) {
+                answerText.textContent = 'Error: Failed to connect to the server. Please check your connection.';
+            }
+
+            // Reset button
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-paper-plane"></i> Ask';
         }
 
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: var(--spacing-lg) var(--spacing-xl);
-            border-radius: var(--radius-md);
+        // Load integrations
+        async function loadIntegrations() {
+            const container = document.getElementById('integrationsList');
+            container.innerHTML = 'Loading integrations...';
+
+            try {
+                const response = await fetch('/integrations');
+                const data = await response.json();
+
+                if (response.ok && data.integrations) {
+                    let html = '<div style="display: grid; gap: 1rem;">';
+
+                    data.integrations.forEach(integration => {
+                        const statusClass = integration.connected ? 'success' : 'warning';
+                        const statusIcon = integration.connected ? 'check-circle' : 'exclamation-triangle';
+
+                        html += `
+                            <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="margin-bottom: 0.5rem;">${integration.name}</h3>
+                                    <p style="color: var(--text-muted); font-size: 0.9rem;">${integration.status_message}</p>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <i class="fas fa-${statusIcon}" style="color: var(--accent-${statusClass});"></i>
+                                    ${integration.auth_url ? `<a href="${integration.auth_url}" class="btn btn-primary">Connect</a>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = 'Failed to load integrations.';
+                }
+            } catch (error) {
+                container.innerHTML = 'Error loading integrations: ' + error.message;
+            }
+        }
+
+        // Load status
+        async function loadStatus() {
+            const container = document.getElementById('statusInfo');
+            container.innerHTML = 'Loading status...';
+
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+
+                if (response.ok) {
+                    let html = '<div style="display: grid; gap: 1rem;">';
+
+                    Object.entries(data).forEach(([key, value]) => {
+                        if (typeof value === 'object') return; // Skip complex objects
+
+                        const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+                        html += `
+                            <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); display: flex; justify-content: space-between;">
+                                <span>${displayKey}:</span>
+                                <span style="font-weight: 600;">${value}</span>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = 'Failed to load status.';
+                }
+            } catch (error) {
+                container.innerHTML = 'Error loading status: ' + error.message;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ATLAS interface loaded');
+
+            // Check if authenticated
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auth') === 'success') {
+                alert('Successfully authenticated with Google!');
+                // Remove the parameter from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.get('error')) {
+                alert('Authentication error: ' + urlParams.get('error'));
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
+</body>
+</html>
