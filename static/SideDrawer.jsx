@@ -25,4 +25,3 @@ function SideDrawer() {
 }
 
 window.SideDrawer = SideDrawer;
-}
