@@ -1,4 +1,10 @@
 
+import SideDrawer       from "/static/SideDrawer.jsx";
+import SettingsControls from "/static/SettingsControls.jsx";
+import MobileFooter     from "/static/MobileFooter.jsx";
+import "/static/styles/SideDrawer.css";
+import "/static/styles/MobileFooter.css";
+
 const { useState, useEffect } = React;
 
 function Header({ eventCount }) {
@@ -86,14 +92,16 @@ function App() {
 
   return (
     <>
+      <SideDrawer />
       <Header eventCount={events.length} />
       <AskAtlas />
       <QuickActions />
-
       <section className="main-columns container">
         <AgendaColumn />
         <TodoColumn />
       </section>
+      <SettingsControls />
+      <MobileFooter />
     </>
   );
 }
