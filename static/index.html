@@ -1,11 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATLAS - Your AI Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Figtree', 'ui-sans-serif', 'system-ui'],
+                        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular']
+                    },
+                    colors: {
+                        'atlas': {
+                            'violet': '#8A7BFF',
+                            'rose': '#C778FF', 
+                            'teal': '#578C86',
+                            'glass': 'rgba(255, 255, 255, 0.25)',
+                            'glass-dark': 'rgba(0, 0, 0, 0.25)',
+                            'accent': '#667eea',
+                            'secondary': '#764ba2'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        :root {
+            --atlas-violet: #8A7BFF;
+            --atlas-rose: #C778FF;
+            --atlas-teal: #578C86;
+            --atlas-glass: rgba(255, 255, 255, 0.25);
+            --atlas-glass-dark: rgba(0, 0, 0, 0.25);
+            --atlas-accent: #667eea;
+            --atlas-secondary: #764ba2;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,16 +51,16 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--atlas-violet) 0%, var(--atlas-secondary) 50%, var(--atlas-rose) 100%);
             min-height: 100vh;
-            color: #333;
+            color: white;
             overflow-x: hidden;
         }
 
         /* Glassmorphism Base */
         .glass {
-            background: rgba(255, 255, 255, 0.25);
+            background: var(--atlas-glass);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.18);
@@ -31,7 +69,7 @@
         }
 
         .glass-dark {
-            background: rgba(0, 0, 0, 0.25);
+            background: var(--atlas-glass-dark);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -205,7 +243,7 @@
         }
 
         .atlas-card {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+            background: linear-gradient(135deg, var(--atlas-accent), var(--atlas-secondary));
             border-radius: 25px;
             padding: 35px;
             position: relative;
@@ -340,7 +378,7 @@
         .action-card i {
             font-size: 2.5rem;
             margin-bottom: 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, var(--atlas-accent), var(--atlas-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -430,7 +468,7 @@
         }
 
         .modal-button {
-            background: #667eea;
+            background: var(--atlas-accent);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -441,7 +479,7 @@
         }
 
         .modal-button:hover {
-            background: #5a6fd8;
+            background: var(--atlas-secondary);
         }
 
         .mood-slider {
@@ -466,8 +504,8 @@
         }
 
         .mood-tag.active {
-            background: #667eea;
-            border-color: #667eea;
+            background: var(--atlas-accent);
+            border-color: var(--atlas-accent);
         }
 
         /* Agenda Section */
@@ -540,7 +578,7 @@
             height: 45px;
             border-radius: 50%;
             border: none;
-            background: #667eea;
+            background: var(--atlas-accent);
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
@@ -551,7 +589,7 @@
         }
 
         .add-todo-btn:hover {
-            background: #5a6fd8;
+            background: var(--atlas-secondary);
             transform: scale(1.05);
         }
 
@@ -659,7 +697,7 @@
         }
 
         .message.user .message-bubble {
-            background: rgba(102, 126, 234, 0.8);
+            background: var(--atlas-accent);
             border-bottom-right-radius: 5px;
         }
 
@@ -713,7 +751,7 @@
         }
 
         .send-btn {
-            background: rgba(102, 126, 234, 0.8);
+            background: var(--atlas-accent);
             color: white;
         }
 
@@ -777,7 +815,7 @@
         }
 
         .sources-content.show {
-            max-height: 500px; /* You may need to adjust this value */
+            max-height: 500px;
         }
 
         /* Responsive Design */
@@ -868,11 +906,11 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-atlas-violet via-atlas-rose to-atlas-teal min-h-screen font-sans">
     <!-- Header -->
     <div class="header">
         <div class="header-left">
-            <h1>Hello, Michael,</h1>
+            <h1 class="font-bold">Hello, Michael,</h1>
             <div class="subtitle" id="current-datetime">1:52 PM | Sun, Jun 1</div>
         </div>
         <button class="menu-toggle" onclick="toggleSidebar()">
@@ -918,7 +956,7 @@
 
         <!-- Ask ATLAS Section -->
         <div class="ask-atlas">
-            <h2>Ask ATLAS</h2>
+            <h2 class="font-bold">Ask ATLAS</h2>
             <div class="atlas-card">
                 <div class="atlas-input-area" onclick="switchToChat()">
                     Ask about your projects, schedule, personal or business insights...
@@ -928,7 +966,7 @@
                     <button class="atlas-btn" onclick="askPredefined('What\'s next on my schedule?')">What's Next?</button>
                     <button class="atlas-btn" onclick="askPredefined('Schedule my week')">Schedule my week</button>
                 </div>
-                <button class="ask-button" onclick="switchToChat()">
+                <button class="ask-button font-semibold" onclick="switchToChat()">
                     Ask <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
@@ -936,38 +974,38 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <h2>Quick Actions.</h2>
+            <h2 class="font-bold">Quick Actions.</h2>
             <div class="actions-grid">
                 <div class="action-card" onclick="openQuickAction('training')">
                     <i class="fas fa-brain"></i>
-                    <span>AI Training Session</span>
+                    <span class="font-semibold">AI Training Session</span>
                 </div>
                 <div class="action-card" onclick="openQuickAction('brainstorm')">
                     <i class="fas fa-lightbulb"></i>
-                    <span>Brainstorm Session</span>
+                    <span class="font-semibold">Brainstorm Session</span>
                 </div>
                 <div class="action-card" onclick="openQuickAction('braindump')">
                     <i class="fas fa-cloud-download-alt"></i>
-                    <span>Brain Dump</span>
+                    <span class="font-semibold">Brain Dump</span>
                 </div>
                 <div class="action-card" onclick="openQuickAction('checkin')">
                     <i class="fas fa-heart"></i>
-                    <span>Daily Check-In</span>
+                    <span class="font-semibold">Daily Check-In</span>
                 </div>
                 <div class="action-card" onclick="openQuickAction('note')">
                     <i class="fas fa-sticky-note"></i>
-                    <span>Quick Note</span>
+                    <span class="font-semibold">Quick Note</span>
                 </div>
                 <div class="action-card" onclick="openQuickAction('review')">
                     <i class="fas fa-chart-line"></i>
-                    <span>Day Review</span>
+                    <span class="font-semibold">Day Review</span>
                 </div>
             </div>
         </div>
 
         <!-- Agenda Section -->
         <div class="agenda">
-            <h2>Agenda</h2>
+            <h2 class="font-bold">Agenda</h2>
             <div class="agenda-grid">
                 <!-- Schedule Card -->
                 <div class="agenda-card schedule-card">
@@ -978,11 +1016,11 @@
                     <div class="agenda-content" id="schedule-content">
                         <div class="event-item">
                             <div class="event-time">9:00 - 10:00</div>
-                            <div class="event-title">Morning Planning Session</div>
+                            <div class="event-title font-semibold">Morning Planning Session</div>
                         </div>
                         <div class="event-item">
                             <div class="event-time">2:00 - 3:00</div>
-                            <div class="event-title">Client Call - Rhino Recon</div>
+                            <div class="event-title font-semibold">Client Call - Rhino Recon</div>
                         </div>
                     </div>
                 </div>
@@ -1032,7 +1070,7 @@
                         <i class="fas fa-microphone"></i>
                     </button>
                     <textarea 
-                        class="chat-input" 
+                        class="chat-input font-sans" 
                         id="chat-input" 
                         placeholder="Ask me anything..." 
                         rows="1"
@@ -1155,7 +1193,7 @@
                     scheduleContent.innerHTML = data.recent_events.map(event => `
                         <div class="event-item">
                             <div class="event-time">${event.start_time} - ${event.end_time}</div>
-                            <div class="event-title">${event.title}</div>
+                            <div class="event-title font-semibold">${event.title}</div>
                         </div>
                     `).join('');
                 }
