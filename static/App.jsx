@@ -77,7 +77,7 @@ function TodoColumn() {
     "Call Alice",
   ];
   return (
-    <div className="column-card">
+    <div className="column-card todo-column">
       <h3 className="column-title">To-Do</h3>
       {todos.map((t) => (
         <div key={t} className="todo-item">🔲 {t}</div>
