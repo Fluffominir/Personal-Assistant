@@ -1,0 +1,22 @@
+
+@import './theme.css';
+
+html { 
+  font-size: 62.5%; /* 1 rem = 10 px */
+}
+
+body { 
+  font-family: var(--font-body); 
+  font-size: 1.6rem; 
+  line-height: 1.5; 
+  color: var(--black);
+  background: var(--white);
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 { 
+  font-family: var(--font-head); 
+  font-weight: 700; 
+  margin: 0; 
+}
