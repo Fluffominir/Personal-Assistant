@@ -497,8 +497,39 @@
 
                 <!-- Status Page -->
                 <div id="status" class="page">
-                    <h2>System Status</h2>
-                    <div id="statusInfo">Loading status...</div>
+                    <div style="display: grid; gap: 1.5rem;">
+                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
+                            <h2 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-tachometer-alt"></i>
+                                System Dashboard
+                            </h2>
+                            <div id="dashboardMetrics">Loading dashboard...</div>
+                        </div>
+                        
+                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
+                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-cogs"></i>
+                                System Status
+                            </h3>
+                            <div id="statusInfo">Loading status...</div>
+                        </div>
+                        
+                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
+                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-briefcase"></i>
+                                Work Metrics
+                            </h3>
+                            <div id="workMetrics">Loading work metrics...</div>
+                        </div>
+                        
+                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-xl);">
+                            <h3 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-tasks"></i>
+                                Today's Schedule
+                            </h3>
+                            <div id="todayTasks">Loading tasks...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -532,7 +563,10 @@
             if (pageId === 'integrations') {
                 loadIntegrations();
             } else if (pageId === 'status') {
+                loadDashboard();
                 loadStatus();
+                loadWorkMetrics();
+                loadTodayTasks();
             }
         }
 
@@ -620,6 +654,182 @@
             }
         }
 
+        // Load dashboard metrics
+        async function loadDashboard() {
+            const container = document.getElementById('dashboardMetrics');
+            if (!container) return;
+            
+            container.innerHTML = 'Loading dashboard...';
+
+            try {
+                const response = await fetch('/dashboard');
+                const data = await response.json();
+
+                if (response.ok) {
+                    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">';
+
+                    // System health
+                    const healthColor = data.system_health > 80 ? 'var(--accent-success)' : 
+                                       data.system_health > 50 ? 'var(--accent-warning)' : 'var(--accent-error)';
+                    
+                    html += `
+                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+                            <div style="font-size: 2rem; font-weight: bold; color: ${healthColor};">${data.system_health}%</div>
+                            <div style="color: var(--text-muted);">System Health</div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-blue);">${data.active_integrations}</div>
+                            <div style="color: var(--text-muted);">Active Integrations</div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-primary);">${data.calendar_events_today || 0}</div>
+                            <div style="color: var(--text-muted);">Events Today</div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-warning);">${data.unread_emails || 0}</div>
+                            <div style="color: var(--text-muted);">Unread Emails</div>
+                        </div>
+                    `;
+
+                    html += '</div>';
+
+                    // Recent events and emails
+                    if (data.recent_events && data.recent_events.length > 0) {
+                        html += '<div style="margin-top: 1.5rem;"><h4>Upcoming Events</h4><div style="display: grid; gap: 0.5rem;">';
+                        data.recent_events.forEach(event => {
+                            html += `
+                                <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); display: flex; justify-content: space-between;">
+                                    <span>${event.title}</span>
+                                    <span style="color: var(--text-muted);">${event.start_time} - ${event.end_time}</span>
+                                </div>
+                            `;
+                        });
+                        html += '</div></div>';
+                    }
+
+                    if (data.priority_emails && data.priority_emails.length > 0) {
+                        html += '<div style="margin-top: 1.5rem;"><h4>Priority Emails</h4><div style="display: grid; gap: 0.5rem;">';
+                        data.priority_emails.forEach(email => {
+                            html += `
+                                <div style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: var(--radius-sm);">
+                                    <div style="font-weight: 600;">${email.sender}</div>
+                                    <div style="color: var(--text-muted); font-size: 0.9rem;">${email.subject}</div>
+                                </div>
+                            `;
+                        });
+                        html += '</div></div>';
+                    }
+
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = 'Failed to load dashboard.';
+                }
+            } catch (error) {
+                container.innerHTML = 'Error loading dashboard: ' + error.message;
+            }
+        }
+
+        // Load work metrics
+        async function loadWorkMetrics() {
+            const container = document.getElementById('workMetrics');
+            if (!container) return;
+            
+            container.innerHTML = 'Loading work metrics...';
+
+            try {
+                const response = await fetch('/metrics/work');
+                const data = await response.json();
+
+                if (response.ok) {
+                    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">';
+
+                    const metrics = [
+                        { label: 'Active Projects', value: data.active_projects, color: 'var(--accent-primary)' },
+                        { label: 'On Track', value: data.projects_on_track, color: 'var(--accent-success)' },
+                        { label: 'At Risk', value: data.projects_at_risk, color: 'var(--accent-warning)' },
+                        { label: 'Events Today', value: data.calendar_events_today, color: 'var(--accent-blue)' },
+                        { label: 'Unread Emails', value: data.unread_emails, color: 'var(--accent-purple)' }
+                    ];
+
+                    metrics.forEach(metric => {
+                        html += `
+                            <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-md);">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: ${metric.color};">${metric.value}</div>
+                                <div style="color: var(--text-muted); font-size: 0.85rem;">${metric.label}</div>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+
+                    if (data.next_meeting) {
+                        html += `
+                            <div style="margin-top: 1rem; padding: 1rem; background: var(--glass-bg); border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem;">Next Meeting</div>
+                                <div>${data.next_meeting}</div>
+                                <div style="color: var(--text-muted); font-size: 0.9rem;">at ${data.next_meeting_time}</div>
+                            </div>
+                        `;
+                    }
+
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = 'Failed to load work metrics.';
+                }
+            } catch (error) {
+                container.innerHTML = 'Error loading work metrics: ' + error.message;
+            }
+        }
+
+        // Load today's tasks
+        async function loadTodayTasks() {
+            const container = document.getElementById('todayTasks');
+            if (!container) return;
+            
+            container.innerHTML = 'Loading tasks...';
+
+            try {
+                const response = await fetch('/tasks/today');
+                const data = await response.json();
+
+                if (response.ok && data.tasks) {
+                    let html = '<div style="display: grid; gap: 0.75rem;">';
+
+                    if (data.tasks.length === 0) {
+                        html += '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No tasks scheduled for today</div>';
+                    } else {
+                        data.tasks.forEach(task => {
+                            const startTime = new Date(task.start_time);
+                            const endTime = new Date(task.end_time);
+                            
+                            html += `
+                                <div style="padding: 1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600;">${task.title}</span>
+                                        <span style="color: var(--text-muted); font-size: 0.9rem;">
+                                            ${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - 
+                                            ${endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                        </span>
+                                    </div>
+                                    ${task.description ? `<div style="color: var(--text-muted); font-size: 0.9rem;">${task.description}</div>` : ''}
+                                </div>
+                            `;
+                        });
+                    }
+
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = data.error || 'Failed to load tasks.';
+                }
+            } catch (error) {
+                container.innerHTML = 'Error loading tasks: ' + error.message;
+            }
+        }
+
         // Load status
         async function loadStatus() {
             const container = document.getElementById('statusInfo');
@@ -636,11 +846,18 @@
                         if (typeof value === 'object') return; // Skip complex objects
 
                         const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        
+                        // Color code status values
+                        let valueColor = 'var(--text-primary)';
+                        if (typeof value === 'string') {
+                            if (value.includes('✓')) valueColor = 'var(--accent-success)';
+                            else if (value.includes('✗')) valueColor = 'var(--accent-error)';
+                        }
 
                         html += `
                             <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); display: flex; justify-content: space-between;">
                                 <span>${displayKey}:</span>
-                                <span style="font-weight: 600;">${value}</span>
+                                <span style="font-weight: 600; color: ${valueColor};">${value}</span>
                             </div>
                         `;
                     });

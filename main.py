@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from fastapi import FastAPI, Query, HTTPException, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import asyncio
@@ -47,8 +48,13 @@ def get_redirect_uri():
     if repl_slug and repl_owner:
         return f"https://{repl_slug}.{repl_owner}.repl.co/auth/google/callback"
 
+    # Auto-detect from current domain
+    repl_id = os.environ.get("REPL_ID")
+    if repl_id:
+        return f"https://{repl_id}.id.repl.co/auth/google/callback"
+
     # Fallback
-    return "https://your-repl-name.your-username.repl.co/auth/google/callback"
+    return "http://0.0.0.0:8000/auth/google/callback"
 
 REDIRECT_URI = get_redirect_uri()
 
@@ -78,7 +84,17 @@ if os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY"):
     except Exception as e:
         print(f"❌ Failed to initialize: {str(e)}")
 
-app = FastAPI()
+app = FastAPI(title="ATLAS - AI Companion", description="Michael's Personal AI Assistant")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Background sync task
@@ -87,31 +103,14 @@ sync_task = None
 @app.on_event("startup")
 async def start_background_tasks():
     global sync_task
+    print("🚀 Starting ATLAS - Michael's AI Companion")
+    
     # Check if we have Notion configuration (either NOTION_WORKSPACES or NOTION_API_KEY)
     has_notion = os.environ.get("NOTION_WORKSPACES") or os.environ.get("NOTION_API_KEY")
     has_required_keys = os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY")
 
     print(f"🔍 Startup check - Notion: {bool(has_notion)}, Required keys: {bool(has_required_keys)}")
     
-    if has_notion and has_required_keys:
-        try:
-            from scripts.notion_sync import scheduler
-            sync_task = asyncio.create_task(scheduler())
-            print("🔄 Background Notion sync started")
-        except ImportError as e:
-            print(f"⚠️  Could not start background sync: {e}")
-        except Exception as e:
-            print(f"⚠️  Background sync startup error: {e}")
-    else:
-        missing = []
-        if not has_notion:
-            missing.append("NOTION_API_KEY or NOTION_WORKSPACES")
-        if not os.environ.get("OPENAI_API_KEY"):
-            missing.append("OPENAI_API_KEY")
-        if not os.environ.get("PINECONE_API_KEY"):
-            missing.append("PINECONE_API_KEY")
-        print(f"⚠️  Background sync disabled - missing: {', '.join(missing)}")
-        
     # Test Notion API if configured
     if os.environ.get("NOTION_API_KEY"):
         print("🔍 Testing Notion API connection...")
@@ -125,11 +124,48 @@ async def start_background_tasks():
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://api.notion.com/v1/users/me", headers=headers) as response:
                     if response.status == 200:
-                        print("✅ Notion API connection successful")
+                        user_data = await response.json()
+                        print(f"✅ Notion API connection successful - User: {user_data.get('name', 'Unknown')}")
                     else:
-                        print(f"❌ Notion API test failed: {response.status}")
+                        response_text = await response.text()
+                        print(f"❌ Notion API test failed: {response.status} - {response_text}")
         except Exception as e:
             print(f"❌ Notion API test error: {e}")
+    
+    # Start background sync with improved error handling
+    if has_notion and has_required_keys:
+        try:
+            from scripts.notion_sync import scheduler
+            sync_task = asyncio.create_task(scheduler())
+            print("🔄 Background Notion sync started")
+            
+            # Run an initial sync after a short delay
+            asyncio.create_task(initial_sync())
+            
+        except ImportError as e:
+            print(f"⚠️  Could not start background sync: {e}")
+        except Exception as e:
+            print(f"⚠️  Background sync startup error: {e}")
+    else:
+        missing = []
+        if not has_notion:
+            missing.append("NOTION_API_KEY or NOTION_WORKSPACES")
+        if not os.environ.get("OPENAI_API_KEY"):
+            missing.append("OPENAI_API_KEY")
+        if not os.environ.get("PINECONE_API_KEY"):
+            missing.append("PINECONE_API_KEY")
+        print(f"⚠️  Background sync disabled - missing: {', '.join(missing)}")
+
+async def initial_sync():
+    """Run initial sync after startup"""
+    await asyncio.sleep(5)  # Wait 5 seconds for server to fully start
+    try:
+        from scripts.notion_sync import full_sync
+        print("🔄 Running initial Notion sync...")
+        await full_sync()
+        print("✅ Initial sync completed")
+    except Exception as e:
+        print(f"⚠️  Initial sync failed: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_background_tasks():
@@ -858,9 +894,80 @@ async def get_weather():
             "location": "Unknown"
         }
 
+@app.get("/dashboard")
+async def get_dashboard():
+    """Get comprehensive dashboard data"""
+    try:
+        # Get calendar events
+        calendar_events = []
+        emails = []
+        
+        access_token = await get_valid_google_token()
+        if access_token:
+            calendar_events = await get_google_calendar_events(access_token, days_ahead=1)
+            emails = await get_gmail_summary(access_token, max_results=5)
+
+        # System health calculation
+        health_factors = []
+        health_factors.append(100 if openai_client else 0)
+        health_factors.append(100 if idx else 0)
+        health_factors.append(100 if google_tokens.get("access_token") else 50)
+        health_factors.append(100 if os.environ.get("NOTION_API_KEY") else 50)
+
+        system_health = sum(health_factors) / len(health_factors)
+
+        # Knowledge base stats
+        kb_stats = {"total_vectors": 0, "namespaces": []}
+        if idx:
+            try:
+                stats = idx.describe_index_stats()
+                kb_stats["total_vectors"] = stats.total_vector_count
+                kb_stats["namespaces"] = list(stats.namespaces.keys())
+            except:
+                pass
+
+        return {
+            "system_health": round(system_health),
+            "active_integrations": len([
+                1 for token in [
+                    google_tokens.get("access_token"),
+                    os.environ.get("NOTION_API_KEY"),
+                    os.environ.get("DUBSADO_API_KEY")
+                ] if token
+            ]),
+            "last_sync": datetime.now().isoformat(),
+            "calendar_events_today": len(calendar_events),
+            "unread_emails": len(emails),
+            "knowledge_base_vectors": kb_stats["total_vectors"],
+            "namespaces": kb_stats["namespaces"],
+            "background_sync_active": sync_task is not None and not sync_task.done() if sync_task else False,
+            "recent_events": [
+                {
+                    "title": event.title,
+                    "start_time": event.start_time.strftime("%H:%M"),
+                    "end_time": event.end_time.strftime("%H:%M")
+                }
+                for event in calendar_events[:3]
+            ],
+            "priority_emails": [
+                {
+                    "sender": email.sender.split('<')[0].strip(),
+                    "subject": email.subject[:50] + "..." if len(email.subject) > 50 else email.subject
+                }
+                for email in emails[:3]
+            ]
+        }
+    except Exception as e:
+        return {
+            "system_health": 0,
+            "active_integrations": 0,
+            "last_sync": None,
+            "error": str(e)
+        }
+
 @app.get("/metrics/dashboard")
 def get_dashboard_metrics():
-    """Get comprehensive dashboard metrics"""
+    """Get comprehensive dashboard metrics (legacy endpoint)"""
     try:
         # System health calculation
         health_factors = []
@@ -881,9 +988,9 @@ def get_dashboard_metrics():
                 ] if token
             ]),
             "last_sync": datetime.now().isoformat(),
-            "uptime": "24h 15m",
+            "uptime": "Running",
             "total_queries_today": 42,
-            "knowledge_base_size": "1,247 items"
+            "knowledge_base_size": "Ready"
         }
     except Exception as e:
         return {
@@ -894,23 +1001,42 @@ def get_dashboard_metrics():
         }
 
 @app.get("/metrics/work")
-def get_work_metrics():
+async def get_work_metrics():
     """Get business/work-related metrics"""
     try:
-        # Mock business metrics - in real implementation, fetch from actual sources
+        # Get real data from integrations
+        calendar_events = []
+        emails = []
+        
+        access_token = await get_valid_google_token()
+        if access_token:
+            calendar_events = await get_google_calendar_events(access_token, days_ahead=1)
+            emails = await get_gmail_summary(access_token, max_results=20)
+
+        # Analyze calendar for work metrics
+        work_events = [e for e in calendar_events if any(keyword in e.title.lower() 
+                      for keyword in ['meeting', 'call', 'project', 'client', 'work'])]
+        
+        client_emails = [e for e in emails if any(keyword in e.sender.lower() 
+                        for keyword in ['client', '@company', 'business'])]
+
         return {
-            "active_projects": 3,
+            "active_projects": 3,  # This would come from Notion/project management
             "projects_on_track": 2,
             "projects_at_risk": 1,
-            "monthly_revenue": 12450,
+            "monthly_revenue": 12450,  # This would come from QuickBooks/accounting
             "revenue_growth": 18,
             "active_clients": 8,
             "new_clients_this_week": 2,
-            "tasks_today": 7,
-            "tasks_completed": 3,
-            "tasks_remaining": 4,
-            "calendar_events_today": 5,
-            "unread_emails": 12
+            "tasks_today": len(work_events),
+            "tasks_completed": 0,
+            "tasks_remaining": len(work_events),
+            "calendar_events_today": len(calendar_events),
+            "work_events_today": len(work_events),
+            "unread_emails": len(emails),
+            "client_emails": len(client_emails),
+            "next_meeting": work_events[0].title if work_events else None,
+            "next_meeting_time": work_events[0].start_time.strftime("%H:%M") if work_events else None
         }
     except Exception as e:
         return {
@@ -918,3 +1044,131 @@ def get_work_metrics():
             "active_projects": 0,
             "monthly_revenue": 0
         }
+
+@app.post("/tasks")
+async def create_task(task_data: dict):
+    """Create a new task"""
+    try:
+        # In a real implementation, this would integrate with task management systems
+        task = {
+            "id": f"task_{int(datetime.now().timestamp())}",
+            "title": task_data.get("title", "Untitled Task"),
+            "description": task_data.get("description", ""),
+            "priority": task_data.get("priority", "medium"),
+            "due_date": task_data.get("due_date"),
+            "created_at": datetime.now().isoformat(),
+            "completed": False
+        }
+        
+        # For now, return the task (in production, store in database)
+        return {"message": "Task created successfully", "task": task}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create task: {str(e)}")
+
+@app.get("/tasks/today")
+async def get_todays_tasks():
+    """Get today's tasks and schedule"""
+    try:
+        access_token = await get_valid_google_token()
+        tasks = []
+        
+        if access_token:
+            calendar_events = await get_google_calendar_events(access_token, days_ahead=1)
+            
+            # Convert calendar events to task format
+            for event in calendar_events:
+                tasks.append({
+                    "id": event.id,
+                    "title": event.title,
+                    "type": "calendar_event",
+                    "start_time": event.start_time.isoformat(),
+                    "end_time": event.end_time.isoformat(),
+                    "description": event.description
+                })
+        
+        return {
+            "tasks": tasks,
+            "total_count": len(tasks),
+            "completed_count": 0,
+            "remaining_count": len(tasks)
+        }
+    except Exception as e:
+        return {
+            "error": f"Failed to get tasks: {str(e)}",
+            "tasks": []
+        }
+
+@app.post("/ai/context")
+async def add_context(context_data: dict):
+    """Add contextual information to the AI's knowledge"""
+    try:
+        if not openai_client or not idx:
+            raise HTTPException(status_code=503, detail="AI services not configured")
+        
+        content = context_data.get("content", "")
+        source = context_data.get("source", "User Input")
+        context_type = context_data.get("type", "general")
+        
+        if not content.strip():
+            raise HTTPException(status_code=400, detail="Content cannot be empty")
+        
+        # Generate embedding
+        embedding_response = openai_client.embeddings.create(
+            model="text-embedding-3-small",
+            input=content
+        )
+        
+        embedding = embedding_response.data[0].embedding
+        
+        # Store in Pinecone
+        metadata = {
+            "source": source,
+            "text": content,
+            "type": context_type,
+            "added_at": datetime.now().isoformat()
+        }
+        
+        vector_id = f"context_{int(datetime.now().timestamp())}"
+        idx.upsert(
+            vectors=[(vector_id, embedding, metadata)],
+            namespace="user_context"
+        )
+        
+        return {"message": "Context added successfully", "vector_id": vector_id}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to add context: {str(e)}")
+
+@app.get("/ai/personality")
+def get_ai_personality():
+    """Get AI personality and preferences"""
+    return {
+        "name": "ATLAS",
+        "role": "Personal AI Companion and Executive Assistant",
+        "personality_traits": [
+            "Direct and kind communication",
+            "Structured and organized",
+            "Neurodivergent-friendly",
+            "Professional yet supportive",
+            "Solution-oriented"
+        ],
+        "communication_style": {
+            "tone": "Direct kindness",
+            "structure": "Step-by-step when needed",
+            "emojis": False,
+            "length": "Concise but thorough"
+        },
+        "specializations": [
+            "Creative project management",
+            "Video production workflows",
+            "ADHD-friendly task organization",
+            "Business intelligence",
+            "Calendar and email management"
+        ],
+        "owner_context": {
+            "name": "Michael Slusher",
+            "company": "Rocket Launch Studio",
+            "focus": "Video production and creative services",
+            "neurodivergent_support": True
+        }
+    }
