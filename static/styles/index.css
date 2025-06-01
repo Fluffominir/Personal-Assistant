@@ -100,3 +100,9 @@ h1,h2,h3,h4{margin:0;font-weight:700;}
 .agenda-column .card{background:var(--card-pink);}
 .todo-column   .card{background:var(--card-blue);}
 .todo-column li{list-style:none;margin:8px 0;}
+.main-columns{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+@media(max-width:700px){
+  .menu-btn{display:none;}                  /* hide top hamburger */
+  .footer-menu{display:block;}              /* bottom one shows */
+  .main-columns{grid-template-columns:1fr;}
+}
