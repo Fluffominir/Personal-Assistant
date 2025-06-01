@@ -1,3 +1,4 @@
+
 const { useState, useEffect } = React;
 
 // Custom hook for form management
@@ -75,7 +76,7 @@ function useForm(initialValues, validations = {}) {
         errors,
         touched,
         setValue,
-        setTouched: setTouched,
+        setTouched,
         validateAll,
         reset
     };

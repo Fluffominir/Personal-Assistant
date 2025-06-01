@@ -1,16 +1,395 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATLAS - Michael's AI Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --atlas-violet: #8B5CF6;
+            --atlas-rose: #F43F5E;
+            --atlas-teal: #06B6D4;
+            --atlas-glass: rgba(255, 255, 255, 0.1);
+            --atlas-glass-dark: rgba(0, 0, 0, 0.3);
+            --atlas-accent: #3B82F6;
+            --atlas-secondary: #10B981;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .atlas-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .atlas-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .atlas-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .atlas-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin: 10px 0 0 0;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            flex: 1;
+            align-items: start;
+        }
+
+        .chat-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quick-action-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .quick-action-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--atlas-accent);
+            border-radius: 10px;
+        }
+
+        .quick-action-content {
+            flex: 1;
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .quick-action-desc {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .status-bar {
+            margin-top: 30px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+        }
+
+        /* Training Wizard Styles */
+        .training-wizard-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .training-wizard-modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            color: #333;
+        }
+
+        .training-wizard-header {
+            padding: 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--atlas-accent);
+            transition: width 0.3s ease;
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .step-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .step-indicator.active {
+            background: var(--atlas-accent);
+            color: white;
+        }
+
+        .training-wizard-content {
+            padding: 0 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .training-wizard-footer {
+            padding: 20px 30px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .wizard-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wizard-btn.primary {
+            background: var(--atlas-accent);
+            color: white;
+        }
+
+        .wizard-btn.secondary {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .wizard-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--atlas-accent);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; }
+            30% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .atlas-title {
+                font-size: 2rem;
+            }
+            
+            .training-wizard-modal {
+                margin: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>ATLAS Interface</h1>
-    <button onclick="openTrainingModal()" class="quick-action-btn">
-        <span class="quick-action-icon">🎯</span>
-        <span class="quick-action-label">AI Training Session</span>
-    </button>
+    <div class="atlas-container">
+        <header class="atlas-header">
+            <h1 class="atlas-title">ATLAS</h1>
+            <p class="atlas-subtitle">Michael's Personal AI Companion</p>
+        </header>
 
-    <div id="chat-box"></div>
+        <main class="main-content">
+            <section class="chat-section">
+                <div id="chat-container"></div>
+            </section>
+
+            <section class="quick-actions">
+                <button class="quick-action-btn" onclick="openTrainingModal()">
+                    <div class="quick-action-icon">🎯</div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-title">AI Training Session</div>
+                        <div class="quick-action-desc">Help ATLAS learn your preferences</div>
+                    </div>
+                </button>
+
+                <button class="quick-action-btn" onclick="showTodaySchedule()">
+                    <div class="quick-action-icon">📅</div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-title">Today's Schedule</div>
+                        <div class="quick-action-desc">View your calendar and tasks</div>
+                    </div>
+                </button>
+
+                <button class="quick-action-btn" onclick="checkIntegrations()">
+                    <div class="quick-action-icon">🔗</div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-title">Integrations</div>
+                        <div class="quick-action-desc">Manage connected services</div>
+                    </div>
+                </button>
+
+                <button class="quick-action-btn" onclick="showInsights()">
+                    <div class="quick-action-icon">📊</div>
+                    <div class="quick-action-content">
+                        <div class="quick-action-title">Daily Insights</div>
+                        <div class="quick-action-desc">View productivity metrics</div>
+                    </div>
+                </button>
+            </section>
+        </main>
+
+        <footer class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>ATLAS Online</span>
+            </div>
+            <div>
+                <span id="current-time"></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Training Wizard Modal Container -->
+    <div id="training-modal"></div>
 
     <!-- React CDN -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -21,19 +400,83 @@
     <script src="static/TrainingWizard.jsx"></script>
 
     <script>
-        // Ensure components are loaded before initializing
-        window.addEventListener('DOMContentLoaded', () => {
+        // Global state
+        let trainingWizardOpen = false;
+
+        // Initialize the interface when page loads
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('ATLAS interface loaded');
             initializeInterface();
         });
 
-        function openTrainingModal() {
-            console.log("Training modal opened");
+        function initializeInterface() {
+            console.log('Interface initialized');
+            
+            // Initialize chat box
+            if (window.AtlasChatBox) {
+                const chatContainer = document.getElementById('chat-container');
+                if (chatContainer) {
+                    const root = ReactDOM.createRoot(chatContainer);
+                    root.render(React.createElement(window.AtlasChatBox));
+                }
+            }
+
+            // Update time
+            updateTime();
+            setInterval(updateTime, 1000);
         }
 
-        function initializeInterface() {
-            console.log("Interface initialized");
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
         }
+
+        function openTrainingModal() {
+            if (trainingWizardOpen) return;
+            
+            trainingWizardOpen = true;
+            const modalContainer = document.getElementById('training-modal');
+            
+            if (modalContainer && window.TrainingWizard) {
+                const root = ReactDOM.createRoot(modalContainer);
+                root.render(React.createElement(window.TrainingWizard, {
+                    isOpen: true,
+                    onClose: () => {
+                        trainingWizardOpen = false;
+                        root.unmount();
+                    }
+                }));
+            } else {
+                console.error('TrainingWizard component not available');
+            }
+        }
+
+        function showTodaySchedule() {
+            alert('Schedule feature coming soon!');
+        }
+
+        function checkIntegrations() {
+            window.open('/integrations', '_blank');
+        }
+
+        function showInsights() {
+            alert('Insights dashboard coming soon!');
+        }
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                updateTime();
+            }
+        });
     </script>
 </body>
 </html>
