@@ -46,3 +46,34 @@ window.QuickActions = function QuickActions() {
         ])
     ));
 };
+// eslint-disable-next-line no-undef
+const { useState, useEffect } = React;
+
+function QuickActions() {
+  const actions = [
+    { label: "Email", icon: "📧" },
+    { label: "Calendar", icon: "📅" },
+    { label: "Notes", icon: "📝" },
+    { label: "Tasks", icon: "✅" }
+  ];
+
+  return (
+    React.createElement("section", { className: "quick-actions container" },
+      React.createElement("h3", { className: "section-title" }, "Quick Actions"),
+      React.createElement("div", { className: "actions-grid" },
+        actions.map((action) =>
+          React.createElement("button", {
+            key: action.label,
+            className: "action-btn",
+            onClick: () => console.log(`${action.label} clicked`)
+          },
+            React.createElement("span", { className: "action-icon" }, action.icon),
+            React.createElement("span", { className: "action-label" }, action.label)
+          )
+        )
+      )
+    )
+  );
+}
+
+window.QuickActions = QuickActions;

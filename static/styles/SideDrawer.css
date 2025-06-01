@@ -1,11 +1,10 @@
 
-.drawer        { position:fixed; top:0; right:-260px; width:260px; height:100%;
-                 background:var(--black); color:#fff; padding:32px 24px;
-                 display:flex; flex-direction:column; gap:24px;
-                 transition:right .3s ease; z-index:1000; }
-.drawer.open   { right:0; }
-.drawer-link   { color:#fff; text-decoration:none; font-size:1.1rem; }
-.menu-btn      { position:fixed; top:24px; right:24px; z-index:1100;
-                 font-size:1.8rem; background:transparent; border:none;
-                 color:var(--black); cursor:pointer; }
-.scrim         { position:fixed; inset:0; background:#0005; z-index:900; }
+.drawer{position:fixed;top:0;left:0;width:260px;height:100vh;
+  background:#000;color:#fff;padding:32px 24px;transform:translateX(-100%);
+  transition:.35s cubic-bezier(.4,0,.2,1);z-index:1000;}
+.drawer.open{transform:translateX(0);}
+.drawer-link{display:block;margin-bottom:24px;text-decoration:none;color:#fff;
+  font-weight:600;}
+.menu-btn{all:unset;cursor:pointer;font-size:26px;position:fixed;top:8px;left:8px;}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(2px);
+  z-index:900;}
