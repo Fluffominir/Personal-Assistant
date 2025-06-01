@@ -1,0 +1,93 @@
+
+const { useState, useEffect } = React;
+
+function Header({ eventCount }) {
+  const scrollToAgenda = () => {
+    const target = document.getElementById("agenda-section");
+    if (target) target.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <div className="header-bar container">
+      <h1 style={{ margin: 0, fontSize: "2rem", fontWeight: 700 }}>ATLAS</h1>
+      <span className="event-badge" title="Show Today's Agenda" onClick={scrollToAgenda}>
+        {eventCount}
+      </span>
+    </div>
+  );
+}
+
+function AskAtlas() {
+  return (
+    <div className="ask-section container">
+      <input
+        className="ask-input"
+        placeholder="Ask me anything…"
+        aria-label="Ask ATLAS"
+      />
+    </div>
+  );
+}
+
+function QuickActions() {
+  const actions = ["New Event", "New Task", "Add Contact", "Brainstorm"];
+  return (
+    <div className="quick-actions container">
+      {actions.map((a) => (
+        <div key={a} className="quick-action-item">{a}</div>
+      ))}
+    </div>
+  );
+}
+
+function AgendaColumn() {
+  const events = [
+    "9 AM – Team Stand-up",
+    "11 AM – Client Meeting",
+    "3 PM – Project Review",
+  ];
+  return (
+    <div className="column-card agenda-column" id="agenda-section">
+      <h3 className="column-title">Agenda</h3>
+      {events.map((e) => (
+        <div key={e} className="event-item">{e}</div>
+      ))}
+    </div>
+  );
+}
+
+function TodoColumn() {
+  const todos = [
+    "Finish project report",
+    "Email budget sheet",
+    "Call Alice",
+  ];
+  return (
+    <div className="column-card">
+      <h3 className="column-title">To-Do</h3>
+      {todos.map((t) => (
+        <div key={t} className="todo-item">🔲 {t}</div>
+      ))}
+    </div>
+  );
+}
+
+function App() {
+  /* Placeholder event count = agenda length */
+  const [events] = useState([1,2,3]); 
+
+  return (
+    <>
+      <Header eventCount={events.length} />
+      <AskAtlas />
+      <QuickActions />
+
+      <section className="main-columns container">
+        <AgendaColumn />
+        <TodoColumn />
+      </section>
+    </>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
