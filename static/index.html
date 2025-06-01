@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="static/Header.css">
     <link rel="stylesheet" href="static/QuickActions.css">
     <link rel="stylesheet" href="static/AgendaTodoCards.css">
+    <link rel="stylesheet" href="static/SideDrawer.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -574,21 +575,50 @@
     </style>
 </head>
 <body>
-    <div class="atlas-container">
-        <header class="header">
-            <div class="greeting">
-                <h1>Hello, Michael,</h1>
-                <span class="sub" id="datetime-display">1:52 PM | Sun, Jun 1</span>
-            </div>
-            <div class="weather-round teal" id="weather-widget">
-                <i class="wi wi-day-sunny"></i>
-                <span class="temp">70°F</span>
-                <span class="loc">Duluth, GA</span>
-            </div>
-            <div class="notif-pill pink">3</div>
-        </header>
+    <div id="app-root"></div>
 
-        <main class="main-content">
+    <script>
+        // Hamburger Menu Component
+        function HamburgerMenu() {
+            const { isMenuOpen, toggleMenu } = window.useMenu();
+
+            return React.createElement('div', {
+                className: `hamburger-menu ${isMenuOpen ? 'open' : ''}`,
+                onClick: toggleMenu
+            }, [
+                React.createElement('div', { key: 'line1', className: 'hamburger-line' }),
+                React.createElement('div', { key: 'line2', className: 'hamburger-line' }),
+                React.createElement('div', { key: 'line3', className: 'hamburger-line' })
+            ]);
+        }
+
+        // Main App Component
+        function App() {
+            return React.createElement(window.MenuProvider, null, [
+                React.createElement('div', { key: 'container', className: 'atlas-container' }, [
+                    React.createElement('header', { key: 'header', className: 'header' }, [
+            React.createElement('div', { key: 'greeting', className: 'greeting' }, [
+                            React.createElement('h1', { key: 'title' }, 'Hello, Michael,'),
+                            React.createElement('span', { 
+                                key: 'datetime', 
+                                className: 'sub', 
+                                id: 'datetime-display' 
+                            }, '1:52 PM | Sun, Jun 1')
+                        ]),
+                        React.createElement('div', { 
+                            key: 'weather', 
+                            className: 'weather-round teal', 
+                            id: 'weather-widget' 
+                        }, [
+                            React.createElement('i', { key: 'icon', className: 'wi wi-day-sunny' }),
+                            React.createElement('span', { key: 'temp', className: 'temp' }, '70°F'),
+                            React.createElement('span', { key: 'loc', className: 'loc' }, 'Duluth, GA')
+                        ]),
+                        React.createElement('div', { key: 'notif', className: 'notif-pill pink' }, '3'),
+                        React.createElement(HamburgerMenu, { key: 'hamburger' })
+                    ]),
+
+        React.createElement('main', { key: 'main', className: 'main-content' }, [
             <section class="ask-atlas">
                 <div class="ask-atlas-card">
                     <textarea 
@@ -732,18 +762,28 @@
                               id="quick-notes"></textarea>
                 </div>
             </section>
-        </main>
+        ]),
+                    React.createElement('footer', { key: 'footer', className: 'status-bar' }, [
+                        React.createElement('div', { key: 'status', className: 'status-indicator' }, [
+                            React.createElement('div', { key: 'dot', className: 'status-dot' }),
+                            React.createElement('span', { key: 'text' }, 'ATLAS Online')
+                        ]),
+                        React.createElement('div', { key: 'time' }, 
+                            React.createElement('span', { id: 'current-time' })
+                        )
+                    ])
+                ]),
+                React.createElement(window.SideDrawer, { key: 'drawer' })
+            ]);
+        }
 
-        <footer class="status-bar">
-            <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span>ATLAS Online</span>
-            </div>
-            <div>
-                <span id="current-time"></span>
-            </div>
-        </footer>
-    </div>
+        // Render the app
+        const appRoot = ReactDOM.createRoot(document.getElementById('app-root'));
+        appRoot.render(React.createElement(App));
+    </script>
+
+    <div class="atlas-container" style="display: none;">
+        <main class="main-content">
 
     <!-- Training Wizard Modal Container -->
     <div id="training-modal"></div>
@@ -758,6 +798,8 @@
     <script src="static/QuickActions.jsx"></script>
     <script src="static/AgendaCard.jsx"></script>
     <script src="static/TodoCard.jsx"></script>
+    <script src="static/MenuContext.jsx"></script>
+    <script src="static/SideDrawer.jsx"></script>
 
     <script>
         // Global state
