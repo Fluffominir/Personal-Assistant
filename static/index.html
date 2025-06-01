@@ -1,1 +1,39 @@
-This code implements real-time agenda sync with Google Calendar, including OAuth scopes, scheduled cron job, event storage, and front-end display.
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ATLAS - Michael's AI Companion</title>
+</head>
+<body>
+    <h1>ATLAS Interface</h1>
+    <button onclick="openTrainingModal()" class="quick-action-btn">
+        <span class="quick-action-icon">🎯</span>
+        <span class="quick-action-label">AI Training Session</span>
+    </button>
+
+    <div id="chat-box"></div>
+
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Components -->
+    <script src="static/AtlasChatBox.jsx"></script>
+    <script src="static/TrainingWizard.jsx"></script>
+
+    <script>
+        // Ensure components are loaded before initializing
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('ATLAS interface loaded');
+            initializeInterface();
+        });
+
+        function openTrainingModal() {
+            console.log("Training modal opened");
+        }
+
+        function initializeInterface() {
+            console.log("Interface initialized");
+        }
+    </script>
+</body>
+</html>

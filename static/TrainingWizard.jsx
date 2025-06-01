@@ -66,12 +66,16 @@ function useForm(initialValues, validations = {}) {
         setFieldTouched({});
     };
 
+    const setTouched = (name, value = true) => {
+        setFieldTouched(prev => ({ ...prev, [name]: value }));
+    };
+
     return {
         values,
         errors,
         touched,
         setValue,
-        setTouched: setTouchedField,
+        setTouched: setTouched,
         validateAll,
         reset
     };
