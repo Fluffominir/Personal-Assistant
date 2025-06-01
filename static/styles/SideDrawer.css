@@ -1,0 +1,11 @@
+
+.drawer        { position:fixed; top:0; right:-260px; width:260px; height:100%;
+                 background:var(--black); color:#fff; padding:32px 24px;
+                 display:flex; flex-direction:column; gap:24px;
+                 transition:right .3s ease; z-index:1000; }
+.drawer.open   { right:0; }
+.drawer-link   { color:#fff; text-decoration:none; font-size:1.1rem; }
+.menu-btn      { position:fixed; top:24px; right:24px; z-index:1100;
+                 font-size:1.8rem; background:transparent; border:none;
+                 color:var(--black); cursor:pointer; }
+.scrim         { position:fixed; inset:0; background:#0005; z-index:900; }

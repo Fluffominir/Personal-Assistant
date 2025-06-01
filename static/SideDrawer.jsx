@@ -1,41 +1,25 @@
+const { useState } = React;
+export default function SideDrawer() {
+  const [open, setOpen] = useState(false);
+  const items = ["Rocket Launch Studio", "Connections", "Status", "Health"];
 
-window.SideDrawer = function SideDrawer() {
-    const { isMenuOpen, closeMenu } = window.useMenu();
+  return (
+    <>
+      <button
+        aria-label="Menu"
+        className="menu-btn"
+        onClick={() => setOpen(!open)}
+      >
+        ☰
+      </button>
 
-    const menuItems = [
-        'Rocket Launch Studio',
-        'Connections',
-        'Status',
-        'Health'
-    ];
+      <aside className={`drawer ${open ? "open" : ""}`}>
+        {items.map((i) => (
+          <a key={i} className="drawer-link" href="#">{i}</a>
+        ))}
+      </aside>
 
-    const handleItemClick = (item) => {
-        console.log(`Menu item clicked: ${item}`);
-        closeMenu();
-    };
-
-    const handleOverlayClick = (e) => {
-        if (e.target === e.currentTarget) {
-            closeMenu();
-        }
-    };
-
-    if (!isMenuOpen) return null;
-
-    return React.createElement('div', {
-        className: 'side-drawer-overlay',
-        onClick: handleOverlayClick
-    }, 
-        React.createElement('div', {
-            className: `side-drawer ${isMenuOpen ? 'open' : ''}`
-        }, 
-            menuItems.map((item, index) => 
-                React.createElement('div', {
-                    key: item,
-                    className: 'side-drawer-item',
-                    onClick: () => handleItemClick(item)
-                }, item)
-            )
-        )
-    );
-};
+      {open && <div className="scrim" onClick={() => setOpen(false)} />}
+    </>
+  );
+}
