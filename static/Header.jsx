@@ -26,10 +26,25 @@ window.Header = function Header() {
         return () => clearInterval(interval);
     }, []);
 
-    return (
-        <header data-testid="header">
-            <h1>Hello, Michael,</h1>
-            <span className="time">{currentTime}</span>
-        </header>
-    );
+    return React.createElement('header', {
+        'data-testid': 'header'
+    }, [
+        React.createElement('h1', { key: 'greeting' }, 'Hello, Michael,'),
+        React.createElement('span', { 
+            key: 'time',
+            className: 'time' 
+        }, currentTime),
+        React.createElement('div', {
+            key: 'weather',
+            className: 'pill weather'
+        }, [
+            '70°F',
+            React.createElement('br', { key: 'br' }),
+            'Duluth, GA'
+        ]),
+        React.createElement('div', {
+            key: 'notif', 
+            className: 'pill notif'
+        }, '3')
+    ]);
 };
