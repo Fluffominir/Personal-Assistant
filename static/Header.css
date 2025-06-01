@@ -1,0 +1,91 @@
+
+.header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.greeting h1 {
+    font-family: var(--font-head);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--black);
+    margin: 0;
+}
+
+.greeting .sub {
+    font-family: var(--font-body);
+    font-size: 1.4rem;
+    color: var(--gray-600);
+    opacity: 0.8;
+}
+
+.weather-round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    justify-self: center;
+}
+
+.weather-round.teal {
+    background-color: var(--teal);
+}
+
+.weather-round i {
+    font-size: 2rem;
+    margin-bottom: 2px;
+}
+
+.weather-round .temp {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.weather-round .loc {
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1;
+}
+
+.notif-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.notif-pill.pink {
+    background-color: var(--pink);
+}
+
+/* Responsive design - stack on mobile */
+@media (max-width: 768px) {
+    .header {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .weather-round {
+        justify-self: center;
+    }
+    
+    .notif-pill {
+        justify-self: center;
+    }
+}

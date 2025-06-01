@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black:wght@400&family=Karla:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="static/Header.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="src/styles/index.css">
     <style>
         .atlas-container {
             max-width: 1400px;
@@ -442,11 +443,11 @@
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
-            
+
             .atlas-title {
                 font-size: 2rem;
             }
-            
+
             .training-wizard-modal {
                 margin: 10px;
             }
@@ -455,9 +456,17 @@
 </head>
 <body>
     <div class="atlas-container">
-        <header class="atlas-header">
-            <h1 class="atlas-title">ATLAS</h1>
-            <p class="atlas-subtitle">Michael's Personal AI Companion</p>
+        <header class="header">
+            <div class="greeting">
+                <h1>Hello, Michael,</h1>
+                <span class="sub" id="datetime-display">1:52 PM | Sun, Jun 1</span>
+            </div>
+            <div class="weather-round teal" id="weather-widget">
+                <i class="wi wi-day-sunny"></i>
+                <span class="temp">70°F</span>
+                <span class="loc">Duluth, GA</span>
+            </div>
+            <div class="notif-pill pink">3</div>
         </header>
 
         <main class="main-content">
@@ -612,7 +621,7 @@
 
         function initializeInterface() {
             console.log('Interface initialized');
-            
+
             // Initialize chat box
             if (window.AtlasChatBox) {
                 const chatContainer = document.getElementById('chat-container');
@@ -655,7 +664,7 @@
             try {
                 const response = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
                 const data = await response.json();
-                
+
                 if (data.error) {
                     throw new Error(data.error);
                 }
@@ -673,7 +682,7 @@
             try {
                 const response = await fetch('/api/todos');
                 const todos = await response.json();
-                
+
                 const todoList = document.getElementById('todo-list');
                 todoList.innerHTML = todos.map(todo => `
                     <div class="todo-item">
@@ -691,7 +700,7 @@
             try {
                 const response = await fetch('/api/events/today');
                 const events = await response.json();
-                
+
                 const agendaTimeline = document.getElementById('agenda-timeline');
                 if (events.length > 0) {
                     agendaTimeline.innerHTML = events.map(event => `
@@ -745,10 +754,10 @@
 
         function openTrainingModal() {
             if (trainingWizardOpen) return;
-            
+
             trainingWizardOpen = true;
             const modalContainer = document.getElementById('training-modal');
-            
+
             if (modalContainer && window.TrainingWizard) {
                 const root = ReactDOM.createRoot(modalContainer);
                 root.render(React.createElement(window.TrainingWizard, {
@@ -781,6 +790,61 @@
                 updateTime();
             }
         });
+
+// Initialize the interface
+        window.atlasInterface = new AtlasInterface();
+        console.log('Interface initialized');
+
+        // Update datetime display
+        function updateDateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            const dateStr = now.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            const datetimeDisplay = document.getElementById('datetime-display');
+            if (datetimeDisplay) {
+                datetimeDisplay.textContent = `${timeStr} | ${dateStr}`;
+            }
+        }
+
+        // Update weather display
+        function updateWeatherDisplay(data) {
+            const weatherWidget = document.getElementById('weather-widget');
+            if (weatherWidget && data) {
+                const temp = weatherWidget.querySelector('.temp');
+                const loc = weatherWidget.querySelector('.loc');
+
+                if (temp && data.temperature) {
+                    temp.textContent = `${Math.round(data.temperature)}°F`;
+                }
+                if (loc && data.city && data.region) {
+                    loc.textContent = `${data.city}, ${data.region}`;
+                }
+            }
+        }
+
+        // Update datetime every minute
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
+
+        // Update weather when dashboard data loads
+        if (window.atlasInterface && window.atlasInterface.loadDashboard) {
+            const originalLoadDashboard = window.atlasInterface.loadDashboard;
+            window.atlasInterface.loadDashboard = async function() {
+                const result = await originalLoadDashboard.call(this);
+                if (result && result.weather) {
+                    updateWeatherDisplay(result.weather);
+                }
+                return result;
+            };
+        }
     </script>
 </body>
 </html>
