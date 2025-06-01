@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,35 +6,43 @@
     <title>ATLAS - Your AI Companion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
+
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #141414;
-            --bg-tertiary: #1e1e1e;
-            --bg-glass: rgba(255, 255, 255, 0.02);
-            --bg-glass-strong: rgba(255, 255, 255, 0.04);
-            
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --text-muted: #666666;
-            
-            --accent-primary: #3b82f6;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --glass-backdrop: blur(8px);
+
+            /* Modern colors inspired by references */
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --accent-error: #ef4444;
-            
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-strong: rgba(255, 255, 255, 0.12);
-            
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
         }
 
         * {
@@ -45,205 +52,308 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
             color: var(--text-primary);
-            line-height: 1.5;
+            line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .container {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             height: 100vh;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-lg);
         }
 
         /* Sidebar */
         .sidebar {
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-subtle);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--glass-shadow);
             display: flex;
             flex-direction: column;
+            padding: var(--spacing-xl);
             position: relative;
+            overflow: hidden;
         }
 
-        .sidebar-header {
-            padding: 2rem 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid var(--border-subtle);
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
         }
 
         .ai-avatar {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             border-radius: var(--radius-lg);
-            background: linear-gradient(135deg, var(--accent-primary), #1d4ed8);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
+            margin: 0 auto var(--spacing-lg);
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
         }
 
         .ai-avatar:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
 
         .ai-avatar i {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             color: white;
         }
 
         .ai-name {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 0.25rem;
-            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: var(--spacing-xs);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .ai-status {
+            text-align: center;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.875rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-xl);
         }
 
         .status-dot {
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: var(--accent-success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .nav-menu {
-            padding: 1rem;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: all 0.2s ease;
-            margin-bottom: 0.25rem;
             font-weight: 500;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
         }
 
         .nav-item:hover {
-            background: var(--bg-glass-strong);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            transform: translateX(4px);
         }
 
         .nav-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
 
         .nav-item i {
-            width: 16px;
+            width: 18px;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         /* Main Content */
         .main-content {
-            background: var(--bg-primary);
-            overflow-y: auto;
-            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .content-header {
-            padding: 2rem;
-            border-bottom: 1px solid var(--border-subtle);
-            background: var(--bg-secondary);
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .greeting {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .greeting-subtitle {
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-xl);
         }
 
         .header-actions {
             display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
             flex-wrap: wrap;
         }
 
         .btn {
-            padding: 0.6rem 1rem;
+            padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--radius-md);
             border: none;
             cursor: pointer;
-            font-weight: 500;
-            font-size: 0.8rem;
-            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
         }
 
         .btn-secondary {
-            background: var(--bg-glass);
+            background: var(--glass-bg);
             color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--glass-border);
         }
 
-        .btn:hover {
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-1px);
         }
 
         .header-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--spacing-md);
         }
 
         .stat-chip {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 0.6rem 0.8rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
+            gap: var(--spacing-md);
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .stat-chip i {
             color: var(--accent-primary);
-            font-size: 0.8rem;
+            font-size: 1.1rem;
         }
 
         .stat-value {
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
 
         /* Content Body */
         .content-body {
-            padding: 2rem;
+            padding: var(--spacing-xl);
+            flex: 1;
+            overflow-y: auto;
         }
 
         .page {
@@ -256,56 +366,64 @@
 
         /* Atlas Chat */
         .atlas-chat {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            margin-bottom: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-xl);
             overflow: hidden;
+            box-shadow: var(--glass-shadow);
         }
 
         .chat-header {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, var(--accent-primary), #1d4ed8);
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
         }
 
         .chat-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
         }
 
         .chat-header p {
             opacity: 0.9;
-            font-size: 0.8rem;
+            font-size: 1rem;
         }
 
         .chat-input-area {
-            padding: 1.5rem;
+            padding: var(--spacing-xl);
         }
 
         .chat-input-wrapper {
             position: relative;
-            background: var(--bg-glass);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-subtle);
+            background: var(--glass-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .chat-input-wrapper:focus-within {
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         #questionInput {
             width: 100%;
             background: transparent;
             border: none;
-            padding: 1rem;
+            padding: var(--spacing-lg);
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 1rem;
             resize: none;
-            min-height: 80px;
+            min-height: 100px;
             font-family: inherit;
+            line-height: 1.6;
         }
 
         #questionInput:focus {
@@ -320,36 +438,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 1rem;
-            border-top: 1px solid var(--border-subtle);
-            background: var(--bg-glass);
+            padding: var(--spacing-lg);
+            border-top: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .input-hint {
             color: var(--text-muted);
-            font-size: 0.75rem;
+            font-size: 0.875rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
         }
 
         #askButton {
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
             border: none;
-            padding: 0.6rem 1rem;
-            border-radius: var(--radius-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            font-size: 0.8rem;
+            gap: var(--spacing-sm);
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
         }
 
         #askButton:hover:not(:disabled) {
-            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
 
         #askButton:disabled {
@@ -359,90 +478,113 @@
 
         /* Answer Container */
         .answer-container {
-            margin-top: 1.5rem;
-            background: var(--bg-glass);
-            border-radius: var(--radius-md);
+            margin-top: var(--spacing-xl);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border-radius: var(--radius-lg);
             display: none;
             overflow: hidden;
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--glass-border);
         }
 
         .answer-text {
-            padding: 1.5rem;
+            padding: var(--spacing-xl);
             white-space: pre-wrap;
-            line-height: 1.6;
-            font-size: 0.9rem;
+            line-height: 1.7;
+            font-size: 1rem;
         }
 
         .answer-actions {
-            padding: 0.75rem 1.5rem;
-            border-top: 1px solid var(--border-subtle);
-            background: var(--bg-glass);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-top: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.02);
             display: flex;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
         }
 
         .feedback-btn {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             color: var(--text-secondary);
-            padding: 0.4rem 0.8rem;
+            padding: var(--spacing-sm) var(--spacing-md);
             border-radius: var(--radius-sm);
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: var(--spacing-xs);
         }
 
         .feedback-btn:hover {
-            background: var(--bg-glass-strong);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
         }
 
         /* Section Titles */
         .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xl);
             color: var(--text-primary);
         }
 
-        /* Quick Actions */
+        /* Quick Actions Grid */
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
         }
 
         .action-card {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             color: inherit;
             display: block;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
         }
 
         .action-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--border-strong);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
         }
 
         .action-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--accent-primary), #1d4ed8);
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-lg);
             color: white;
+            font-size: 1.5rem;
         }
 
         .action-card.green .action-icon { 
@@ -454,102 +596,21 @@
         .action-card.info .action-icon { 
             background: linear-gradient(135deg, #06b6d4, #0891b2); 
         }
+        .action-card.pink .action-icon { 
+            background: linear-gradient(135deg, var(--accent-pink), #db2777); 
+        }
 
         .action-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
         }
 
         .action-description {
             color: var(--text-muted);
-            font-size: 0.8rem;
-            line-height: 1.4;
-        }
-
-        /* Smart Home Widget */
-        .smarthome-widget {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .smarthome-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .smarthome-device {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .device-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .device-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius-sm);
-            background: var(--accent-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.8rem;
-        }
-
-        .device-details h4 {
             font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .device-status {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .device-toggle {
-            width: 36px;
-            height: 20px;
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
-        }
-
-        .device-toggle.active {
-            background: var(--accent-primary);
-        }
-
-        .device-toggle::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all 0.2s ease;
-        }
-
-        .device-toggle.active::after {
-            transform: translateX(16px);
+            line-height: 1.6;
         }
 
         /* Modals */
@@ -561,8 +622,9 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
             z-index: 1000;
-            padding: 2rem;
+            padding: var(--spacing-xl);
         }
 
         .modal.active {
@@ -572,62 +634,77 @@
         }
 
         .modal-content {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
             max-width: 500px;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
-            border: 1px solid var(--border-subtle);
+            box-shadow: var(--glass-shadow);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .modal-header h2 {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .modal-close {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 1rem;
-            padding: 0.4rem;
+            font-size: 1.25rem;
+            padding: var(--spacing-sm);
             border-radius: var(--radius-sm);
             transition: all 0.2s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-close:hover {
-            background: var(--bg-glass-strong);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--text-primary);
         }
 
-        /* Check-in Modal */
+        /* Wellness Check-in */
         .mood-slider {
-            margin: 1.5rem 0;
+            margin: var(--spacing-xl) 0;
         }
 
         .mood-slider label {
             display: block;
-            margin-bottom: 0.75rem;
-            font-weight: 500;
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .slider-container {
             position: relative;
-            margin: 1rem 0;
+            margin: var(--spacing-lg) 0;
         }
 
         .mood-range {
             width: 100%;
-            height: 4px;
+            height: 6px;
             border-radius: var(--radius-sm);
-            background: var(--bg-tertiary);
+            background: var(--glass-bg);
             outline: none;
             -webkit-appearance: none;
             cursor: pointer;
@@ -635,254 +712,132 @@
 
         .mood-range::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             cursor: pointer;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
         }
 
         .mood-labels {
             display: flex;
             justify-content: space-between;
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
+            margin-top: var(--spacing-md);
+            font-size: 0.875rem;
             color: var(--text-muted);
         }
 
         .mood-descriptors {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-            gap: 0.5rem;
-            margin: 1.5rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: var(--spacing-sm);
+            margin: var(--spacing-xl) 0;
         }
 
         .mood-descriptor {
-            padding: 0.6rem 0.8rem;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius-md);
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .mood-descriptor:hover {
             border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
         }
 
         .mood-descriptor.selected {
             border-color: var(--accent-primary);
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
         }
 
-        .quick-notes-input {
+        .quick-notes-input, .training-input {
             width: 100%;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
             border-radius: var(--radius-md);
-            padding: 0.8rem;
+            padding: var(--spacing-lg);
             color: var(--text-primary);
             font-family: inherit;
             resize: vertical;
-            min-height: 80px;
-            font-size: 0.85rem;
+            min-height: 100px;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
-        .quick-notes-input:focus {
+        .quick-notes-input:focus, .training-input:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         /* Training Session */
         .training-session {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--glass-shadow);
         }
 
         .training-question {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
             color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .training-input {
-            width: 100%;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 0.8rem;
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 0.85rem;
-            min-height: 60px;
-            resize: vertical;
-            margin-bottom: 1rem;
-        }
-
-        .training-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
+            line-height: 1.6;
         }
 
         .training-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: var(--spacing-md);
             justify-content: flex-end;
+            margin-top: var(--spacing-lg);
         }
 
-        /* Weather Inline */
-        .weather-inline {
+        /* Success Animation */
+        .success-animation {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
         }
 
-        .weather-icon-inline {
-            font-size: 0.9rem;
-            color: var(--accent-warning);
-        }
-
-        /* Settings */
-        .settings-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-section h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .settings-toggle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 36px;
-            height: 20px;
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .toggle-switch.active {
-            background: var(--accent-primary);
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: white;
+        .success-icon {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all 0.2s ease;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(16px);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100vh;
-                width: 260px;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 200;
-            }
-
-            .sidebar.mobile-visible {
-                transform: translateX(0);
-            }
-
-            .mobile-toggle {
-                display: block;
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                z-index: 300;
-                background: var(--bg-secondary);
-                border: 1px solid var(--border-subtle);
-                border-radius: var(--radius-md);
-                padding: 0.6rem;
-                cursor: pointer;
-                color: var(--text-primary);
-            }
-
-            .content-header {
-                padding: 1rem;
-                padding-left: 3.5rem;
-            }
-
-            .content-body {
-                padding: 1rem;
-            }
-
-            .greeting {
-                font-size: 1.5rem;
-            }
-
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .mobile-toggle {
-            display: none;
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 0.8rem 1.2rem;
-            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--accent-success), #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            z-index: 1001;
-            font-weight: 500;
-            font-size: 0.85rem;
+            font-size: 2rem;
+            animation: successPulse 1s ease-out;
         }
 
-        .notification.success { background: var(--accent-success); }
-        .notification.error { background: var(--accent-error); }
-        .notification.info { background: var(--accent-primary); }
+        @keyframes successPulse {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
 
         /* Loading */
         .loading {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-sm);
             color: var(--accent-primary);
             font-weight: 500;
         }
@@ -896,1379 +851,84 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Success Animation */
-        .success-animation {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .success-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--accent-success);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
         /* No Data */
         .no-data {
             color: var(--text-muted);
             font-style: italic;
-            font-size: 0.8rem;
-        }
-    </style>
-</head>
-<body>
-    <!-- Mobile Toggle -->
-    <button class="mobile-toggle" onclick="toggleMobileNav()">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <div class="container">
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="ai-avatar" onclick="playGreeting()">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <h2 class="ai-name">ATLAS</h2>
-                <div class="ai-status">
-                    <div class="status-dot"></div>
-                    Ready to assist
-                </div>
-            </div>
-            
-            <div class="nav-menu">
-                <div class="nav-item active" data-page="dashboard">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </div>
-                <div class="nav-item" data-page="insights">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Smart Insights</span>
-                </div>
-                <div class="nav-item" data-page="health">
-                    <i class="fas fa-heart"></i>
-                    <span>Health & Wellness</span>
-                </div>
-                <div class="nav-item" data-page="smarthome">
-                    <i class="fas fa-home"></i>
-                    <span>Smart Home</span>
-                </div>
-                <div class="nav-item" data-page="studio">
-                    <i class="fas fa-video"></i>
-                    <span>Studio</span>
-                </div>
-                <div class="nav-item" data-page="training">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>AI Training</span>
-                </div>
-                <div class="nav-item" data-page="integrations">
-                    <i class="fas fa-plug"></i>
-                    <span>Integrations</span>
-                </div>
-                <div class="nav-item" onclick="openSettings()">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <div class="content-header">
-                <h1 class="greeting" id="greetingText">Welcome back, Michael</h1>
-                <p class="greeting-subtitle">Your AI companion is ready to help optimize your workflow</p>
-                
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="refreshData()">
-                        <i class="fas fa-sync-alt"></i>
-                        Sync Data
-                    </button>
-                    <button class="btn btn-primary" onclick="openQuickCheckIn()">
-                        <i class="fas fa-heart"></i>
-                        Check-in
-                    </button>
-                    <button class="btn btn-primary" onclick="focusChat()">
-                        <i class="fas fa-comments"></i>
-                        Chat with ATLAS
-                    </button>
-                </div>
-
-                <div class="header-stats">
-                    <div class="stat-chip">
-                        <i class="fas fa-calendar-day"></i>
-                        <span>Today: <span class="stat-value" id="todayEvents">--</span></span>
-                    </div>
-                    <div class="stat-chip">
-                        <i class="fas fa-envelope"></i>
-                        <span>Unread: <span class="stat-value" id="unreadEmails">--</span></span>
-                    </div>
-                    <div class="stat-chip">
-                        <i class="fas fa-heartbeat"></i>
-                        <span>Health: <span class="stat-value" id="systemStatus">--</span></span>
-                    </div>
-                    <div class="stat-chip">
-                        <div class="weather-inline">
-                            <i class="fas fa-sun weather-icon-inline"></i>
-                            <span class="stat-value" id="weatherInline">--°F</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Body -->
-            <div class="content-body">
-                <!-- Dashboard Page -->
-                <div class="page active" id="dashboard">
-                    <!-- ATLAS Chat -->
-                    <div class="atlas-chat">
-                        <div class="chat-header">
-                            <h2><i class="fas fa-robot"></i> Chat with ATLAS</h2>
-                            <p>Your AI companion for creative and business support</p>
-                        </div>
-                        <div class="chat-input-area">
-                            <div class="chat-input-wrapper">
-                                <textarea 
-                                    id="questionInput" 
-                                    placeholder="Ask ATLAS anything - from creative ideas to business insights, calendar management to project planning..."
-                                    rows="3"
-                                ></textarea>
-                                <div class="input-actions">
-                                    <div class="input-hint">
-                                        <i class="fas fa-keyboard"></i>
-                                        Enter to send
-                                    </div>
-                                    <button id="askButton" onclick="askQuestion()">
-                                        <i class="fas fa-paper-plane"></i>
-                                        Send
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div id="answerContainer" class="answer-container">
-                                <div id="answerText" class="answer-text"></div>
-                                <div class="answer-actions">
-                                    <button class="feedback-btn" onclick="giveFeedback('helpful')">
-                                        <i class="fas fa-thumbs-up"></i>
-                                        Helpful
-                                    </button>
-                                    <button class="feedback-btn" onclick="giveFeedback('needs-work')">
-                                        <i class="fas fa-thumbs-down"></i>
-                                        Needs Work
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <h3 class="section-title">Quick Actions</h3>
-                    <div class="quick-actions">
-                        <div class="action-card" onclick="openQuickNotes()">
-                            <div class="action-icon">
-                                <i class="fas fa-sticky-note"></i>
-                            </div>
-                            <div class="action-title">Quick Notes</div>
-                            <div class="action-description">Capture thoughts and ideas instantly - they'll auto-organize in Notion</div>
-                        </div>
-
-                        <div class="action-card green" onclick="openBrainDump()">
-                            <div class="action-icon">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <div class="action-title">Voice Notes</div>
-                            <div class="action-description">Voice record your thoughts and I'll transcribe and organize them</div>
-                        </div>
-
-                        <div class="action-card warm" onclick="openQuickCheckIn()">
-                            <div class="action-icon">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <div class="action-title">Wellness Check-in</div>
-                            <div class="action-description">Track your mood, energy, and wellbeing patterns</div>
-                        </div>
-
-                        <div class="action-card info" onclick="showPage('training')">
-                            <div class="action-icon">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                            <div class="action-title">Train ATLAS</div>
-                            <div class="action-description">Interactive session to help ATLAS learn your preferences</div>
-                        </div>
-
-                        <div class="action-card" onclick="showPage('studio')">
-                            <div class="action-icon">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <div class="action-title">Studio Dashboard</div>
-                            <div class="action-description">Rocket Launch Studio projects and creative workflow</div>
-                        </div>
-
-                        <div class="action-card green" onclick="generateComprehensiveDebrief()">
-                            <div class="action-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="action-title">Weekly Analysis</div>
-                            <div class="action-description">AI analysis of your productivity and patterns</div>
-                        </div>
-
-                        <div class="action-card info" onclick="openMessageBackup()">
-                            <div class="action-icon">
-                                <i class="fas fa-comments"></i>
-                            </div>
-                            <div class="action-title">Message Backup</div>
-                            <div class="action-description">Backup and analyze text messages and call data</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Smart Home Page -->
-                <div class="page" id="smarthome">
-                    <h2 class="section-title">Smart Home Control</h2>
-                    
-                    <!-- Philips Hue -->
-                    <div class="smarthome-widget">
-                        <h3 class="section-title">Philips Hue Lighting</h3>
-                        <div class="smarthome-controls" id="hueControls">
-                            <div class="loading">
-                                <i class="fas fa-spinner"></i>
-                                Loading Hue devices...
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- HomeKit -->
-                    <div class="smarthome-widget">
-                        <h3 class="section-title">HomeKit Devices</h3>
-                        <div class="smarthome-controls" id="homekitControls">
-                            <div class="loading">
-                                <i class="fas fa-spinner"></i>
-                                Loading HomeKit devices...
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Training Page -->
-                <div class="page" id="training">
-                    <h2 class="section-title">Interactive AI Training</h2>
-                    <div class="training-session" id="trainingSession" style="display: none;">
-                        <div class="training-question" id="trainingQuestion"></div>
-                        <textarea class="training-input" id="trainingAnswer" placeholder="Share your thoughts here..."></textarea>
-                        <div class="training-actions">
-                            <button class="btn btn-secondary" onclick="skipTrainingQuestion()">
-                                <i class="fas fa-forward"></i>
-                                Skip
-                            </button>
-                            <button class="btn btn-primary" onclick="submitTrainingAnswer()">
-                                <i class="fas fa-check"></i>
-                                Submit Answer
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="action-card" id="startTrainingCard">
-                        <div class="action-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="action-title">Start Training Session</div>
-                        <div class="action-description">Help ATLAS learn about your preferences, habits, and personality through guided questions</div>
-                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="startTrainingSession()">
-                            <i class="fas fa-play"></i>
-                            Begin Training
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Insights Page -->
-                <div class="page" id="insights">
-                    <h2 class="section-title">Smart Insights & Analytics</h2>
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="action-title">Generate Deep Insights</div>
-                        <div class="action-description">AI-powered analysis of your productivity patterns, calendar events, and workflow</div>
-                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="generateComprehensiveDebrief()">
-                            <i class="fas fa-magic"></i>
-                            Analyze My Data
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Health Page -->
-                <div class="page" id="health">
-                    <h2 class="section-title">Health & Wellness</h2>
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="fas fa-heart"></i>
-                        </div>
-                        <div class="action-title">Health Data Upload</div>
-                        <div class="action-description">Upload your Apple Health export for comprehensive wellness tracking and insights</div>
-                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="uploadHealthData()">
-                            <i class="fas fa-upload"></i>
-                            Upload Health Data
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Studio Page -->
-                <div class="page" id="studio">
-                    <h2 class="section-title">Rocket Launch Studio</h2>
-                    <div class="quick-actions">
-                        <div class="action-card">
-                            <div class="action-icon">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <div class="action-title">Active Projects</div>
-                            <div class="action-description">View and manage current video productions</div>
-                        </div>
-                        <div class="action-card green">
-                            <div class="action-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="action-title">Client Management</div>
-                            <div class="action-description">Access client communications and project files</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Integrations Page -->
-                <div class="page" id="integrations">
-                    <h2 class="section-title">Connected Services</h2>
-                    <div id="integrationsList" class="quick-actions">
-                        <div class="loading">
-                            <i class="fas fa-spinner"></i>
-                            Loading integrations...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Quick Check-in Modal -->
-    <div class="modal" id="checkinModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-heart"></i> Wellness Check-in</h2>
-                <button class="modal-close" onclick="closeCheckIn()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="mood-slider">
-                <label>Energy Level</label>
-                <div class="slider-container">
-                    <input type="range" class="mood-range" id="energySlider" min="1" max="10" value="5">
-                    <div class="mood-labels">
-                        <span>Low</span>
-                        <span>Moderate</span>
-                        <span>High</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mood-slider">
-                <label>Focus Level</label>
-                <div class="slider-container">
-                    <input type="range" class="mood-range" id="focusSlider" min="1" max="10" value="5">
-                    <div class="mood-labels">
-                        <span>Scattered</span>
-                        <span>Balanced</span>
-                        <span>Sharp</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mood-descriptors">
-                <div class="mood-descriptor" data-mood="creative">Creative</div>
-                <div class="mood-descriptor" data-mood="productive">Productive</div>
-                <div class="mood-descriptor" data-mood="relaxed">Relaxed</div>
-                <div class="mood-descriptor" data-mood="motivated">Motivated</div>
-                <div class="mood-descriptor" data-mood="stressed">Stressed</div>
-                <div class="mood-descriptor" data-mood="inspired">Inspired</div>
-                <div class="mood-descriptor" data-mood="focused">Focused</div>
-                <div class="mood-descriptor" data-mood="energetic">Energetic</div>
-                <div class="mood-descriptor" data-mood="calm">Calm</div>
-                <div class="mood-descriptor" data-mood="ambitious">Ambitious</div>
-                <div class="mood-descriptor" data-mood="thoughtful">Thoughtful</div>
-                <div class="mood-descriptor" data-mood="determined">Determined</div>
-                <div class="mood-descriptor" data-mood="optimistic">Optimistic</div>
-                <div class="mood-descriptor" data-mood="confident">Confident</div>
-                <div class="mood-descriptor" data-mood="balanced">Balanced</div>
-                <div class="mood-descriptor" data-mood="innovative">Innovative</div>
-                <div class="mood-descriptor" data-mood="analytical">Analytical</div>
-                <div class="mood-descriptor" data-mood="collaborative">Collaborative</div>
-            </div>
-
-            <textarea class="quick-notes-input" id="checkinNotes" placeholder="Any specific thoughts or observations about your current state?"></textarea>
-
-            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="submitCheckIn()">
-                <i class="fas fa-heart"></i>
-                Submit Check-in
-            </button>
-        </div>
-    </div>
-
-    <!-- Quick Notes Modal -->
-    <div class="modal" id="notesModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-sticky-note"></i> Quick Notes</h2>
-                <button class="modal-close" onclick="closeQuickNotes()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <textarea class="quick-notes-input" id="quickNotesText" placeholder="Capture your thoughts, ideas, reminders, or anything else. ATLAS will automatically organize this in your workspace."></textarea>
-
-            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="saveQuickNote()">
-                <i class="fas fa-save"></i>
-                Save & Organize
-            </button>
-        </div>
-    </div>
-
-    <!-- Brain Dump Modal -->
-    <div class="modal" id="brainDumpModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-microphone"></i> Voice Notes</h2>
-                <button class="modal-close" onclick="closeBrainDump()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div style="text-align: center; margin-bottom: 1.5rem; color: var(--text-muted);">
-                Speak your thoughts, and ATLAS will transcribe and organize everything for you
-            </div>
-            <button class="btn btn-primary" id="voiceBtn" onclick="toggleVoiceRecording()" style="width: 100%; margin-bottom: 1.5rem;">
-                <i class="fas fa-microphone"></i>
-                <span id="voiceBtnText">Start Recording</span>
-            </button>
-            <div id="transcriptionText" style="padding: 1rem; background: var(--bg-glass); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); min-height: 80px; color: var(--text-muted); font-style: italic;">
-                Your transcription will appear here...
-            </div>
-        </div>
-    </div>
-
-    <!-- Message Backup Modal -->
-    <div class="modal" id="messageBackupModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-comments"></i> Message & Call Backup</h2>
-                <button class="modal-close" onclick="closeMessageBackup()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div style="margin-bottom: 1.5rem; color: var(--text-muted);">
-                <p>Backup and analyze your text messages and call data for insights.</p>
-            </div>
-            
-            <div class="settings-section">
-                <h3>iPhone Data Export</h3>
-                <div class="settings-toggle">
-                    <span>Export messages via iTunes backup</span>
-                    <button class="btn btn-secondary" onclick="exportiPhoneData()">Export</button>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Android Data Export</h3>
-                <div class="settings-toggle">
-                    <span>Export via SMS Backup & Restore app</span>
-                    <button class="btn btn-secondary" onclick="exportAndroidData()">Guide</button>
-                </div>
-            </div>
-
-            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="uploadMessageData()">
-                <i class="fas fa-upload"></i>
-                Upload Message Data
-            </button>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <div class="success-animation">
-                <div class="success-icon">
-                    <i class="fas fa-check"></i>
-                </div>
-                <h2>Thank you, Michael!</h2>
-                <p id="successMessage">Your check-in has been recorded successfully.</p>
-                <button class="btn btn-primary" onclick="closeSuccess()" style="margin-top: 1rem;">
-                    <i class="fas fa-check"></i>
-                    Continue
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-cog"></i> Settings</h2>
-                <button class="modal-close" onclick="closeSettings()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="settings-section">
-                <h3>AI Learning & Memory</h3>
-                <div class="settings-toggle">
-                    <span>Long-term memory updates</span>
-                    <div class="toggle-switch active" data-setting="memory-updates"></div>
-                </div>
-                <div class="settings-toggle">
-                    <span>Automatic retraining (weekly)</span>
-                    <div class="toggle-switch active" data-setting="auto-retrain"></div>
-                </div>
-                <div class="settings-toggle">
-                    <span>Offline fallback model</span>
-                    <div class="toggle-switch" data-setting="offline-mode"></div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Notifications</h3>
-                <div class="settings-toggle">
-                    <span>Daily wellness reminders</span>
-                    <div class="toggle-switch" data-setting="wellness-reminders"></div>
-                </div>
-                <div class="settings-toggle">
-                    <span>Calendar sync notifications</span>
-                    <div class="toggle-switch active" data-setting="calendar-sync"></div>
-                </div>
-                <div class="settings-toggle">
-                    <span>Project deadline alerts</span>
-                    <div class="toggle-switch active" data-setting="deadline-alerts"></div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Data & Privacy</h3>
-                <div class="settings-toggle">
-                    <span>Message backup analysis</span>
-                    <div class="toggle-switch" data-setting="message-analysis"></div>
-                </div>
-                <div class="settings-toggle">
-                    <span>Anonymous analytics</span>
-                    <div class="toggle-switch" data-setting="analytics"></div>
-                </div>
-                <div class="settings-toggle">
-                    <span>Data export available</span>
-                    <div class="toggle-switch active" data-setting="data-export"></div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>System</h3>
-                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem;" onclick="triggerRetraining()">
-                    <i class="fas fa-brain"></i>
-                    Trigger Memory Audit
-                </button>
-                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem;" onclick="exportAllData()">
-                    <i class="fas fa-download"></i>
-                    Export All Data
-                </button>
-                <button class="btn btn-secondary" style="width: 100%;" onclick="resetSystem()">
-                    <i class="fas fa-refresh"></i>
-                    Reset Learning Data
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Global state
-        let currentPage = 'dashboard';
-        let selectedMoods = [];
-        let isRecording = false;
-        let recognition = null;
-        let trainingQuestions = [
-            "What time of day do you feel most creative and productive?",
-            "How do you prefer to receive feedback on your work?",
-            "What are your biggest productivity challenges?",
-            "How do you like to organize your projects and tasks?",
-            "What motivates you most in your creative work?",
-            "How do you prefer to communicate with clients?",
-            "What tools and workflows work best for you?",
-            "How do you manage stress and maintain work-life balance?",
-            "What are your long-term goals for Rocket Launch Studio?",
-            "How do you prefer to handle interruptions during deep work?"
-        ];
-        let currentTrainingIndex = 0;
-        let memoryDatabase = [];
-        let personalFacts = [];
-
-        // Initialize speech recognition
-        if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
+            font-size: 0.9rem;
         }
 
-        // Navigation
-        function showPage(pageName) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            const pageElement = document.getElementById(pageName);
-            if (pageElement) {
-                pageElement.classList.add('active');
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: var(--spacing-md);
             }
-            
-            const navItem = document.querySelector(`[data-page="${pageName}"]`);
-            if (navItem) {
-                navItem.classList.add('active');
+
+            .sidebar {
+                position: fixed;
+                left: var(--spacing-md);
+                top: var(--spacing-md);
+                height: calc(100vh - 2 * var(--spacing-md));
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 200;
             }
-            
-            currentPage = pageName;
-            
-            if (pageName === 'integrations') {
-                loadIntegrations();
-            } else if (pageName === 'dashboard') {
-                loadDashboardData();
-            } else if (pageName === 'smarthome') {
-                loadSmartHomeDevices();
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
             }
-            
-            closeMobileNav();
-        }
 
-        // Navigation event listeners
-        document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-            item.addEventListener('click', () => {
-                const page = item.getAttribute('data-page');
-                showPage(page);
-            });
-        });
-
-        // Mobile navigation
-        function toggleMobileNav() {
-            document.getElementById('sidebar').classList.toggle('mobile-visible');
-        }
-
-        function closeMobileNav() {
-            document.getElementById('sidebar').classList.remove('mobile-visible');
-        }
-
-        // Greeting
-        function updateGreeting() {
-            const now = new Date();
-            const hour = now.getHours();
-            let greeting;
-            
-            if (hour < 12) {
-                greeting = "Good morning, Michael";
-            } else if (hour < 17) {
-                greeting = "Good afternoon, Michael";
-            } else {
-                greeting = "Good evening, Michael";
+            .mobile-toggle {
+                display: flex;
+                position: fixed;
+                top: var(--spacing-lg);
+                left: var(--spacing-lg);
+                z-index: 300;
+                background: var(--glass-bg);
+                backdrop-filter: var(--glass-backdrop);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--radius-md);
+                padding: var(--spacing-md);
+                cursor: pointer;
+                color: var(--text-primary);
+                width: 44px;
+                height: 44px;
+                align-items: center;
+                justify-content: center;
             }
-            
-            document.getElementById('greetingText').textContent = greeting;
-        }
 
-        function playGreeting() {
-            showNotification('Hello Michael! ATLAS is ready to assist you today.', 'info');
-        }
+            .content-header {
+                padding: var(--spacing-lg);
+                padding-left: 4rem;
+            }
 
-        // Chat functionality
-        function focusChat() {
-            document.getElementById('questionInput').focus();
-            document.getElementById('questionInput').scrollIntoView({ behavior: 'smooth' });
-        }
+            .content-body {
+                padding: var(--spacing-lg);
+            }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                askQuestion();
+            .greeting {
+                font-size: 2rem;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .header-stats {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const questionInput = document.getElementById('questionInput');
-            if (questionInput) {
-                questionInput.addEventListener('keydown', handleKeyPress);
-            }
-        });
-
-        async function askQuestion(predefinedQuestion = null) {
-            const input = document.getElementById('questionInput');
-            const button = document.getElementById('askButton');
-            const answerContainer = document.getElementById('answerContainer');
-            const answerText = document.getElementById('answerText');
-
-            const question = predefinedQuestion || input.value.trim();
-            if (!question) return;
-
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
-            answerContainer.style.display = 'block';
-            answerText.innerHTML = '<div class="loading"><i class="fas fa-brain fa-pulse"></i> Processing your question...</div>';
-
-            try {
-                const response = await fetch('/ask?q=' + encodeURIComponent(question));
-                const data = await response.json();
-
-                if (response.ok) {
-                    answerText.textContent = data.answer;
-                    // Store interaction for memory learning
-                    storeInteraction(question, data.answer);
-                } else {
-                    answerText.innerHTML = `<div style="color: var(--accent-error);">Error: ${data.detail || 'Failed to get answer'}</div>`;
-                }
-            } catch (error) {
-                answerText.innerHTML = `<div style="color: var(--accent-error);">Network error: ${error.message}</div>`;
-            } finally {
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
-                if (!predefinedQuestion) {
-                    input.value = '';
-                }
-            }
+        .mobile-toggle {
+            display: none;
         }
 
-        // Memory and Learning Functions
-        function storeInteraction(question, answer) {
-            const interaction = {
-                question: question,
-                answer: answer,
-                timestamp: new Date().toISOString(),
-                feedback: null
-            };
-            
-            // Store in local memory database
-            memoryDatabase.push(interaction);
-            
-            // Keep only last 100 interactions
-            if (memoryDatabase.length > 100) {
-                memoryDatabase.shift();
-            }
-            
-            // Store in localStorage for persistence
-            localStorage.setItem('atlasMemory', JSON.stringify(memoryDatabase));
-        }
-
-        function extractPersonalFacts(interactions) {
-            // Simple fact extraction - in production, use more sophisticated NLP
-            const facts = [];
-            interactions.forEach(interaction => {
-                const question = interaction.question.toLowerCase();
-                const answer = interaction.answer.toLowerCase();
-                
-                // Extract preferences
-                if (question.includes('prefer') || question.includes('like')) {
-                    facts.push({
-                        type: 'preference',
-                        content: interaction.question + ' -> ' + interaction.answer,
-                        timestamp: interaction.timestamp
-                    });
-                }
-                
-                // Extract goals
-                if (question.includes('goal') || question.includes('want to')) {
-                    facts.push({
-                        type: 'goal',
-                        content: interaction.question + ' -> ' + interaction.answer,
-                        timestamp: interaction.timestamp
-                    });
-                }
-            });
-            
-            return facts;
-        }
-
-        function triggerRetraining() {
-            showNotification('Starting memory audit and learning update...', 'info');
-            
-            // Load stored interactions
-            const storedMemory = localStorage.getItem('atlasMemory');
-            if (storedMemory) {
-                memoryDatabase = JSON.parse(storedMemory);
-            }
-            
-            // Extract personal facts
-            personalFacts = extractPersonalFacts(memoryDatabase);
-            
-            // Store updated facts
-            localStorage.setItem('atlasPersonalFacts', JSON.stringify(personalFacts));
-            
-            setTimeout(() => {
-                showNotification(`Memory audit complete. ${personalFacts.length} personal insights stored.`, 'success');
-            }, 2000);
-        }
-
-        // Smart Home Functions
-        function loadSmartHomeDevices() {
-            loadHueDevices();
-            loadHomeKitDevices();
-        }
-
-        function loadHueDevices() {
-            const hueControls = document.getElementById('hueControls');
-            
-            // Mock Hue devices - in production, integrate with Hue API
-            const hueDevices = [
-                { id: 1, name: 'Office Desk Lamp', state: false, brightness: 80 },
-                { id: 2, name: 'Living Room Overhead', state: true, brightness: 60 },
-                { id: 3, name: 'Bedroom Strip Lights', state: false, brightness: 40 },
-                { id: 4, name: 'Kitchen Under Cabinet', state: true, brightness: 90 }
-            ];
-            
-            hueControls.innerHTML = '';
-            hueDevices.forEach(device => {
-                const deviceEl = document.createElement('div');
-                deviceEl.className = 'smarthome-device';
-                deviceEl.innerHTML = `
-                    <div class="device-info">
-                        <div class="device-icon">
-                            <i class="fas fa-lightbulb"></i>
-                        </div>
-                        <div class="device-details">
-                            <h4>${device.name}</h4>
-                            <div class="device-status">${device.state ? 'On' : 'Off'} • ${device.brightness}%</div>
-                        </div>
-                    </div>
-                    <div class="device-toggle ${device.state ? 'active' : ''}" onclick="toggleHueDevice(${device.id})"></div>
-                `;
-                hueControls.appendChild(deviceEl);
-            });
-        }
-
-        function loadHomeKitDevices() {
-            const homekitControls = document.getElementById('homekitControls');
-            
-            // Mock HomeKit devices
-            const homekitDevices = [
-                { id: 1, name: 'Thermostat', state: true, value: '72°F' },
-                { id: 2, name: 'Front Door Lock', state: true, value: 'Locked' },
-                { id: 3, name: 'Garage Door', state: false, value: 'Closed' },
-                { id: 4, name: 'Security System', state: true, value: 'Armed' }
-            ];
-            
-            homekitControls.innerHTML = '';
-            homekitDevices.forEach(device => {
-                const deviceEl = document.createElement('div');
-                deviceEl.className = 'smarthome-device';
-                deviceEl.innerHTML = `
-                    <div class="device-info">
-                        <div class="device-icon">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        <div class="device-details">
-                            <h4>${device.name}</h4>
-                            <div class="device-status">${device.value}</div>
-                        </div>
-                    </div>
-                    <div class="device-toggle ${device.state ? 'active' : ''}" onclick="toggleHomeKitDevice(${device.id})"></div>
-                `;
-                homekitControls.appendChild(deviceEl);
-            });
-        }
-
-        function toggleHueDevice(deviceId) {
-            showNotification(`Toggling Hue device ${deviceId}...`, 'info');
-            // In production, make API call to Hue bridge
-            setTimeout(() => {
-                showNotification('Hue device toggled successfully', 'success');
-                loadHueDevices(); // Refresh the display
-            }, 1000);
-        }
-
-        function toggleHomeKitDevice(deviceId) {
-            showNotification(`Toggling HomeKit device ${deviceId}...`, 'info');
-            // In production, make API call to HomeKit
-            setTimeout(() => {
-                showNotification('HomeKit device toggled successfully', 'success');
-                loadHomeKitDevices(); // Refresh the display
-            }, 1000);
-        }
-
-        // Training Session
-        function startTrainingSession() {
-            currentTrainingIndex = 0;
-            document.getElementById('startTrainingCard').style.display = 'none';
-            document.getElementById('trainingSession').style.display = 'block';
-            showTrainingQuestion();
-        }
-
-        function showTrainingQuestion() {
-            if (currentTrainingIndex < trainingQuestions.length) {
-                document.getElementById('trainingQuestion').textContent = trainingQuestions[currentTrainingIndex];
-                document.getElementById('trainingAnswer').value = '';
-                document.getElementById('trainingAnswer').focus();
-            } else {
-                finishTrainingSession();
-            }
-        }
-
-        function submitTrainingAnswer() {
-            const answer = document.getElementById('trainingAnswer').value.trim();
-            if (!answer) {
-                showNotification('Please provide an answer before continuing.', 'warning');
-                return;
-            }
-
-            // Store training data for learning
-            const trainingData = {
-                question: trainingQuestions[currentTrainingIndex],
-                answer: answer,
-                timestamp: new Date().toISOString(),
-                type: 'training'
-            };
-            
-            storeInteraction(trainingData.question, trainingData.answer);
-
-            currentTrainingIndex++;
-            showTrainingQuestion();
-        }
-
-        function skipTrainingQuestion() {
-            currentTrainingIndex++;
-            showTrainingQuestion();
-        }
-
-        function finishTrainingSession() {
-            document.getElementById('trainingSession').style.display = 'none';
-            document.getElementById('startTrainingCard').style.display = 'block';
-            showSuccess('Training session completed! ATLAS has learned more about your preferences.');
-            
-            // Trigger learning update
-            triggerRetraining();
-        }
-
-        // Quick Check-in
-        function openQuickCheckIn() {
-            document.getElementById('checkinModal').classList.add('active');
-        }
-
-        function closeCheckIn() {
-            document.getElementById('checkinModal').classList.remove('active');
-            selectedMoods = [];
-            document.querySelectorAll('.mood-descriptor').forEach(desc => {
-                desc.classList.remove('selected');
-            });
-        }
-
-        // Mood descriptor selection
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.mood-descriptor').forEach(desc => {
-                desc.addEventListener('click', () => {
-                    const mood = desc.getAttribute('data-mood');
-                    if (selectedMoods.includes(mood)) {
-                        selectedMoods = selectedMoods.filter(m => m !== mood);
-                        desc.classList.remove('selected');
-                    } else {
-                        selectedMoods.push(mood);
-                        desc.classList.add('selected');
-                    }
-                });
-            });
-
-            // Settings toggles
-            document.querySelectorAll('.toggle-switch').forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    toggle.classList.toggle('active');
-                    const setting = toggle.getAttribute('data-setting');
-                    console.log(`Setting ${setting}:`, toggle.classList.contains('active'));
-                });
-            });
-        });
-
-        function submitCheckIn() {
-            const energy = document.getElementById('energySlider').value;
-            const focus = document.getElementById('focusSlider').value;
-            const notes = document.getElementById('checkinNotes').value;
-            
-            const checkinData = {
-                energy: energy,
-                focus: focus,
-                moods: selectedMoods,
-                notes: notes,
-                timestamp: new Date().toISOString()
-            };
-            
-            console.log('Check-in data:', checkinData);
-            
-            // Store check-in as interaction for learning
-            const summary = `Wellness check-in: Energy ${energy}/10, Focus ${focus}/10, Moods: ${selectedMoods.join(', ')}${notes ? ', Notes: ' + notes : ''}`;
-            storeInteraction('How are you feeling today?', summary);
-            
-            closeCheckIn();
-            
-            // Auto-close success modal after 1.5 seconds
-            showSuccess('Your wellness check-in has been recorded successfully.');
-            setTimeout(() => {
-                closeSuccess();
-            }, 1500);
-        }
-
-        // Quick Notes
-        function openQuickNotes() {
-            document.getElementById('notesModal').classList.add('active');
-        }
-
-        function closeQuickNotes() {
-            document.getElementById('notesModal').classList.remove('active');
-        }
-
-        function saveQuickNote() {
-            const noteText = document.getElementById('quickNotesText').value.trim();
-            if (!noteText) return;
-            
-            console.log('Saving note:', noteText);
-            
-            // Store as interaction
-            storeInteraction('Quick note', noteText);
-            
-            closeQuickNotes();
-            showSuccess('Your note has been saved and organized!');
-            document.getElementById('quickNotesText').value = '';
-        }
-
-        // Brain Dump (Voice Recording)
-        function openBrainDump() {
-            document.getElementById('brainDumpModal').classList.add('active');
-        }
-
-        function closeBrainDump() {
-            document.getElementById('brainDumpModal').classList.remove('active');
-            if (isRecording) {
-                toggleVoiceRecording();
-            }
-        }
-
-        function toggleVoiceRecording() {
-            const btn = document.getElementById('voiceBtn');
-            const btnText = document.getElementById('voiceBtnText');
-            
-            if (!recognition) {
-                showNotification('Speech recognition not supported in this browser', 'error');
-                return;
-            }
-            
-            if (!isRecording) {
-                recognition.start();
-                isRecording = true;
-                btnText.textContent = 'Stop Recording';
-                btn.style.background = 'var(--accent-warning)';
-                
-                recognition.onresult = (event) => {
-                    let transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        transcript += event.results[i][0].transcript;
-                    }
-                    document.getElementById('transcriptionText').textContent = transcript;
-                };
-                
-                recognition.onend = () => {
-                    if (isRecording) {
-                        const transcript = document.getElementById('transcriptionText').textContent;
-                        if (transcript && transcript !== 'Your transcription will appear here...') {
-                            storeInteraction('Voice note', transcript);
-                        }
-                    }
-                };
-            } else {
-                recognition.stop();
-                isRecording = false;
-                btnText.textContent = 'Start Recording';
-                btn.style.background = 'var(--accent-primary)';
-            }
-        }
-
-        // Message Backup Functions
-        function openMessageBackup() {
-            document.getElementById('messageBackupModal').classList.add('active');
-        }
-
-        function closeMessageBackup() {
-            document.getElementById('messageBackupModal').classList.remove('active');
-        }
-
-        function exportiPhoneData() {
-            showNotification('Opening iPhone backup guide...', 'info');
-            // In production, provide detailed instructions
-        }
-
-        function exportAndroidData() {
-            showNotification('Opening Android export guide...', 'info');
-            // In production, provide SMS Backup & Restore instructions
-        }
-
-        function uploadMessageData() {
-            showNotification('Message data upload feature will be available soon.', 'info');
-            closeMessageBackup();
-        }
-
-        // Comprehensive Debrief
-        function generateComprehensiveDebrief() {
-            askQuestion('Please provide a comprehensive analysis of my productivity patterns, schedule, and any insights you can gather from my available data.');
-        }
-
-        // Success Modal
-        function showSuccess(message) {
-            document.getElementById('successMessage').textContent = message;
-            document.getElementById('successModal').classList.add('active');
-        }
-
-        function closeSuccess() {
-            document.getElementById('successModal').classList.remove('active');
-        }
-
-        // Settings
-        function openSettings() {
-            document.getElementById('settingsModal').classList.add('active');
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        function giveFeedback(type) {
-            console.log('Feedback:', type);
-            const message = type === 'helpful' ? 'Thank you for the positive feedback!' : 'Thanks for the feedback. ATLAS will continue learning.';
-            showNotification(message, 'success');
-            
-            // Store feedback for learning
-            if (memoryDatabase.length > 0) {
-                const lastInteraction = memoryDatabase[memoryDatabase.length - 1];
-                lastInteraction.feedback = type;
-                localStorage.setItem('atlasMemory', JSON.stringify(memoryDatabase));
-            }
-        }
-
-        function exportAllData() {
-            const allData = {
-                memory: memoryDatabase,
-                personalFacts: personalFacts,
-                settings: getAllSettings(),
-                timestamp: new Date().toISOString()
-            };
-            
-            const dataStr = JSON.stringify(allData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'atlas-data-export.json';
-            link.click();
-            
-            showNotification('Data export downloaded successfully', 'success');
-        }
-
-        function resetSystem() {
-            if (confirm('Are you sure you want to reset all learning data? This cannot be undone.')) {
-                localStorage.removeItem('atlasMemory');
-                localStorage.removeItem('atlasPersonalFacts');
-                memoryDatabase = [];
-                personalFacts = [];
-                showNotification('Learning data has been reset', 'success');
-                closeSettings();
-            }
-        }
-
-        function getAllSettings() {
-            const settings = {};
-            document.querySelectorAll('.toggle-switch').forEach(toggle => {
-                const setting = toggle.getAttribute('data-setting');
-                if (setting) {
-                    settings[setting] = toggle.classList.contains('active');
-                }
-            });
-            return settings;
-        }
-
-        // Health Data Upload
-        function uploadHealthData() {
-            showNotification('Health data upload feature will be available soon.', 'info');
-        }
-
-        // Weather
-        function loadWeather() {
-            // Placeholder for weather API integration
-            document.getElementById('weatherInline').innerHTML = '<span class="no-data">--°F</span>';
-        }
-
-        // Data loading functions
-        function loadDashboardData() {
-            updateGreeting();
-            loadSystemHealth();
-            loadTodayEvents();
-            loadWeather();
-            
-            // Load stored memory data
-            const storedMemory = localStorage.getItem('atlasMemory');
-            if (storedMemory) {
-                memoryDatabase = JSON.parse(storedMemory);
-            }
-            
-            const storedFacts = localStorage.getItem('atlasPersonalFacts');
-            if (storedFacts) {
-                personalFacts = JSON.parse(storedFacts);
-            }
-        }
-
-        function loadSystemHealth() {
-            fetch('/status')
-                .then(response => response.json())
-                .then(data => {
-                    const healthPercentage = data.ready ? '98%' : '--';
-                    document.getElementById('systemStatus').innerHTML = data.ready ? healthPercentage : '<span class="no-data">--</span>';
-                })
-                .catch(() => {
-                    document.getElementById('systemStatus').innerHTML = '<span class="no-data">--</span>';
-                });
-        }
-
-        function loadTodayEvents() {
-            fetch('/calendar/today')
-                .then(response => response.json())
-                .then(data => {
-                    const eventCount = data.events ? data.events.length : '--';
-                    document.getElementById('todayEvents').innerHTML = eventCount !== '--' ? eventCount : '<span class="no-data">--</span>';
-                })
-                .catch(() => {
-                    document.getElementById('todayEvents').innerHTML = '<span class="no-data">--</span>';
-                });
-        }
-
-        function loadIntegrations() {
-            fetch('/integrations')
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('integrationsList');
-                    container.innerHTML = '';
-                    
-                    data.integrations.forEach(integration => {
-                        const card = document.createElement('div');
-                        card.className = 'action-card';
-                        
-                        const statusColor = integration.connected ? 'var(--accent-success)' : 'var(--accent-warning)';
-                        const statusIcon = integration.connected ? 'check-circle' : 'exclamation-circle';
-                        
-                        card.innerHTML = `
-                            <div class="action-icon">
-                                <i class="fas fa-${getIntegrationIcon(integration.name)}"></i>
-                            </div>
-                            <div class="action-title">${integration.name}</div>
-                            <div class="action-description">
-                                <i class="fas fa-${statusIcon}" style="color: ${statusColor};"></i>
-                                ${integration.status_message}
-                            </div>
-                        `;
-                        container.appendChild(card);
-                    });
-                })
-                .catch(() => {
-                    document.getElementById('integrationsList').innerHTML = '<div style="color: var(--accent-error);">Failed to load integrations</div>';
-                });
-        }
-
-        function getIntegrationIcon(name) {
-            const icons = {
-                'Google Calendar': 'calendar-alt',
-                'Gmail': 'envelope',
-                'Google Drive': 'cloud',
-                'Notion': 'sticky-note',
-                'Dubsado': 'briefcase',
-                'QuickBooks': 'calculator',
-                'Apple Health': 'heart',
-                'HomeKit': 'home',
-                'Philips Hue': 'lightbulb'
-            };
-            return icons[name] || 'plug';
-        }
-
-        function refreshData() {
-            showNotification('Syncing your data...', 'info');
-            loadDashboardData();
-            if (currentPage === 'integrations') {
-                loadIntegrations();
-            } else if (currentPage === 'smarthome') {
-                loadSmartHomeDevices();
-            }
-            setTimeout(() => {
-                showNotification('Data sync completed successfully.', 'success');
-            }, 1500);
-        }
-
-        // Notification system
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDashboardData();
-            
-            // Auto-refresh every 5 minutes
-            setInterval(() => {
-                if (currentPage === 'dashboard') {
-                    loadDashboardData();
-                }
-            }, 300000);
-            
-            // Update greeting every hour
-            setInterval(updateGreeting, 3600000);
-            
-            // Schedule automatic retraining (daily)
-            setInterval(() => {
-                const now = new Date();
-                if (now.getHours() === 3 && now.getMinutes() === 0) { // 3 AM
-                    triggerRetraining();
-                }
-            }, 60000); // Check every minute
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                closeMobileNav();
-            }
-        });
-
-        // Close modals when clicking outside
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.classList.remove('active');
-                    }
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-radius: var(--radius-md);
