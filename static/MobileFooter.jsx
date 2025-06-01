@@ -6,4 +6,4 @@ function MobileFooter() {
   );
 }
 
-window.MobileFooter = MobileFooter;
+window.MobileFooter = MobileFooter;r;

@@ -7,4 +7,4 @@ function SettingsControls() {
   );
 }
 
-window.SettingsControls = SettingsControls;
+window.SettingsControls = SettingsControls;trols;
