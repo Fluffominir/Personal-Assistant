@@ -61,3 +61,8 @@ body {
 .settings-btn { width:48px; height:48px; border-radius:50%; border:none;
                 font-size:1.4rem; background:var(--black); color:#fff;
                 cursor:pointer; }
+
+/* Weather badge */
+.weather-badge{width:56px;height:56px;border-radius:50%;background:var(--teal);
+               color:#fff;font-weight:700;display:flex;align-items:center;
+               justify-content:center;}

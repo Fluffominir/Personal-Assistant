@@ -2,17 +2,25 @@
 const { useState, useEffect } = React;
 
 function Header({ eventCount }) {
-  const scrollToAgenda = () => {
-    const target = document.getElementById("agenda-section");
-    if (target) target.scrollIntoView({ behavior: "smooth" });
-  };
+  const now = new Date();
+  const time = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const date = now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
 
   return (
     <div className="header-bar container">
-      <h1 style={{ margin: 0, fontSize: "2rem", fontWeight: 700 }}>ATLAS</h1>
-      <span className="event-badge" title="Show Today's Agenda" onClick={scrollToAgenda}>
-        {eventCount}
-      </span>
+      <div>
+        <h2 style={{margin:0,fontWeight:700}}>Hello, Michael,</h2>
+        <span style={{fontSize:14}}>{time} | {date}</span>
+      </div>
+
+      <div style={{display:"flex",gap:16,alignItems:"center"}}>
+        {/* Weather badge placeholder */}
+        <div className="weather-badge">70°F</div>
+        {/* agenda count badge */}
+        <span className="event-badge" title="Show Today's Agenda" onClick={()=>{
+          document.getElementById("agenda-section")?.scrollIntoView({behavior:"smooth"});
+        }}>{eventCount}</span>
+      </div>
     </div>
   );
 }
