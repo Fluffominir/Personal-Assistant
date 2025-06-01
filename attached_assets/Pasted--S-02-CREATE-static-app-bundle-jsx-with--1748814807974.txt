@@ -1,0 +1,150 @@
+**S-02**
+
+CREATE   static/app-bundle.jsx   with:
+
+// --------------------------------------------------
+// tiny helpers / design constants
+// --------------------------------------------------
+const { useState, useEffect } = React;
+const COLORS = {
+  blue   : "#569aff",
+  teal   : "#479387",
+  gold   : "#f7b138",
+  salmon : "#ed6b81"
+};
+
+// --------------------------------------------------
+// Header
+// --------------------------------------------------
+function Header({ agendaCount }) {
+  const [now, setNow] = useState(new Date());
+  useEffect(()=>{ const id=setInterval(()=>setNow(new Date()),60_000);
+                  return()=>clearInterval(id); },[]);
+  const time = now.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+  const date = now.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"});
+
+  return (
+    <header className="header-bar">
+      <div className="greeting">
+        <h2>Hello, Michael,</h2>
+        <span>{time} | {date}</span>
+      </div>
+
+      <div className="badges">
+        <div className="weather-badge">70°F</div>
+        <button className="event-badge"
+                title="Today’s events"
+                onClick={()=>document.getElementById("agenda-section")
+                                   ?.scrollIntoView({behavior:"smooth"})}>
+          {agendaCount}
+        </button>
+      </div>
+    </header>
+  );
+}
+
+// --------------------------------------------------
+// Side Drawer  +  scrim
+// --------------------------------------------------
+function SideDrawer() {
+  const [open,setOpen]=useState(false);
+  return (
+    <>
+      <button className="menu-btn" onClick={()=>setOpen(true)}>☰</button>
+      {open && <div className="scrim" onClick={()=>setOpen(false)}/>}
+      <nav className={"drawer"+(open?" open":"")}>
+        {["Rocket Launch Studio","Connections","Status","Health"].map(txt=>
+          <a key={txt} href="#" className="drawer-link">{txt}</a>)}
+      </nav>
+    </>
+  );
+}
+
+// --------------------------------------------------
+// Ask-ATLAS bar
+// --------------------------------------------------
+function AskAtlas() {
+  const [q,setQ]=useState("");
+  return (
+    <form className="ask-wrap" onSubmit={e=>{e.preventDefault();if(!q)return;alert(q);setQ("");}}>
+      <input className="ask-input" value={q}
+             onChange={e=>setQ(e.target.value)}
+             placeholder="Ask about your projects, schedule, personal or business insights…" />
+      <button className="ask-btn">Ask ▾</button>
+    </form>
+  );
+}
+
+// --------------------------------------------------
+// Quick Action pills
+// --------------------------------------------------
+function QuickActions() {
+  const actions = ["AI Training Session","Brainstorm Session","Brain Dump",
+                   "Daily Check-In","Quick Note","Audit"];
+  return (
+    <section className="quick-actions">
+      {actions.map(txt=> <button key={txt} className="pill-btn">{txt}</button>)}
+    </section>
+  );
+}
+
+// --------------------------------------------------
+// Agenda + To-Do cards
+// --------------------------------------------------
+const sampleAgenda = ["9 AM – Team Stand-up","11 AM – Client Meeting","3 PM – Project Review"];
+const sampleTodos  = ["Finish project report","Email budget sheet","Call Alice"];
+
+function AgendaColumn() {
+  return (
+    <div className="agenda-column">
+      <div id="agenda-section" className="card">
+        <h3>Agenda</h3>
+        {sampleAgenda.map(item=><div key={item} className="chip">{item}</div>)}
+      </div>
+    </div>
+  );
+}
+function TodoColumn() {
+  return (
+    <div className="todo-column">
+      <div className="card">
+        <h3>To-Do</h3>
+        <ul>{sampleTodos.map(t=>(
+          <li key={t}><input type="checkbox" /> {t}</li>
+        ))}</ul>
+      </div>
+    </div>
+  );
+}
+
+// --------------------------------------------------
+// Bottom mobile menu
+// --------------------------------------------------
+function MobileFooter() {
+  const [open,setOpen]=useState(false);
+  return (
+    <div className="mobile-footer">
+      <button className="footer-menu" onClick={()=>setOpen(o=>!o)}>≡</button>
+    </div>
+  );
+}
+
+// --------------------------------------------------
+// App root
+// --------------------------------------------------
+function App(){
+  return (
+    <>
+      <SideDrawer />
+      <Header agendaCount={3}/>
+      <AskAtlas/>
+      <QuickActions/>
+      <section className="main-columns">
+        <AgendaColumn/><TodoColumn/>
+      </section>
+      <MobileFooter/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElement
