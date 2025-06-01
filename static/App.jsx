@@ -7,21 +7,21 @@ function Header({ eventCount }) {
   const date = now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
 
   return (
-    <div className="header-bar container">
-      <div>
-        <h2 style={{margin:0,fontWeight:700}}>Hello, Michael,</h2>
-        <span style={{fontSize:14}}>{time} | {date}</span>
+    <header className="header-bar">
+      <div className="greeting">
+        <h2>Hello, Michael,</h2>
+        <span>{time} | {date}</span>
       </div>
 
-      <div style={{display:"flex",gap:16,alignItems:"center"}}>
-        {/* Weather badge placeholder */}
+      <div className="badges">
         <div className="weather-badge">70°F</div>
-        {/* agenda count badge */}
-        <span className="event-badge" title="Show Today's Agenda" onClick={()=>{
-          document.getElementById("agenda-section")?.scrollIntoView({behavior:"smooth"});
-        }}>{eventCount}</span>
+        <button className="event-badge"
+                onClick={()=>document.getElementById("agenda-section")
+                                 ?.scrollIntoView({behavior:"smooth"})}>
+          {eventCount}
+        </button>
       </div>
-    </div>
+    </header>
   );
 }
 
