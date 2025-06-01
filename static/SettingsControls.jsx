@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-undef
+const { useState, useEffect } = React;
+
 function SettingsControls() {
   return (
     <div className="settings-wrap">
@@ -7,4 +10,4 @@ function SettingsControls() {
   );
 }
 
-window.SettingsControls = SettingsControls;trols;
+window.SettingsControls = SettingsControls;

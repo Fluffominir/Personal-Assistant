@@ -24,4 +24,4 @@ function SideDrawer() {
   );
 }
 
-window.SideDrawer = SideDrawer;r;
+window.SideDrawer = SideDrawer;

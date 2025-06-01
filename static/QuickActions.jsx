@@ -1,4 +1,7 @@
 
+// eslint-disable-next-line no-undef
+const { useState, useEffect } = React;
+
 window.QuickActions = function QuickActions() {
     const actionItems = [
         { title: "AI Training Session", icon: "cube" },
