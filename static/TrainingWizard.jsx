@@ -4,7 +4,7 @@ const { useState, useEffect } = React;
 function useForm(initialValues, validations = {}) {
     const [values, setValues] = React.useState(initialValues);
     const [errors, setErrors] = React.useState({});
-    const [touched, setTouched] = React.useState({});
+    const [touched, setFieldTouched] = React.useState({});
 
     const validate = (name, value) => {
         const rules = validations[name];
@@ -31,8 +31,8 @@ function useForm(initialValues, validations = {}) {
         }
     };
 
-    const setFieldTouched = (name) => {
-        setTouched(prev => ({ ...prev, [name]: true }));
+    const setTouchedField = (name) => {
+        setFieldTouched(prev => ({ ...prev, [name]: true }));
 
         // Validate when field is touched
         const error = validate(name, values[name]);
@@ -52,7 +52,7 @@ function useForm(initialValues, validations = {}) {
         });
 
         setErrors(newErrors);
-        setTouched(Object.keys(validations).reduce((acc, key) => {
+        setFieldTouched(Object.keys(validations).reduce((acc, key) => {
             acc[key] = true;
             return acc;
         }, {}));
@@ -63,7 +63,7 @@ function useForm(initialValues, validations = {}) {
     const reset = () => {
         setValues(initialValues);
         setErrors({});
-        setTouched({});
+        setFieldTouched({});
     };
 
     return {
@@ -71,7 +71,7 @@ function useForm(initialValues, validations = {}) {
         errors,
         touched,
         setValue,
-        setTouched: setFieldTouched,
+        setTouched: setTouchedField,
         validateAll,
         reset
     };
