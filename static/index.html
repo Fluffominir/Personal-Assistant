@@ -438,6 +438,109 @@
             display: block;
         }
 
+        /* Ask ATLAS Styles */
+        .ask-atlas {
+            background: transparent;
+        }
+
+        .ask-atlas-card {
+            background: rgba(247, 177, 56, 0.7); /* --yellow with 70% opacity */
+            border-radius: 20px;
+            padding: 24px;
+            margin: 0 32px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ask-atlas-card textarea {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: var(--font-body);
+            font-size: 1.4rem;
+            color: var(--black);
+            resize: none;
+            outline: none;
+            flex: 1;
+        }
+
+        .ask-atlas-card textarea::placeholder {
+            color: rgba(11, 11, 11, 0.6);
+        }
+
+        .suggestion-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-chip {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 1.2rem;
+            color: var(--black);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-body);
+        }
+
+        .suggestion-chip:hover {
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .ask-button-row {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .ask-button {
+            background: var(--black);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-family: var(--font-body);
+        }
+
+        .ask-button:hover {
+            background: rgba(11, 11, 11, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .chevron-down {
+            transition: transform 0.2s ease;
+        }
+
+        .ask-button:hover .chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .atlas-response {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+            color: var(--black);
+            font-size: 1.4rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -450,6 +553,20 @@
 
             .training-wizard-modal {
                 margin: 10px;
+            }
+
+            .ask-atlas-card {
+                margin: 16px 0;
+                height: auto;
+                min-height: 180px;
+            }
+
+            .suggestion-row {
+                flex-direction: column;
+            }
+
+            .suggestion-chip {
+                text-align: center;
             }
         }
     </style>
@@ -470,8 +587,27 @@
         </header>
 
         <main class="main-content">
-            <section class="chat-section">
-                <div id="chat-container"></div>
+            <section class="ask-atlas">
+                <div class="ask-atlas-card">
+                    <textarea 
+                        id="atlas-input"
+                        placeholder="Ask about your projects, schedule, personal or business insights…"
+                        rows="3"></textarea>
+                    <div class="suggestion-row">
+                        <button class="suggestion-chip" onclick="fillSuggestion('Give me a daily breakdown')">Daily Breakdown</button>
+                        <button class="suggestion-chip" onclick="fillSuggestion('What\'s next on my agenda?')">What's Next?</button>
+                        <button class="suggestion-chip" onclick="fillSuggestion('Help me schedule my week')">Schedule my week</button>
+                    </div>
+                    <div class="ask-button-row">
+                        <button class="ask-button" onclick="submitAtlasQuestion()">
+                            Ask
+                            <svg class="chevron-down" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6,9 12,15 18,9"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="atlas-response" class="atlas-response" style="display: none;"></div>
+                </div>
             </section>
 
             <section class="dashboard-column">
@@ -622,14 +758,8 @@
         function initializeInterface() {
             console.log('Interface initialized');
 
-            // Initialize chat box
-            if (window.AtlasChatBox) {
-                const chatContainer = document.getElementById('chat-container');
-                if (chatContainer) {
-                    const root = ReactDOM.createRoot(chatContainer);
-                    root.render(React.createElement(window.AtlasChatBox));
-                }
-            }
+            // Initialize WebSocket for Ask ATLAS
+            initializeAtlasWebSocket();
 
             // Initialize weather
             initializeWeather();
@@ -783,6 +913,85 @@
         function showInsights() {
             alert('Insights dashboard coming soon!');
         }
+
+        // Ask ATLAS functionality
+        let atlasWs = null;
+        let isAtlasConnected = false;
+
+        function initializeAtlasWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/atlas`;
+            
+            atlasWs = new WebSocket(wsUrl);
+            
+            atlasWs.onopen = () => {
+                isAtlasConnected = true;
+                console.log('ATLAS WebSocket connected');
+            };
+            
+            atlasWs.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const responseDiv = document.getElementById('atlas-response');
+                
+                if (data.type === 'chunk') {
+                    responseDiv.style.display = 'block';
+                    if (!responseDiv.textContent) {
+                        responseDiv.textContent = data.content;
+                    } else {
+                        responseDiv.textContent += data.content;
+                    }
+                } else if (data.type === 'complete') {
+                    // Response complete
+                } else if (data.type === 'error') {
+                    responseDiv.style.display = 'block';
+                    responseDiv.textContent = 'Sorry, I encountered an error. Please try again.';
+                }
+            };
+            
+            atlasWs.onclose = () => {
+                isAtlasConnected = false;
+                console.log('ATLAS WebSocket disconnected');
+                setTimeout(initializeAtlasWebSocket, 3000);
+            };
+        }
+
+        function fillSuggestion(text) {
+            document.getElementById('atlas-input').value = text;
+        }
+
+        function submitAtlasQuestion() {
+            const input = document.getElementById('atlas-input');
+            const question = input.value.trim();
+            
+            if (!question || !isAtlasConnected) return;
+            
+            // Clear previous response
+            const responseDiv = document.getElementById('atlas-response');
+            responseDiv.textContent = '';
+            responseDiv.style.display = 'none';
+            
+            // Send question
+            atlasWs.send(JSON.stringify({
+                type: 'message',
+                content: question
+            }));
+            
+            // Clear input
+            input.value = '';
+        }
+
+        // Handle Enter key in textarea
+        document.addEventListener('DOMContentLoaded', function() {
+            const atlasInput = document.getElementById('atlas-input');
+            if (atlasInput) {
+                atlasInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        submitAtlasQuestion();
+                    }
+                });
+            }
+        });
 
         // Handle page visibility changes
         document.addEventListener('visibilitychange', function() {

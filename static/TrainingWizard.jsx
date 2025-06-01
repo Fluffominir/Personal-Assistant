@@ -1,504 +1,305 @@
-
 const { useState, useEffect } = React;
 
-// Custom hook for form management
-function useForm(initialValues, validations = {}) {
-    const [values, setValues] = React.useState(initialValues);
-    const [errors, setErrors] = React.useState({});
-    const [touched, setTouched] = React.useState({});
+function TrainingWizard({ isOpen, onClose }) {
+    const [currentStep, setCurrentStep] = useState(1);
+    const [formData, setFormData] = useState({
+        name: '',
+        role: '',
+        workStyle: '',
+        priorities: '',
+        communicationStyle: '',
+        tools: ''
+    });
+    const [errors, setErrors] = useState({});
+    const [touched, setTouched] = useState({});
 
-    const validate = (name, value) => {
-        const rules = validations[name];
-        if (!rules) return '';
+    const totalSteps = 4;
 
-        if (rules.required && (!value || value.trim() === '')) {
-            return rules.message || `${name} is required`;
-        }
-
-        if (rules.minLength && value && value.length < rules.minLength) {
-            return rules.message || `${name} must be at least ${rules.minLength} characters`;
-        }
-
-        return '';
-    };
-
-    const setValue = (name, value) => {
-        setValues(prev => ({ ...prev, [name]: value }));
-
-        // Validate on change if field has been touched
-        if (touched[name]) {
-            const error = validate(name, value);
-            setErrors(prev => ({ ...prev, [name]: error }));
-        }
-    };
-
-    const setFieldTouched = (name) => {
-        setTouched(prev => ({ ...prev, [name]: true }));
-
-        // Validate when field is touched
-        const error = validate(name, values[name]);
-        setErrors(prev => ({ ...prev, [name]: error }));
-    };
-
-    const validateAll = () => {
+    const validateStep = (step) => {
         const newErrors = {};
-        let hasErrors = false;
 
-        Object.keys(validations).forEach(name => {
-            const error = validate(name, values[name]);
-            if (error) {
-                newErrors[name] = error;
-                hasErrors = true;
-            }
-        });
+        switch (step) {
+            case 1:
+                if (!formData.name.trim()) newErrors.name = 'Name is required';
+                if (!formData.role.trim()) newErrors.role = 'Role is required';
+                break;
+            case 2:
+                if (!formData.workStyle.trim()) newErrors.workStyle = 'Work style is required';
+                if (!formData.priorities.trim()) newErrors.priorities = 'Priorities are required';
+                break;
+            case 3:
+                if (!formData.communicationStyle.trim()) newErrors.communicationStyle = 'Communication style is required';
+                break;
+            case 4:
+                if (!formData.tools.trim()) newErrors.tools = 'Tools information is required';
+                break;
+        }
 
         setErrors(newErrors);
-        setTouched(Object.keys(validations).reduce((acc, key) => {
-            acc[key] = true;
-            return acc;
-        }, {}));
-
-        return !hasErrors;
-    };
-
-    const reset = () => {
-        setValues(initialValues);
-        setErrors({});
-        setTouched({});
-    };
-
-    return {
-        values,
-        errors,
-        touched,
-        setValue,
-        setTouched: setFieldTouched,
-        validateAll,
-        reset
-    };
-}
-
-// Personal Preferences Step
-function PersonalStep({ form }) {
-    return React.createElement('div', { className: 'wizard-step' }, [
-        React.createElement('h3', { 
-            key: 'title',
-            style: { marginBottom: '25px', fontSize: '1.4rem', fontWeight: '700' }
-        }, 'Personal Preferences'),
-
-        React.createElement('div', { key: 'comm-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'How do you prefer to communicate?'),
-            React.createElement('select', {
-                key: 'select',
-                className: `form-input ${form.errors.communication_style ? 'error' : ''}`,
-                value: form.values.communication_style,
-                onChange: (e) => form.setValue('communication_style', e.target.value),
-                onBlur: () => form.setTouched('communication_style')
-            }, [
-                React.createElement('option', { key: 'default', value: '' }, 'Select communication style'),
-                React.createElement('option', { key: 'direct', value: 'direct' }, 'Direct and concise'),
-                React.createElement('option', { key: 'detailed', value: 'detailed' }, 'Detailed explanations'),
-                React.createElement('option', { key: 'conversational', value: 'conversational' }, 'Conversational and friendly'),
-                React.createElement('option', { key: 'professional', value: 'professional' }, 'Formal and professional')
-            ]),
-            form.errors.communication_style && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.communication_style)
-        ]),
-
-        React.createElement('div', { key: 'reminder-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'How often would you like reminders?'),
-            React.createElement('select', {
-                key: 'select',
-                className: `form-input ${form.errors.reminder_frequency ? 'error' : ''}`,
-                value: form.values.reminder_frequency,
-                onChange: (e) => form.setValue('reminder_frequency', e.target.value),
-                onBlur: () => form.setTouched('reminder_frequency')
-            }, [
-                React.createElement('option', { key: 'default', value: '' }, 'Select reminder frequency'),
-                React.createElement('option', { key: 'minimal', value: 'minimal' }, 'Minimal - only important items'),
-                React.createElement('option', { key: 'moderate', value: 'moderate' }, 'Moderate - daily check-ins'),
-                React.createElement('option', { key: 'frequent', value: 'frequent' }, 'Frequent - throughout the day'),
-                React.createElement('option', { key: 'custom', value: 'custom' }, 'Custom schedule')
-            ]),
-            form.errors.reminder_frequency && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.reminder_frequency)
-        ]),
-
-        React.createElement('div', { key: 'tone-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'What tone do you prefer for AI responses?'),
-            React.createElement('select', {
-                key: 'select',
-                className: `form-input ${form.errors.preferred_tone ? 'error' : ''}`,
-                value: form.values.preferred_tone,
-                onChange: (e) => form.setValue('preferred_tone', e.target.value),
-                onBlur: () => form.setTouched('preferred_tone')
-            }, [
-                React.createElement('option', { key: 'default', value: '' }, 'Select preferred tone'),
-                React.createElement('option', { key: 'encouraging', value: 'encouraging' }, 'Encouraging and supportive'),
-                React.createElement('option', { key: 'neutral', value: 'neutral' }, 'Neutral and informative'),
-                React.createElement('option', { key: 'playful', value: 'playful' }, 'Playful and casual'),
-                React.createElement('option', { key: 'serious', value: 'serious' }, 'Serious and focused')
-            ]),
-            form.errors.preferred_tone && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.preferred_tone)
-        ])
-    ]);
-}
-
-// Workflow Preferences Step
-function WorkflowStep({ form }) {
-    return React.createElement('div', { className: 'wizard-step' }, [
-        React.createElement('h3', { 
-            key: 'title',
-            style: { marginBottom: '25px', fontSize: '1.4rem', fontWeight: '700' }
-        }, 'Workflow Preferences'),
-
-        React.createElement('div', { key: 'morning-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'Describe your ideal morning routine:'),
-            React.createElement('textarea', {
-                key: 'textarea',
-                className: `form-input ${form.errors.morning_routine ? 'error' : ''}`,
-                value: form.values.morning_routine,
-                onChange: (e) => form.setValue('morning_routine', e.target.value),
-                onBlur: () => form.setTouched('morning_routine'),
-                placeholder: 'e.g., Check emails, review calendar, plan priorities...',
-                rows: 3
-            }),
-            form.errors.morning_routine && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.morning_routine)
-        ]),
-
-        React.createElement('div', { key: 'task-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'How do you like to organize tasks?'),
-            React.createElement('select', {
-                key: 'select',
-                className: `form-input ${form.errors.task_organization ? 'error' : ''}`,
-                value: form.values.task_organization,
-                onChange: (e) => form.setValue('task_organization', e.target.value),
-                onBlur: () => form.setTouched('task_organization')
-            }, [
-                React.createElement('option', { key: 'default', value: '' }, 'Select organization method'),
-                React.createElement('option', { key: 'priority', value: 'priority' }, 'By priority (high, medium, low)'),
-                React.createElement('option', { key: 'time', value: 'time' }, 'By time blocks'),
-                React.createElement('option', { key: 'project', value: 'project' }, 'By project or category'),
-                React.createElement('option', { key: 'gtd', value: 'gtd' }, 'Getting Things Done (GTD) method'),
-                React.createElement('option', { key: 'kanban', value: 'kanban' }, 'Kanban style (To Do, Doing, Done)')
-            ]),
-            form.errors.task_organization && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.task_organization)
-        ]),
-
-        React.createElement('div', { key: 'break-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'What helps you recharge during breaks?'),
-            React.createElement('textarea', {
-                key: 'textarea',
-                className: 'form-input',
-                value: form.values.break_preferences,
-                onChange: (e) => form.setValue('break_preferences', e.target.value),
-                placeholder: 'e.g., Short walks, meditation, music, quick games...',
-                rows: 2
-            })
-        ])
-    ]);
-}
-
-// Goals Step
-function GoalsStep({ form }) {
-    return React.createElement('div', { className: 'wizard-step' }, [
-        React.createElement('h3', { 
-            key: 'title',
-            style: { marginBottom: '25px', fontSize: '1.4rem', fontWeight: '700' }
-        }, 'Goals & Objectives'),
-
-        React.createElement('div', { key: 'goals-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'What are your primary goals for the next 3-6 months?'),
-            React.createElement('textarea', {
-                key: 'textarea',
-                className: `form-input ${form.errors.primary_goals ? 'error' : ''}`,
-                value: form.values.primary_goals,
-                onChange: (e) => form.setValue('primary_goals', e.target.value),
-                onBlur: () => form.setTouched('primary_goals'),
-                placeholder: 'Share your professional and personal goals...',
-                rows: 4
-            }),
-            form.errors.primary_goals && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.primary_goals)
-        ]),
-
-        React.createElement('div', { key: 'metrics-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'How do you measure success?'),
-            React.createElement('textarea', {
-                key: 'textarea',
-                className: `form-input ${form.errors.success_metrics ? 'error' : ''}`,
-                value: form.values.success_metrics,
-                onChange: (e) => form.setValue('success_metrics', e.target.value),
-                onBlur: () => form.setTouched('success_metrics'),
-                placeholder: 'What metrics, milestones, or outcomes matter most to you?',
-                rows: 3
-            }),
-            form.errors.success_metrics && React.createElement('span', {
-                key: 'error',
-                className: 'error-message'
-            }, form.errors.success_metrics)
-        ]),
-
-        React.createElement('div', { key: 'focus-group', className: 'form-group' }, [
-            React.createElement('label', { key: 'label' }, 'What areas need the most focus or improvement?'),
-            React.createElement('textarea', {
-                key: 'textarea',
-                className: 'form-input',
-                value: form.values.focus_areas,
-                onChange: (e) => form.setValue('focus_areas', e.target.value),
-                placeholder: 'e.g., Time management, work-life balance, productivity, specific skills...',
-                rows: 3
-            })
-        ])
-    ]);
-}
-
-// Confirmation Step
-function ConfirmationStep({ personalData, workflowData, goalsData }) {
-    return React.createElement('div', { className: 'wizard-step confirmation-step' }, [
-        React.createElement('div', { key: 'summary', className: 'training-summary' }, [
-            React.createElement('h3', { key: 'title' }, 'Training Summary'),
-            React.createElement('p', { key: 'intro' }, 'Please review your preferences before completing the training:'),
-
-            React.createElement('div', { key: 'personal', className: 'summary-section' }, [
-                React.createElement('h4', { key: 'title' }, 'Personal Preferences'),
-                React.createElement('ul', { key: 'list' }, [
-                    React.createElement('li', { key: 'comm' }, `Communication: ${personalData.communication_style}`),
-                    React.createElement('li', { key: 'remind' }, `Reminders: ${personalData.reminder_frequency}`),
-                    React.createElement('li', { key: 'tone' }, `Tone: ${personalData.preferred_tone}`)
-                ])
-            ]),
-
-            React.createElement('div', { key: 'workflow', className: 'summary-section' }, [
-                React.createElement('h4', { key: 'title' }, 'Workflow Preferences'),
-                React.createElement('ul', { key: 'list' }, [
-                    React.createElement('li', { key: 'morning' }, `Morning routine: ${workflowData.morning_routine.substring(0, 50)}...`),
-                    React.createElement('li', { key: 'task' }, `Task organization: ${workflowData.task_organization}`),
-                    workflowData.break_preferences && React.createElement('li', { key: 'break' }, `Break preferences: ${workflowData.break_preferences.substring(0, 50)}...`)
-                ])
-            ]),
-
-            React.createElement('div', { key: 'goals', className: 'summary-section' }, [
-                React.createElement('h4', { key: 'title' }, 'Goals & Focus Areas'),
-                React.createElement('ul', { key: 'list' }, [
-                    React.createElement('li', { key: 'primary' }, `Primary goals: ${goalsData.primary_goals.substring(0, 60)}...`),
-                    React.createElement('li', { key: 'metrics' }, `Success metrics: ${goalsData.success_metrics.substring(0, 60)}...`),
-                    goalsData.focus_areas && React.createElement('li', { key: 'focus' }, `Focus areas: ${goalsData.focus_areas.substring(0, 60)}...`)
-                ])
-            ])
-        ]),
-
-        React.createElement('div', { key: 'next-steps', className: 'next-steps' }, [
-            React.createElement('h4', { key: 'title' }, 'What happens next?'),
-            React.createElement('ul', { key: 'list' }, [
-                React.createElement('li', { key: 'adapt' }, 'ATLAS will adapt its responses to match your preferences'),
-                React.createElement('li', { key: 'suggest' }, 'You\'ll receive personalized suggestions and reminders'),
-                React.createElement('li', { key: 'improve' }, 'The system will continue learning from your interactions'),
-                React.createElement('li', { key: 'update' }, 'You can update these preferences anytime in Settings')
-            ])
-        ])
-    ]);
-}
-
-// Main Training Wizard Component
-function TrainingWizard({ isOpen, onClose }) {
-    const [currentStep, setCurrentStep] = React.useState(0);
-    const [direction, setDirection] = React.useState('right');
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-    // Step 1: Personal Preferences
-    const personalForm = useForm({
-        communication_style: '',
-        reminder_frequency: '',
-        preferred_tone: ''
-    }, {
-        communication_style: { required: true, message: 'Please select a communication style' },
-        reminder_frequency: { required: true, message: 'Please select reminder frequency' },
-        preferred_tone: { required: true, message: 'Please select preferred tone' }
-    });
-
-    // Step 2: Workflows
-    const workflowForm = useForm({
-        morning_routine: '',
-        task_organization: '',
-        break_preferences: ''
-    }, {
-        morning_routine: { required: true, message: 'Please describe your morning routine' },
-        task_organization: { required: true, message: 'Please select task organization preference' }
-    });
-
-    // Step 3: Goals
-    const goalsForm = useForm({
-        primary_goals: '',
-        success_metrics: '',
-        focus_areas: ''
-    }, {
-        primary_goals: { required: true, minLength: 10, message: 'Please describe your goals (minimum 10 characters)' },
-        success_metrics: { required: true, message: 'Please describe how you measure success' }
-    });
-
-    const steps = [
-        { title: 'Personal Preferences', component: PersonalStep, form: personalForm },
-        { title: 'Workflow Preferences', component: WorkflowStep, form: workflowForm },
-        { title: 'Goals & Objectives', component: GoalsStep, form: goalsForm },
-        { title: 'Confirmation', component: ConfirmationStep, form: null }
-    ];
-
-    const resetForms = () => {
-        personalForm.reset();
-        workflowForm.reset();
-        goalsForm.reset();
-        setCurrentStep(0);
-        setIsSubmitting(false);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleNext = () => {
-        const currentStepData = steps[currentStep];
-
-        if (currentStepData.form && !currentStepData.form.validateAll()) {
-            return;
-        }
-
-        if (currentStep < steps.length - 1) {
-            setDirection('right');
-            setCurrentStep(currentStep + 1);
+        if (validateStep(currentStep)) {
+            setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+        } else {
+            // Mark fields as touched to show errors
+            const stepFields = getStepFields(currentStep);
+            const newTouched = { ...touched };
+            stepFields.forEach(field => {
+                newTouched[field] = true;
+            });
+            setTouched(newTouched);
         }
     };
 
     const handlePrevious = () => {
-        if (currentStep > 0) {
-            setDirection('left');
-            setCurrentStep(currentStep - 1);
+        setCurrentStep(prev => Math.max(prev - 1, 1));
+    };
+
+    const getStepFields = (step) => {
+        switch (step) {
+            case 1: return ['name', 'role'];
+            case 2: return ['workStyle', 'priorities'];
+            case 3: return ['communicationStyle'];
+            case 4: return ['tools'];
+            default: return [];
         }
+    };
+
+    const handleInputChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+
+        // Clear error when user starts typing
+        if (errors[field]) {
+            setErrors(prev => ({ ...prev, [field]: '' }));
+        }
+
+        // Mark field as touched
+        setTouched(prev => ({ ...prev, [field]: true }));
     };
 
     const handleSubmit = async () => {
-        setIsSubmitting(true);
+        if (validateStep(currentStep)) {
+            try {
+                const response = await fetch('/api/training', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
 
-        try {
-            const trainingData = {
-                personal_preferences: personalForm.values,
-                workflow_preferences: workflowForm.values,
-                goals: goalsForm.values,
-                completed_at: new Date().toISOString()
-            };
-
-            const response = await fetch('/api/profile/training', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(trainingData)
-            });
-
-            if (response.ok) {
-                alert('Training completed successfully! ATLAS will now better understand your preferences.');
-                onClose();
-                resetForms();
-            } else {
-                throw new Error('Failed to save training data');
+                if (response.ok) {
+                    alert('Training data saved successfully!');
+                    onClose();
+                } else {
+                    alert('Failed to save training data');
+                }
+            } catch (error) {
+                console.error('Training submission error:', error);
+                alert('Error saving training data');
             }
-        } catch (error) {
-            console.error('Error saving training:', error);
-            alert('Failed to save training data. Please try again.');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
-    const handleClose = () => {
-        onClose();
-        resetForms();
+    const renderStep = () => {
+        switch (currentStep) {
+            case 1:
+                return React.createElement('div', null, [
+                    React.createElement('h2', { key: 'title' }, 'Personal Information'),
+                    React.createElement('p', { key: 'desc' }, 'Tell me about yourself so I can assist you better.'),
+
+                    React.createElement('div', { key: 'name-group', className: 'form-group' }, [
+                        React.createElement('label', { key: 'name-label' }, 'Full Name'),
+                        React.createElement('input', {
+                            key: 'name-input',
+                            type: 'text',
+                            className: `form-input ${errors.name && touched.name ? 'error' : ''}`,
+                            value: formData.name,
+                            onChange: (e) => handleInputChange('name', e.target.value),
+                            placeholder: 'Enter your full name'
+                        }),
+                        errors.name && touched.name && React.createElement('span', {
+                            key: 'name-error',
+                            className: 'error-message'
+                        }, errors.name)
+                    ]),
+
+                    React.createElement('div', { key: 'role-group', className: 'form-group' }, [
+                        React.createElement('label', { key: 'role-label' }, 'Professional Role'),
+                        React.createElement('input', {
+                            key: 'role-input',
+                            type: 'text',
+                            className: `form-input ${errors.role && touched.role ? 'error' : ''}`,
+                            value: formData.role,
+                            onChange: (e) => handleInputChange('role', e.target.value),
+                            placeholder: 'e.g., Video Producer, Business Owner'
+                        }),
+                        errors.role && touched.role && React.createElement('span', {
+                            key: 'role-error',
+                            className: 'error-message'
+                        }, errors.role)
+                    ])
+                ]);
+
+            case 2:
+                return React.createElement('div', null, [
+                    React.createElement('h2', { key: 'title' }, 'Work Style & Priorities'),
+                    React.createElement('p', { key: 'desc' }, 'Help me understand how you work best.'),
+
+                    React.createElement('div', { key: 'style-group', className: 'form-group' }, [
+                        React.createElement('label', { key: 'style-label' }, 'Work Style'),
+                        React.createElement('textarea', {
+                            key: 'style-input',
+                            className: `form-input ${errors.workStyle && touched.workStyle ? 'error' : ''}`,
+                            value: formData.workStyle,
+                            onChange: (e) => handleInputChange('workStyle', e.target.value),
+                            placeholder: 'Describe your work style, preferences, and approach',
+                            rows: 3
+                        }),
+                        errors.workStyle && touched.workStyle && React.createElement('span', {
+                            key: 'style-error',
+                            className: 'error-message'
+                        }, errors.workStyle)
+                    ]),
+
+                    React.createElement('div', { key: 'priorities-group', className: 'form-group' }, [
+                        React.createElement('label', { key: 'priorities-label' }, 'Current Priorities'),
+                        React.createElement('textarea', {
+                            key: 'priorities-input',
+                            className: `form-input ${errors.priorities && touched.priorities ? 'error' : ''}`,
+                            value: formData.priorities,
+                            onChange: (e) => handleInputChange('priorities', e.target.value),
+                            placeholder: 'What are your main goals and priorities right now?',
+                            rows: 3
+                        }),
+                        errors.priorities && touched.priorities && React.createElement('span', {
+                            key: 'priorities-error',
+                            className: 'error-message'
+                        }, errors.priorities)
+                    ])
+                ]);
+
+            case 3:
+                return React.createElement('div', null, [
+                    React.createElement('h2', { key: 'title' }, 'Communication Preferences'),
+                    React.createElement('p', { key: 'desc' }, 'How would you like me to communicate with you?'),
+
+                    React.createElement('div', { key: 'comm-group', className: 'form-group' }, [
+                        React.createElement('label', { key: 'comm-label' }, 'Communication Style'),
+                        React.createElement('textarea', {
+                            key: 'comm-input',
+                            className: `form-input ${errors.communicationStyle && touched.communicationStyle ? 'error' : ''}`,
+                            value: formData.communicationStyle,
+                            onChange: (e) => handleInputChange('communicationStyle', e.target.value),
+                            placeholder: 'e.g., Direct and concise, detailed explanations, casual tone, etc.',
+                            rows: 4
+                        }),
+                        errors.communicationStyle && touched.communicationStyle && React.createElement('span', {
+                            key: 'comm-error',
+                            className: 'error-message'
+                        }, errors.communicationStyle)
+                    ])
+                ]);
+
+            case 4:
+                return React.createElement('div', null, [
+                    React.createElement('h2', { key: 'title' }, 'Tools & Systems'),
+                    React.createElement('p', { key: 'desc' }, 'What tools and systems do you use regularly?'),
+
+                    React.createElement('div', { key: 'tools-group', className: 'form-group' }, [
+                        React.createElement('label', { key: 'tools-label' }, 'Tools & Software'),
+                        React.createElement('textarea', {
+                            key: 'tools-input',
+                            className: `form-input ${errors.tools && touched.tools ? 'error' : ''}`,
+                            value: formData.tools,
+                            onChange: (e) => handleInputChange('tools', e.target.value),
+                            placeholder: 'List the tools, software, and systems you use for work and personal tasks',
+                            rows: 4
+                        }),
+                        errors.tools && touched.tools && React.createElement('span', {
+                            key: 'tools-error',
+                            className: 'error-message'
+                        }, errors.tools)
+                    ])
+                ]);
+
+            default:
+                return null;
+        }
     };
 
     if (!isOpen) return null;
 
-    const progressPercent = ((currentStep + 1) / steps.length) * 100;
-    const currentStepData = steps[currentStep];
+    return React.createElement('div', {
+        className: 'training-wizard-overlay',
+        onClick: (e) => {
+            if (e.target === e.currentTarget) onClose();
+        }
+    }, React.createElement('div', {
+        className: 'training-wizard-modal'
+    }, [
+        React.createElement('div', {
+            key: 'header',
+            className: 'training-wizard-header'
+        }, [
+            React.createElement('div', { key: 'title-section' }, [
+                React.createElement('h1', { key: 'title' }, 'ATLAS Training Session'),
+                React.createElement('p', { key: 'subtitle' }, `Step ${currentStep} of ${totalSteps}`)
+            ]),
+            React.createElement('button', {
+                key: 'close',
+                className: 'close-btn',
+                onClick: onClose
+            }, '×')
+        ]),
 
-    return React.createElement('div', { className: 'training-wizard-overlay' }, [
-        React.createElement('div', { key: 'modal', className: 'training-wizard-modal' }, [
-            React.createElement('div', { key: 'header', className: 'training-wizard-header' }, [
-                React.createElement('div', { key: 'title-section', className: 'title-section' }, [
-                    React.createElement('h2', { key: 'title' }, 'AI Training Session'),
-                    React.createElement('p', { key: 'subtitle' }, 'Help ATLAS learn your preferences and working style')
-                ]),
+        React.createElement('div', {
+            key: 'progress',
+            className: 'progress-bar'
+        }, React.createElement('div', {
+            className: 'progress-fill',
+            style: { width: `${(currentStep / totalSteps) * 100}%` }
+        })),
+
+        React.createElement('div', {
+            key: 'indicators',
+            className: 'step-indicators'
+        }, Array.from({ length: totalSteps }, (_, i) => 
+            React.createElement('div', {
+                key: i,
+                className: `step-indicator ${i + 1 <= currentStep ? 'active' : ''}`
+            }, i + 1)
+        )),
+
+        React.createElement('div', {
+            key: 'content',
+            className: 'training-wizard-content'
+        }, renderStep()),
+
+        React.createElement('div', {
+            key: 'footer',
+            className: 'training-wizard-footer'
+        }, [
+            React.createElement('button', {
+                key: 'prev',
+                className: 'wizard-btn secondary',
+                onClick: handlePrevious,
+                disabled: currentStep === 1
+            }, 'Previous'),
+
+            currentStep < totalSteps ? 
                 React.createElement('button', {
-                    key: 'close',
-                    className: 'close-btn',
-                    onClick: handleClose
-                }, '×')
-            ]),
-
-            React.createElement('div', { key: 'progress', className: 'progress-bar' }, [
-                React.createElement('div', {
-                    key: 'fill',
-                    className: 'progress-fill',
-                    style: { width: `${progressPercent}%` }
-                })
-            ]),
-
-            React.createElement('div', { key: 'indicators', className: 'step-indicators' }, 
-                steps.map((step, index) => 
-                    React.createElement('div', {
-                        key: index,
-                        className: `step-indicator ${index <= currentStep ? 'active' : ''}`
-                    }, index + 1)
-                )
-            ),
-
-            React.createElement('div', { key: 'content', className: 'training-wizard-content' }, [
-                React.createElement('div', {
-                    key: 'step',
-                    className: `training-step active ${direction === 'left' ? 'direction-left' : ''}`
-                }, [
-                    currentStep === 3 
-                        ? React.createElement(ConfirmationStep, {
-                            personalData: personalForm.values,
-                            workflowData: workflowForm.values,
-                            goalsData: goalsForm.values
-                        })
-                        : React.createElement(currentStepData.component, { form: currentStepData.form })
-                ])
-            ]),
-
-            React.createElement('div', { key: 'footer', className: 'training-wizard-footer' }, [
+                    key: 'next',
+                    className: 'wizard-btn primary',
+                    onClick: handleNext
+                }, 'Next') :
                 React.createElement('button', {
-                    key: 'previous',
-                    className: 'wizard-btn secondary',
-                    onClick: handlePrevious,
-                    disabled: currentStep === 0
-                }, 'Previous'),
-
-                currentStep === steps.length - 1
-                    ? React.createElement('button', {
-                        key: 'finish',
-                        className: 'wizard-btn primary',
-                        onClick: handleSubmit,
-                        disabled: isSubmitting
-                    }, isSubmitting ? 'Saving...' : 'Complete Training')
-                    : React.createElement('button', {
-                        key: 'next',
-                        className: 'wizard-btn primary',
-                        onClick: handleNext
-                    }, 'Next')
-            ])
+                    key: 'submit',
+                    className: 'wizard-btn primary',
+                    onClick: handleSubmit
+                }, 'Complete Training')
         ])
-    ]);
+    ]));
 }
 
-// Export to global scope
 window.TrainingWizard = TrainingWizard;
