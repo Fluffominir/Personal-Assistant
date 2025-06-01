@@ -634,9 +634,13 @@
 
         // Main App Component
         function App() {
-            return React.createElement('h1', {
-                style: { fontFamily: 'var(--font-head)' }
-            }, '⚡ Atlas baseline up');
+            return React.createElement('div', {}, [
+                React.createElement(window.Header, { key: 'header' }),
+                React.createElement('h1', {
+                    key: 'baseline',
+                    style: { fontFamily: 'var(--font-head)' }
+                }, '⚡ Atlas baseline up')
+            ]);
         }
 
         // Render the app
@@ -655,6 +659,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
     <!-- Components -->
+    <script src="static/Header.jsx"></script>
     <script src="static/AtlasChatBox.jsx"></script>
     <script src="static/TrainingWizard.jsx"></script>
     <script src="static/QuickActions.jsx"></script>
