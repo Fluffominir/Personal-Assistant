@@ -9,6 +9,10 @@ from typing import Optional, List, Dict, Any
 import asyncio
 import aiohttp
 import urllib.parse
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+import sqlite3
+from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -25,6 +29,7 @@ NS = "v1"
 # Google APIs setup
 GOOGLE_SCOPES = [
     'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/calendar.readonly',
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/gmail.send',
     'https://www.googleapis.com/auth/drive.readonly'
@@ -105,6 +110,10 @@ async def start_background_tasks():
     global sync_task
     print("🚀 Starting ATLAS - Michael's AI Companion")
 
+    # Initialize database
+    init_database()
+    print("🗄️  Database initialized")
+
     # Check if we have Notion configuration (either NOTION_WORKSPACES or NOTION_API_KEY)
     has_notion = os.environ.get("NOTION_WORKSPACES") or os.environ.get("NOTION_API_KEY")
     has_required_keys = os.environ.get("OPENAI_API_KEY") and os.environ.get("PINECONE_API_KEY")
@@ -132,11 +141,30 @@ async def start_background_tasks():
         except Exception as e:
             print(f"❌ Notion API test error: {e}")
 
+    # Start Google Calendar sync scheduler
+    if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+        try:
+            scheduler.add_job(
+                sync_google_calendar,
+                IntervalTrigger(minutes=10),
+                id='google_calendar_sync',
+                replace_existing=True,
+                max_instances=1
+            )
+            scheduler.start()
+            print("📅 Google Calendar sync scheduler started (every 10 minutes)")
+            
+            # Run initial calendar sync after 30 seconds
+            asyncio.create_task(initial_calendar_sync())
+            
+        except Exception as e:
+            print(f"⚠️  Could not start calendar sync: {e}")
+
     # Start background sync with improved error handling
     if has_notion and has_required_keys:
         try:
-            from scripts.notion_sync import scheduler
-            sync_task = asyncio.create_task(scheduler())
+            from scripts.notion_sync import scheduler as notion_scheduler
+            sync_task = asyncio.create_task(notion_scheduler())
             print("🔄 Background Notion sync started")
 
             # Run an initial sync after a short delay
@@ -167,6 +195,11 @@ async def initial_sync():
     except Exception as e:
         print(f"⚠️  Initial sync failed: {e}")
 
+async def initial_calendar_sync():
+    """Run initial calendar sync after startup"""
+    await asyncio.sleep(30)  # Wait for server to be fully ready
+    await sync_google_calendar()
+
 @app.on_event("shutdown")
 async def shutdown_background_tasks():
     global sync_task
@@ -176,6 +209,11 @@ async def shutdown_background_tasks():
             await sync_task
         except asyncio.CancelledError:
             pass
+    
+    # Shutdown scheduler
+    if scheduler.running:
+        scheduler.shutdown()
+        print("📅 Calendar sync scheduler stopped")
 
 # Models
 class Answer(BaseModel):
@@ -215,11 +253,54 @@ class TodoModel(BaseModel):
     completed: Optional[bool] = False
     created_at: Optional[str] = None
 
+class Event(BaseModel):
+    id: str
+    title: str
+    start: str
+    end: str
+    color: Optional[str] = "#3b82f6"
+    description: Optional[str] = None
+    location: Optional[str] = None
+
 class EventModel(BaseModel):
     title: str
     start_time: str
     end_time: Optional[str] = None
     description: Optional[str] = None
+
+# Database setup
+DB_PATH = Path("data/events.db")
+
+def init_database():
+    """Initialize SQLite database for events"""
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS events (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            color TEXT DEFAULT '#3b82f6',
+            description TEXT,
+            location TEXT,
+            last_updated TEXT NOT NULL
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+def get_db_connection():
+    """Get database connection"""
+    return sqlite3.connect(DB_PATH)
+
+# Initialize scheduler
+scheduler = AsyncIOScheduler()
+calendar_sync_running = False
 
 # Helper functions for integrations
 async def get_google_calendar_events(access_token: str, days_ahead: int = 7) -> List[CalendarEvent]:
@@ -304,6 +385,84 @@ async def get_gmail_summary(access_token: str, max_results: int = 10) -> List[Em
     except Exception as e:
         print(f"Error fetching emails: {e}")
         return []
+
+async def sync_google_calendar():
+    """Sync Google Calendar events to local database"""
+    global calendar_sync_running
+    
+    if calendar_sync_running:
+        print("📅 Calendar sync already running, skipping...")
+        return
+    
+    calendar_sync_running = True
+    
+    try:
+        access_token = await get_valid_google_token()
+        if not access_token:
+            print("⚠️  No valid Google token for calendar sync")
+            return
+        
+        print("📅 Starting Google Calendar sync...")
+        
+        # Get events for the next 30 days
+        calendar_events = await get_google_calendar_events(access_token, days_ahead=30)
+        
+        if not calendar_events:
+            print("📅 No calendar events found")
+            return
+        
+        # Store events in database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Clear existing events (simple approach - in production, you'd do incremental sync)
+        cursor.execute("DELETE FROM events WHERE id LIKE 'gcal_%'")
+        
+        synced_count = 0
+        for event in calendar_events:
+            try:
+                event_id = f"gcal_{event.id}"
+                
+                # Determine color based on event title
+                color = "#3b82f6"  # Default blue
+                title_lower = event.title.lower()
+                if any(word in title_lower for word in ['meeting', 'call']):
+                    color = "#10b981"  # Green for meetings
+                elif any(word in title_lower for word in ['project', 'work']):
+                    color = "#f59e0b"  # Amber for work
+                elif any(word in title_lower for word in ['personal', 'doctor', 'appointment']):
+                    color = "#8b5cf6"  # Purple for personal
+                
+                cursor.execute('''
+                    INSERT OR REPLACE INTO events 
+                    (id, title, start_time, end_time, color, description, location, last_updated)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    event_id,
+                    event.title,
+                    event.start_time.isoformat(),
+                    event.end_time.isoformat(),
+                    color,
+                    event.description or '',
+                    getattr(event, 'location', ''),
+                    datetime.now().isoformat()
+                ))
+                
+                synced_count += 1
+                
+            except Exception as e:
+                print(f"❌ Error syncing event {event.title}: {e}")
+                continue
+        
+        conn.commit()
+        conn.close()
+        
+        print(f"✅ Calendar sync completed: {synced_count} events synced")
+        
+    except Exception as e:
+        print(f"❌ Calendar sync error: {e}")
+    finally:
+        calendar_sync_running = False
 
 async def get_notion_data(notion_token: str, database_id: str) -> Dict[str, Any]:
     """Get data from Notion database"""
@@ -1366,6 +1525,135 @@ def get_ai_personality():
             "neurodivergent_support": True
         }
     }
+
+@app.get("/api/events/today")
+async def get_todays_events():
+    """Get today's calendar events from local database"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get today's date range
+        today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_end = today_start + timedelta(days=1)
+        
+        cursor.execute('''
+            SELECT id, title, start_time, end_time, color, description, location
+            FROM events 
+            WHERE start_time >= ? AND start_time < ?
+            ORDER BY start_time ASC
+        ''', (today_start.isoformat(), today_end.isoformat()))
+        
+        events = []
+        for row in cursor.fetchall():
+            event_id, title, start_time, end_time, color, description, location = row
+            
+            # Parse datetime strings
+            start_dt = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+            end_dt = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+            
+            events.append({
+                "id": event_id,
+                "title": title,
+                "start": start_dt.strftime("%H:%M"),
+                "end": end_dt.strftime("%H:%M"),
+                "start_full": start_dt.isoformat(),
+                "end_full": end_dt.isoformat(),
+                "color": color,
+                "description": description or "",
+                "location": location or ""
+            })
+        
+        conn.close()
+        
+        return {
+            "events": events,
+            "count": len(events),
+            "date": today_start.strftime("%Y-%m-%d")
+        }
+        
+    except Exception as e:
+        print(f"❌ Error fetching today's events: {e}")
+        return {
+            "events": [],
+            "count": 0,
+            "error": str(e)
+        }
+
+@app.get("/api/events/week")
+async def get_week_events():
+    """Get this week's calendar events from local database"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get week date range (next 7 days)
+        week_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        week_end = week_start + timedelta(days=7)
+        
+        cursor.execute('''
+            SELECT id, title, start_time, end_time, color, description, location
+            FROM events 
+            WHERE start_time >= ? AND start_time < ?
+            ORDER BY start_time ASC
+        ''', (week_start.isoformat(), week_end.isoformat()))
+        
+        events = []
+        for row in cursor.fetchall():
+            event_id, title, start_time, end_time, color, description, location = row
+            
+            # Parse datetime strings
+            start_dt = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+            end_dt = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+            
+            events.append({
+                "id": event_id,
+                "title": title,
+                "start": start_dt.strftime("%m/%d %H:%M"),
+                "end": end_dt.strftime("%H:%M"),
+                "start_full": start_dt.isoformat(),
+                "end_full": end_dt.isoformat(),
+                "color": color,
+                "description": description or "",
+                "location": location or "",
+                "date": start_dt.strftime("%Y-%m-%d")
+            })
+        
+        conn.close()
+        
+        # Group events by date
+        events_by_date = {}
+        for event in events:
+            date = event["date"]
+            if date not in events_by_date:
+                events_by_date[date] = []
+            events_by_date[date].append(event)
+        
+        return {
+            "events": events,
+            "events_by_date": events_by_date,
+            "count": len(events),
+            "week_start": week_start.strftime("%Y-%m-%d"),
+            "week_end": week_end.strftime("%Y-%m-%d")
+        }
+        
+    except Exception as e:
+        print(f"❌ Error fetching week events: {e}")
+        return {
+            "events": [],
+            "events_by_date": {},
+            "count": 0,
+            "error": str(e)
+        }
+
+@app.post("/api/events/sync")
+async def manual_calendar_sync():
+    """Manually trigger calendar sync"""
+    try:
+        await sync_google_calendar()
+        return {"message": "Calendar sync completed successfully"}
+    except Exception as e:
+        return {"error": f"Sync failed: {str(e)}"}
 
 @app.post("/api/profile/training")
 async def save_training_profile(training_data: dict):
