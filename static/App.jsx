@@ -25,17 +25,7 @@ function Header({ eventCount }) {
   );
 }
 
-function AskAtlas() {
-  return (
-    <div className="ask-section container">
-      <input
-        className="ask-input"
-        placeholder="Ask me anything…"
-        aria-label="Ask ATLAS"
-      />
-    </div>
-  );
-}
+
 
 function QuickActions() {
   const actions = ["New Event", "New Task", "Add Contact", "Brainstorm"];
@@ -88,7 +78,9 @@ function App() {
     <>
       {React.createElement(window.SideDrawer)}
       <Header eventCount={events.length} />
-      <AskAtlas />
+      <div className="container">
+        {React.createElement(window.AskAtlas)}
+      </div>
       <QuickActions />
       <section className="main-columns container">
         <AgendaColumn />

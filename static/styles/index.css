@@ -84,3 +84,9 @@ h1,h2,h3,h4{margin:0;font-weight:700;}
   background:var(--salmon);color:#fff;font-weight:700;text-align:center;
   display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .event-badge:hover{filter:brightness(110%);}
+.ask-wrap{margin:32px 0;display:flex;}
+.ask-input{flex:1;border:none;padding:18px 20px;border-radius:12px 0 0 12px;
+  background:var(--gold);color:#fff;font-weight:600;font-size:18px;}
+.ask-btn{border:none;padding:0 24px;border-radius:0 12px 12px 0;
+  background:#000;color:#fff;font-weight:600;cursor:pointer;}
+.ask-btn:hover{filter:brightness(120%);}
