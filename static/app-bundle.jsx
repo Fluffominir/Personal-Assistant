@@ -131,7 +131,7 @@ function MobileFooter() {
 // --------------------------------------------------
 function App(){
   return (
-    <>
+    <div className="container">
       <SideDrawer />
       <Header agendaCount={3}/>
       <AskAtlas/>
@@ -140,7 +140,7 @@ function App(){
         <AgendaColumn/><TodoColumn/>
       </section>
       <MobileFooter/>
-    </>
+    </div>
   );
 }
 
